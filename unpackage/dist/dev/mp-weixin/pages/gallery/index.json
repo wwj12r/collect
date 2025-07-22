@@ -1,4 +1,5 @@
 {
   "navigationBarTitleText": "展厅",
+  "navigationStyle": "custom",
   "usingComponents": {}
 }

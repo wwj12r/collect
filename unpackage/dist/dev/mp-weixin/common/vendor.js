@@ -85,8 +85,8 @@ const def = (obj, key, value) => {
   });
 };
 const looseToNumber = (val) => {
-  const n = parseFloat(val);
-  return isNaN(n) ? val : n;
+  const n2 = parseFloat(val);
+  return isNaN(n2) ? val : n2;
 };
 function normalizeStyle(value) {
   if (isArray$1(value)) {
@@ -117,6 +117,26 @@ function parseStringStyle(cssText) {
     }
   });
   return ret;
+}
+function normalizeClass(value) {
+  let res = "";
+  if (isString(value)) {
+    res = value;
+  } else if (isArray$1(value)) {
+    for (let i = 0; i < value.length; i++) {
+      const normalized = normalizeClass(value[i]);
+      if (normalized) {
+        res += normalized + " ";
+      }
+    }
+  } else if (isObject$1(value)) {
+    for (const name in value) {
+      if (value[name]) {
+        res += name + " ";
+      }
+    }
+  }
+  return res.trim();
 }
 const toDisplayString = (val) => {
   return isString(val) ? val : val == null ? "" : isArray$1(val) || isObject$1(val) && (val.toString === objectToString || !isFunction(val.toString)) ? JSON.stringify(val, replacer, 2) : String(val);
@@ -5268,6 +5288,7 @@ const r = (name, props2, key) => renderSlot(name, props2, key);
 const w = (fn, options) => withScopedSlot(fn, options);
 const s = (value) => stringifyStyle(value);
 const e = (target, ...sources) => extend(target, ...sources);
+const n = (value) => normalizeClass(value);
 const t = (val) => toDisplayString(val);
 const p = (props2) => renderProps(props2);
 function createApp$1(rootComponent, rootProps = null) {
@@ -5853,8 +5874,8 @@ const $once = defineSyncApi(API_ONCE, (name, callback) => {
 const $off = defineSyncApi(API_OFF, (name, callback) => {
   if (!isArray$1(name))
     name = name ? [name] : [];
-  name.forEach((n) => {
-    eventBus.off(n, callback);
+  name.forEach((n2) => {
+    eventBus.off(n2, callback);
   });
 }, OffProtocol);
 const $emit = defineSyncApi(API_EMIT, (name, ...args) => {
@@ -7031,9 +7052,9 @@ function initOnError() {
   };
 }
 function initRuntimeSocketService() {
-  const hosts = "127.0.0.1,192.168.50.239";
+  const hosts = "127.0.0.1,192.168.50.238";
   const port = "8090";
-  const id = "mp-weixin_wphwHo";
+  const id = "mp-weixin_RqheqJ";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -8656,12 +8677,12 @@ function type2icon(type = "success", fill = false) {
 }
 function priceFormat(number2, decimals = 0, decimalPoint = ".", thousandsSeparator = ",") {
   number2 = `${number2}`.replace(/[^0-9+-Ee.]/g, "");
-  const n = !isFinite(+number2) ? 0 : +number2;
+  const n2 = !isFinite(+number2) ? 0 : +number2;
   const prec = !isFinite(+decimals) ? 0 : Math.abs(decimals);
   const sep = typeof thousandsSeparator === "undefined" ? "," : thousandsSeparator;
   const dec = typeof decimalPoint === "undefined" ? "." : decimalPoint;
   let s2 = "";
-  s2 = (prec ? round(n, prec) + "" : `${Math.round(n)}`).split(".");
+  s2 = (prec ? round(n2, prec) + "" : `${Math.round(n2)}`).split(".");
   const re = /(-?\d+)(\d{3})/;
   while (re.test(s2[0])) {
     s2[0] = s2[0].replace(re, `$1${sep}$2`);
@@ -8814,8 +8835,8 @@ function rgbToHsl(r2, g, b) {
 function hslToHex(h, s2, l) {
   l /= 100;
   const a = s2 * Math.min(l, 1 - l) / 100;
-  const f2 = (n) => {
-    const k = (n + h / 30) % 12;
+  const f2 = (n2) => {
+    const k = (n2 + h / 30) % 12;
     const color2 = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
     return Math.round(255 * color2).toString(16).padStart(2, "0");
   };
@@ -9252,7 +9273,7 @@ function add(arg1, arg2) {
   return (arg1 * m + arg2 * m) / m;
 }
 function sub(arg1, arg2) {
-  var r1, r2, m, n;
+  var r1, r2, m, n2;
   try {
     r1 = arg1.toString().split(".")[1].length;
   } catch (e2) {
@@ -9264,8 +9285,8 @@ function sub(arg1, arg2) {
     r2 = 0;
   }
   m = Math.pow(10, Math.max(r1, r2));
-  n = r1 >= r2 ? r1 : r2;
-  return Math.abs(((arg1 * m - arg2 * m) / m).toFixed(n));
+  n2 = r1 >= r2 ? r1 : r2;
+  return Math.abs(((arg1 * m - arg2 * m) / m).toFixed(n2));
 }
 function mul(a, b) {
   var c = 0, d = a.toString(), e2 = b.toString();
@@ -11413,7 +11434,7 @@ const Upload = {
     videoPreviewObjectFit: "cover"
   }
 };
-const props$1 = {
+const props$9 = {
   ...ActionSheet,
   ...Album,
   ...Alert,
@@ -11506,7 +11527,7 @@ const props$1 = {
 };
 function setConfig$1(configs) {
   shallowMerge(config, configs.config || {});
-  shallowMerge(props$1, configs.props || {});
+  shallowMerge(props$9, configs.props || {});
   shallowMerge(color$3, configs.color || {});
   shallowMerge(zIndex, configs.zIndex || {});
 }
@@ -11528,7 +11549,7 @@ const platform$1 = platform;
 let themeType = ["primary", "success", "error", "warning", "info"];
 function setConfig(configs) {
   index.shallowMerge(config, configs.config || {});
-  index.shallowMerge(props$1, configs.props || {});
+  index.shallowMerge(props$9, configs.props || {});
   index.shallowMerge(color$3, configs.color || {});
   index.shallowMerge(zIndex, configs.zIndex || {});
 }
@@ -11552,7 +11573,7 @@ const $u = {
   calc,
   mixin,
   mpMixin,
-  props: props$1,
+  props: props$9,
   ...index,
   color: color$3,
   platform: platform$1
@@ -11575,151 +11596,930 @@ const install = (Vue, upuiParams = "") => {
 const uviewPlus = {
   install
 };
-const props = defineMixin({
+const props$8 = defineMixin({
   props: {
     // 列表数组，元素可为字符串，如为对象可通过keyName指定目标属性名
     list: {
       type: Array,
-      default: () => props$1.swiper.list
+      default: () => props$9.swiper.list
     },
     // 是否显示面板指示器
     indicator: {
       type: Boolean,
-      default: () => props$1.swiper.indicator
+      default: () => props$9.swiper.indicator
     },
     // 指示器非激活颜色
     indicatorActiveColor: {
       type: String,
-      default: () => props$1.swiper.indicatorActiveColor
+      default: () => props$9.swiper.indicatorActiveColor
     },
     // 指示器的激活颜色
     indicatorInactiveColor: {
       type: String,
-      default: () => props$1.swiper.indicatorInactiveColor
+      default: () => props$9.swiper.indicatorInactiveColor
     },
     // 指示器样式，可通过bottom，left，right进行定位
     indicatorStyle: {
       type: [String, Object],
-      default: () => props$1.swiper.indicatorStyle
+      default: () => props$9.swiper.indicatorStyle
     },
     // 指示器模式，line-线型，dot-点型
     indicatorMode: {
       type: String,
-      default: () => props$1.swiper.indicatorMode
+      default: () => props$9.swiper.indicatorMode
     },
     // 是否自动切换
     autoplay: {
       type: Boolean,
-      default: () => props$1.swiper.autoplay
+      default: () => props$9.swiper.autoplay
     },
     // 当前所在滑块的 index
     current: {
       type: [String, Number],
-      default: () => props$1.swiper.current
+      default: () => props$9.swiper.current
     },
     // 当前所在滑块的 item-id ，不能与 current 被同时指定
     currentItemId: {
       type: String,
-      default: () => props$1.swiper.currentItemId
+      default: () => props$9.swiper.currentItemId
     },
     // 滑块自动切换时间间隔
     interval: {
       type: [String, Number],
-      default: () => props$1.swiper.interval
+      default: () => props$9.swiper.interval
     },
     // 滑块切换过程所需时间
     duration: {
       type: [String, Number],
-      default: () => props$1.swiper.duration
+      default: () => props$9.swiper.duration
     },
     // 播放到末尾后是否重新回到开头
     circular: {
       type: Boolean,
-      default: () => props$1.swiper.circular
+      default: () => props$9.swiper.circular
     },
     // 前边距，可用于露出前一项的一小部分，nvue和支付宝不支持
     previousMargin: {
       type: [String, Number],
-      default: () => props$1.swiper.previousMargin
+      default: () => props$9.swiper.previousMargin
     },
     // 后边距，可用于露出后一项的一小部分，nvue和支付宝不支持
     nextMargin: {
       type: [String, Number],
-      default: () => props$1.swiper.nextMargin
+      default: () => props$9.swiper.nextMargin
     },
     // 当开启时，会根据滑动速度，连续滑动多屏，支付宝不支持
     acceleration: {
       type: Boolean,
-      default: () => props$1.swiper.acceleration
+      default: () => props$9.swiper.acceleration
     },
     // 同时显示的滑块数量，nvue、支付宝小程序不支持
     displayMultipleItems: {
       type: Number,
-      default: () => props$1.swiper.displayMultipleItems
+      default: () => props$9.swiper.displayMultipleItems
     },
     // 指定swiper切换缓动动画类型，有效值：default、linear、easeInCubic、easeOutCubic、easeInOutCubic
     // 只对微信小程序有效
     easingFunction: {
       type: String,
-      default: () => props$1.swiper.easingFunction
+      default: () => props$9.swiper.easingFunction
     },
     // list数组中指定对象的目标属性名
     keyName: {
       type: String,
-      default: () => props$1.swiper.keyName
+      default: () => props$9.swiper.keyName
     },
     // 图片的裁剪模式
     imgMode: {
       type: String,
-      default: () => props$1.swiper.imgMode
+      default: () => props$9.swiper.imgMode
     },
     // 组件高度
     height: {
       type: [String, Number],
-      default: () => props$1.swiper.height
+      default: () => props$9.swiper.height
     },
     // 背景颜色
     bgColor: {
       type: String,
-      default: () => props$1.swiper.bgColor
+      default: () => props$9.swiper.bgColor
     },
     // 组件圆角，数值或带单位的字符串
     radius: {
       type: [String, Number],
-      default: () => props$1.swiper.radius
+      default: () => props$9.swiper.radius
     },
     // 是否加载中
     loading: {
       type: Boolean,
-      default: () => props$1.swiper.loading
+      default: () => props$9.swiper.loading
     },
     // 是否显示标题，要求数组对象中有title属性
     showTitle: {
       type: Boolean,
-      default: () => props$1.swiper.showTitle
+      default: () => props$9.swiper.showTitle
     }
   }
 });
+const buttonMixin = defineMixin({
+  props: {
+    lang: String,
+    sessionFrom: String,
+    sendMessageTitle: String,
+    sendMessagePath: String,
+    sendMessageImg: String,
+    showMessageCard: Boolean,
+    appParameter: String,
+    formType: String,
+    openType: String
+  }
+});
+const openType = defineMixin({
+  props: {
+    openType: String
+  },
+  methods: {
+    onGetUserInfo(event) {
+      this.$emit("getuserinfo", event.detail);
+    },
+    onContact(event) {
+      this.$emit("contact", event.detail);
+    },
+    onGetPhoneNumber(event) {
+      this.$emit("getphonenumber", event.detail);
+    },
+    onError(event) {
+      this.$emit("error", event.detail);
+    },
+    onLaunchApp(event) {
+      this.$emit("launchapp", event.detail);
+    },
+    onOpenSetting(event) {
+      this.$emit("opensetting", event.detail);
+    }
+  }
+});
+const props$7 = defineMixin({
+  props: {
+    // 是否细边框
+    hairline: {
+      type: Boolean,
+      default: () => props$9.button.hairline
+    },
+    // 按钮的预置样式，info，primary，error，warning，success
+    type: {
+      type: String,
+      default: () => props$9.button.type
+    },
+    // 按钮尺寸，large，normal，small，mini
+    size: {
+      type: String,
+      default: () => props$9.button.size
+    },
+    // 按钮形状，circle（两边为半圆），square（带圆角）
+    shape: {
+      type: String,
+      default: () => props$9.button.shape
+    },
+    // 按钮是否镂空
+    plain: {
+      type: Boolean,
+      default: () => props$9.button.plain
+    },
+    // 是否禁止状态
+    disabled: {
+      type: Boolean,
+      default: () => props$9.button.disabled
+    },
+    // 是否加载中
+    loading: {
+      type: Boolean,
+      default: () => props$9.button.loading
+    },
+    // 加载中提示文字
+    loadingText: {
+      type: [String, Number],
+      default: () => props$9.button.loadingText
+    },
+    // 加载状态图标类型
+    loadingMode: {
+      type: String,
+      default: () => props$9.button.loadingMode
+    },
+    // 加载图标大小
+    loadingSize: {
+      type: [String, Number],
+      default: () => props$9.button.loadingSize
+    },
+    // 开放能力，具体请看uniapp稳定关于button组件部分说明
+    // https://uniapp.dcloud.io/component/button
+    openType: {
+      type: String,
+      default: () => props$9.button.openType
+    },
+    // 用于 <form> 组件，点击分别会触发 <form> 组件的 submit/reset 事件
+    // 取值为submit（提交表单），reset（重置表单）
+    formType: {
+      type: String,
+      default: () => props$9.button.formType
+    },
+    // 打开 APP 时，向 APP 传递的参数，open-type=launchApp时有效
+    // 只微信小程序、QQ小程序有效
+    appParameter: {
+      type: String,
+      default: () => props$9.button.appParameter
+    },
+    // 指定是否阻止本节点的祖先节点出现点击态，微信小程序有效
+    hoverStopPropagation: {
+      type: Boolean,
+      default: () => props$9.button.hoverStopPropagation
+    },
+    // 指定返回用户信息的语言，zh_CN 简体中文，zh_TW 繁体中文，en 英文。只微信小程序有效
+    lang: {
+      type: String,
+      default: () => props$9.button.lang
+    },
+    // 会话来源，open-type="contact"时有效。只微信小程序有效
+    sessionFrom: {
+      type: String,
+      default: () => props$9.button.sessionFrom
+    },
+    // 会话内消息卡片标题，open-type="contact"时有效
+    // 默认当前标题，只微信小程序有效
+    sendMessageTitle: {
+      type: String,
+      default: () => props$9.button.sendMessageTitle
+    },
+    // 会话内消息卡片点击跳转小程序路径，open-type="contact"时有效
+    // 默认当前分享路径，只微信小程序有效
+    sendMessagePath: {
+      type: String,
+      default: () => props$9.button.sendMessagePath
+    },
+    // 会话内消息卡片图片，open-type="contact"时有效
+    // 默认当前页面截图，只微信小程序有效
+    sendMessageImg: {
+      type: String,
+      default: () => props$9.button.sendMessageImg
+    },
+    // 是否显示会话内消息卡片，设置此参数为 true，用户进入客服会话会在右下角显示"可能要发送的小程序"提示，
+    // 用户点击后可以快速发送小程序消息，open-type="contact"时有效
+    showMessageCard: {
+      type: Boolean,
+      default: () => props$9.button.showMessageCard
+    },
+    // 额外传参参数，用于小程序的data-xxx属性，通过target.dataset.name获取
+    dataName: {
+      type: String,
+      default: () => props$9.button.dataName
+    },
+    // 节流，一定时间内只能触发一次
+    throttleTime: {
+      type: [String, Number],
+      default: () => props$9.button.throttleTime
+    },
+    // 按住后多久出现点击态，单位毫秒
+    hoverStartTime: {
+      type: [String, Number],
+      default: () => props$9.button.hoverStartTime
+    },
+    // 手指松开后点击态保留时间，单位毫秒
+    hoverStayTime: {
+      type: [String, Number],
+      default: () => props$9.button.hoverStayTime
+    },
+    // 按钮文字，之所以通过props传入，是因为slot传入的话
+    // nvue中无法控制文字的样式
+    text: {
+      type: [String, Number],
+      default: () => props$9.button.text
+    },
+    // 按钮图标
+    icon: {
+      type: String,
+      default: () => props$9.button.icon
+    },
+    // 按钮图标
+    iconColor: {
+      type: String,
+      default: () => props$9.button.icon
+    },
+    // 按钮颜色，支持传入linear-gradient渐变色
+    color: {
+      type: String,
+      default: () => props$9.button.color
+    },
+    // 停止冒泡
+    stop: {
+      type: Boolean,
+      default: () => props$9.button.stop
+    }
+  }
+});
+const props$6 = defineMixin({
+  props: {
+    // 是否展示弹窗
+    show: {
+      type: Boolean,
+      default: () => props$9.popup.show
+    },
+    // 是否显示遮罩
+    overlay: {
+      type: Boolean,
+      default: () => props$9.popup.overlay
+    },
+    // 弹出的方向，可选值为 top bottom right left center
+    mode: {
+      type: String,
+      default: () => props$9.popup.mode
+    },
+    // 动画时长，单位ms
+    duration: {
+      type: [String, Number],
+      default: () => props$9.popup.duration
+    },
+    // 是否显示关闭图标
+    closeable: {
+      type: Boolean,
+      default: () => props$9.popup.closeable
+    },
+    // 自定义遮罩的样式
+    overlayStyle: {
+      type: [Object, String],
+      default: () => props$9.popup.overlayStyle
+    },
+    // 点击遮罩是否关闭弹窗
+    closeOnClickOverlay: {
+      type: Boolean,
+      default: () => props$9.popup.closeOnClickOverlay
+    },
+    // 层级
+    zIndex: {
+      type: [String, Number],
+      default: () => props$9.popup.zIndex
+    },
+    // 是否为iPhoneX留出底部安全距离
+    safeAreaInsetBottom: {
+      type: Boolean,
+      default: () => props$9.popup.safeAreaInsetBottom
+    },
+    // 是否留出顶部安全距离（状态栏高度）
+    safeAreaInsetTop: {
+      type: Boolean,
+      default: () => props$9.popup.safeAreaInsetTop
+    },
+    // 自定义关闭图标位置，top-left为左上角，top-right为右上角，bottom-left为左下角，bottom-right为右下角
+    closeIconPos: {
+      type: String,
+      default: () => props$9.popup.closeIconPos
+    },
+    // 是否显示圆角
+    round: {
+      type: [Boolean, String, Number],
+      default: () => props$9.popup.round
+    },
+    // mode=center，也即中部弹出时，是否使用缩放模式
+    zoom: {
+      type: Boolean,
+      default: () => props$9.popup.zoom
+    },
+    // 弹窗背景色，设置为transparent可去除白色背景
+    bgColor: {
+      type: String,
+      default: () => props$9.popup.bgColor
+    },
+    // 遮罩的透明度，0-1之间
+    overlayOpacity: {
+      type: [Number, String],
+      default: () => props$9.popup.overlayOpacity
+    }
+  }
+});
+const props$5 = defineMixin({
+  props: {
+    // 是否显示组件
+    show: {
+      type: Boolean,
+      default: () => props$9.loadingIcon.show
+    },
+    // 颜色
+    color: {
+      type: String,
+      default: () => props$9.loadingIcon.color
+    },
+    // 提示文字颜色
+    textColor: {
+      type: String,
+      default: () => props$9.loadingIcon.textColor
+    },
+    // 文字和图标是否垂直排列
+    vertical: {
+      type: Boolean,
+      default: () => props$9.loadingIcon.vertical
+    },
+    // 模式选择，circle-圆形，spinner-花朵形，semicircle-半圆形
+    mode: {
+      type: String,
+      default: () => props$9.loadingIcon.mode
+    },
+    // 图标大小，单位默认px
+    size: {
+      type: [String, Number],
+      default: () => props$9.loadingIcon.size
+    },
+    // 文字大小
+    textSize: {
+      type: [String, Number],
+      default: () => props$9.loadingIcon.textSize
+    },
+    // 文字内容
+    text: {
+      type: [String, Number],
+      default: () => props$9.loadingIcon.text
+    },
+    // 动画模式
+    timingFunction: {
+      type: String,
+      default: () => props$9.loadingIcon.timingFunction
+    },
+    // 动画执行周期时间
+    duration: {
+      type: [String, Number],
+      default: () => props$9.loadingIcon.duration
+    },
+    // mode=circle时的暗边颜色
+    inactiveColor: {
+      type: String,
+      default: () => props$9.loadingIcon.inactiveColor
+    }
+  }
+});
+const icons = {
+  "uicon-level": "",
+  "uicon-column-line": "",
+  "uicon-checkbox-mark": "",
+  "uicon-folder": "",
+  "uicon-movie": "",
+  "uicon-star-fill": "",
+  "uicon-star": "",
+  "uicon-phone-fill": "",
+  "uicon-phone": "",
+  "uicon-apple-fill": "",
+  "uicon-chrome-circle-fill": "",
+  "uicon-backspace": "",
+  "uicon-attach": "",
+  "uicon-cut": "",
+  "uicon-empty-car": "",
+  "uicon-empty-coupon": "",
+  "uicon-empty-address": "",
+  "uicon-empty-favor": "",
+  "uicon-empty-permission": "",
+  "uicon-empty-news": "",
+  "uicon-empty-search": "",
+  "uicon-github-circle-fill": "",
+  "uicon-rmb": "",
+  "uicon-person-delete-fill": "",
+  "uicon-reload": "",
+  "uicon-order": "",
+  "uicon-server-man": "",
+  "uicon-search": "",
+  "uicon-fingerprint": "",
+  "uicon-more-dot-fill": "",
+  "uicon-scan": "",
+  "uicon-share-square": "",
+  "uicon-map": "",
+  "uicon-map-fill": "",
+  "uicon-tags": "",
+  "uicon-tags-fill": "",
+  "uicon-bookmark-fill": "",
+  "uicon-bookmark": "",
+  "uicon-eye": "",
+  "uicon-eye-fill": "",
+  "uicon-mic": "",
+  "uicon-mic-off": "",
+  "uicon-calendar": "",
+  "uicon-calendar-fill": "",
+  "uicon-trash": "",
+  "uicon-trash-fill": "",
+  "uicon-play-left": "",
+  "uicon-play-right": "",
+  "uicon-minus": "",
+  "uicon-plus": "",
+  "uicon-info": "",
+  "uicon-info-circle": "",
+  "uicon-info-circle-fill": "",
+  "uicon-question": "",
+  "uicon-error": "",
+  "uicon-close": "",
+  "uicon-checkmark": "",
+  "uicon-android-circle-fill": "",
+  "uicon-android-fill": "",
+  "uicon-ie": "",
+  "uicon-IE-circle-fill": "",
+  "uicon-google": "",
+  "uicon-google-circle-fill": "",
+  "uicon-setting-fill": "",
+  "uicon-setting": "",
+  "uicon-minus-square-fill": "",
+  "uicon-plus-square-fill": "",
+  "uicon-heart": "",
+  "uicon-heart-fill": "",
+  "uicon-camera": "",
+  "uicon-camera-fill": "",
+  "uicon-more-circle": "",
+  "uicon-more-circle-fill": "",
+  "uicon-chat": "",
+  "uicon-chat-fill": "",
+  "uicon-bag-fill": "",
+  "uicon-bag": "",
+  "uicon-error-circle-fill": "",
+  "uicon-error-circle": "",
+  "uicon-close-circle": "",
+  "uicon-close-circle-fill": "",
+  "uicon-checkmark-circle": "",
+  "uicon-checkmark-circle-fill": "",
+  "uicon-question-circle-fill": "",
+  "uicon-question-circle": "",
+  "uicon-share": "",
+  "uicon-share-fill": "",
+  "uicon-shopping-cart": "",
+  "uicon-shopping-cart-fill": "",
+  "uicon-bell": "",
+  "uicon-bell-fill": "",
+  "uicon-list": "",
+  "uicon-list-dot": "",
+  "uicon-zhihu": "",
+  "uicon-zhihu-circle-fill": "",
+  "uicon-zhifubao": "",
+  "uicon-zhifubao-circle-fill": "",
+  "uicon-weixin-circle-fill": "",
+  "uicon-weixin-fill": "",
+  "uicon-twitter-circle-fill": "",
+  "uicon-twitter": "",
+  "uicon-taobao-circle-fill": "",
+  "uicon-taobao": "",
+  "uicon-weibo-circle-fill": "",
+  "uicon-weibo": "",
+  "uicon-qq-fill": "",
+  "uicon-qq-circle-fill": "",
+  "uicon-moments-circel-fill": "",
+  "uicon-moments": "",
+  "uicon-qzone": "",
+  "uicon-qzone-circle-fill": "",
+  "uicon-baidu-circle-fill": "",
+  "uicon-baidu": "",
+  "uicon-facebook-circle-fill": "",
+  "uicon-facebook": "",
+  "uicon-car": "",
+  "uicon-car-fill": "",
+  "uicon-warning-fill": "",
+  "uicon-warning": "",
+  "uicon-clock-fill": "",
+  "uicon-clock": "",
+  "uicon-edit-pen": "",
+  "uicon-edit-pen-fill": "",
+  "uicon-email": "",
+  "uicon-email-fill": "",
+  "uicon-minus-circle": "",
+  "uicon-minus-circle-fill": "",
+  "uicon-plus-circle": "",
+  "uicon-plus-circle-fill": "",
+  "uicon-file-text": "",
+  "uicon-file-text-fill": "",
+  "uicon-pushpin": "",
+  "uicon-pushpin-fill": "",
+  "uicon-grid": "",
+  "uicon-grid-fill": "",
+  "uicon-play-circle": "",
+  "uicon-play-circle-fill": "",
+  "uicon-pause-circle-fill": "",
+  "uicon-pause": "",
+  "uicon-pause-circle": "",
+  "uicon-eye-off": "",
+  "uicon-eye-off-outline": "",
+  "uicon-gift-fill": "",
+  "uicon-gift": "",
+  "uicon-rmb-circle-fill": "",
+  "uicon-rmb-circle": "",
+  "uicon-kefu-ermai": "",
+  "uicon-server-fill": "",
+  "uicon-coupon-fill": "",
+  "uicon-coupon": "",
+  "uicon-integral": "",
+  "uicon-integral-fill": "",
+  "uicon-home-fill": "",
+  "uicon-home": "",
+  "uicon-hourglass-half-fill": "",
+  "uicon-hourglass": "",
+  "uicon-account": "",
+  "uicon-plus-people-fill": "",
+  "uicon-minus-people-fill": "",
+  "uicon-account-fill": "",
+  "uicon-thumb-down-fill": "",
+  "uicon-thumb-down": "",
+  "uicon-thumb-up": "",
+  "uicon-thumb-up-fill": "",
+  "uicon-lock-fill": "",
+  "uicon-lock-open": "",
+  "uicon-lock-opened-fill": "",
+  "uicon-lock": "",
+  "uicon-red-packet-fill": "",
+  "uicon-photo-fill": "",
+  "uicon-photo": "",
+  "uicon-volume-off-fill": "",
+  "uicon-volume-off": "",
+  "uicon-volume-fill": "",
+  "uicon-volume": "",
+  "uicon-red-packet": "",
+  "uicon-download": "",
+  "uicon-arrow-up-fill": "",
+  "uicon-arrow-down-fill": "",
+  "uicon-play-left-fill": "",
+  "uicon-play-right-fill": "",
+  "uicon-rewind-left-fill": "",
+  "uicon-rewind-right-fill": "",
+  "uicon-arrow-downward": "",
+  "uicon-arrow-leftward": "",
+  "uicon-arrow-rightward": "",
+  "uicon-arrow-upward": "",
+  "uicon-arrow-down": "",
+  "uicon-arrow-right": "",
+  "uicon-arrow-left": "",
+  "uicon-arrow-up": "",
+  "uicon-skip-back-left": "",
+  "uicon-skip-forward-right": "",
+  "uicon-rewind-right": "",
+  "uicon-rewind-left": "",
+  "uicon-arrow-right-double": "",
+  "uicon-arrow-left-double": "",
+  "uicon-wifi-off": "",
+  "uicon-wifi": "",
+  "uicon-empty-data": "",
+  "uicon-empty-history": "",
+  "uicon-empty-list": "",
+  "uicon-empty-page": "",
+  "uicon-empty-order": "",
+  "uicon-man": "",
+  "uicon-woman": "",
+  "uicon-man-add": "",
+  "uicon-man-add-fill": "",
+  "uicon-man-delete": "",
+  "uicon-man-delete-fill": "",
+  "uicon-zh": "",
+  "uicon-en": ""
+};
+const props$4 = defineMixin({
+  props: {
+    // 图标类名
+    name: {
+      type: String,
+      default: () => props$9.icon.name
+    },
+    // 图标颜色，可接受主题色
+    color: {
+      type: String,
+      default: () => props$9.icon.color
+    },
+    // 字体大小，单位px
+    size: {
+      type: [String, Number],
+      default: () => props$9.icon.size
+    },
+    // 是否显示粗体
+    bold: {
+      type: Boolean,
+      default: () => props$9.icon.bold
+    },
+    // 点击图标的时候传递事件出去的index（用于区分点击了哪一个）
+    index: {
+      type: [String, Number],
+      default: () => props$9.icon.index
+    },
+    // 触摸图标时的类名
+    hoverClass: {
+      type: String,
+      default: () => props$9.icon.hoverClass
+    },
+    // 自定义扩展前缀，方便用户扩展自己的图标库
+    customPrefix: {
+      type: String,
+      default: () => props$9.icon.customPrefix
+    },
+    // 图标右边或者下面的文字
+    label: {
+      type: [String, Number],
+      default: () => props$9.icon.label
+    },
+    // label的位置，只能右边或者下边
+    labelPos: {
+      type: String,
+      default: () => props$9.icon.labelPos
+    },
+    // label的大小
+    labelSize: {
+      type: [String, Number],
+      default: () => props$9.icon.labelSize
+    },
+    // label的颜色
+    labelColor: {
+      type: String,
+      default: () => props$9.icon.labelColor
+    },
+    // label与图标的距离
+    space: {
+      type: [String, Number],
+      default: () => props$9.icon.space
+    },
+    // 图片的mode
+    imgMode: {
+      type: String,
+      default: () => props$9.icon.imgMode
+    },
+    // 用于显示图片小图标时，图片的宽度
+    width: {
+      type: [String, Number],
+      default: () => props$9.icon.width
+    },
+    // 用于显示图片小图标时，图片的高度
+    height: {
+      type: [String, Number],
+      default: () => props$9.icon.height
+    },
+    // 用于解决某些情况下，让图标垂直居中的用途
+    top: {
+      type: [String, Number],
+      default: () => props$9.icon.top
+    },
+    // 是否阻止事件传播
+    stop: {
+      type: Boolean,
+      default: () => props$9.icon.stop
+    }
+  }
+});
+const props$3 = defineMixin({
+  props: {
+    // 是否显示遮罩
+    show: {
+      type: Boolean,
+      default: () => props$9.overlay.show
+    },
+    // 层级z-index
+    zIndex: {
+      type: [String, Number],
+      default: () => props$9.overlay.zIndex
+    },
+    // 遮罩的过渡时间，单位为ms
+    duration: {
+      type: [String, Number],
+      default: () => props$9.overlay.duration
+    },
+    // 不透明度值，当做rgba的第四个参数
+    opacity: {
+      type: [String, Number],
+      default: () => props$9.overlay.opacity
+    }
+  }
+});
+const props$2 = defineMixin({
+  props: {
+    bgColor: {
+      type: String,
+      default: () => props$9.statusBar.bgColor
+    },
+    // 状态栏获取得高度
+    height: {
+      type: Number,
+      default: () => props$9.statusBar.height
+    }
+  }
+});
+const props$1 = defineMixin({
+  props: {}
+});
+const props = defineMixin({
+  props: {
+    // 是否展示组件
+    show: {
+      type: Boolean,
+      default: () => props$9.transition.show
+    },
+    // 使用的动画模式
+    mode: {
+      type: String,
+      default: () => props$9.transition.mode
+    },
+    // 动画的执行时间，单位ms
+    duration: {
+      type: [String, Number],
+      default: () => props$9.transition.duration
+    },
+    // 使用的动画过渡函数
+    timingFunction: {
+      type: String,
+      default: () => props$9.transition.timingFunction
+    }
+  }
+});
+const getClassNames = (name) => ({
+  enter: `u-${name}-enter u-${name}-enter-active`,
+  "enter-to": `u-${name}-enter-to u-${name}-enter-active`,
+  leave: `u-${name}-leave u-${name}-leave-active`,
+  "leave-to": `u-${name}-leave-to u-${name}-leave-active`
+});
+const transitionMixin = {
+  methods: {
+    // 组件被点击发出事件
+    clickHandler() {
+      this.$emit("click");
+    },
+    // vue版本的组件进场处理
+    async vueEnter() {
+      const classNames = getClassNames(this.mode);
+      this.status = "enter";
+      this.$emit("beforeEnter");
+      this.inited = true;
+      this.display = true;
+      this.classes = classNames.enter;
+      await nextTick$1();
+      {
+        await sleep(20);
+        this.$emit("enter");
+        this.transitionEnded = false;
+        this.$emit("afterEnter");
+        this.classes = classNames["enter-to"];
+      }
+    },
+    // 动画离场处理
+    async vueLeave() {
+      if (!this.display)
+        return;
+      const classNames = getClassNames(this.mode);
+      this.status = "leave";
+      this.$emit("beforeLeave");
+      this.classes = classNames.leave;
+      await nextTick$1();
+      {
+        this.transitionEnded = false;
+        this.$emit("leave");
+        setTimeout(this.onTransitionEnd, this.duration);
+        this.classes = classNames["leave-to"];
+      }
+    },
+    // 完成过渡后触发
+    onTransitionEnd() {
+      if (this.transitionEnded)
+        return;
+      this.transitionEnded = true;
+      this.$emit(this.status === "leave" ? "afterLeave" : "afterEnter");
+      if (!this.show && this.display) {
+        this.display = false;
+        this.inited = false;
+      }
+    }
+  }
+};
 exports._export_sfc = _export_sfc;
 exports.addStyle = addStyle;
 exports.addUnit = addUnit;
+exports.buttonMixin = buttonMixin;
+exports.color = color$3;
+exports.colorGradient = colorGradient;
+exports.computed = computed;
+exports.config = config;
 exports.createSSRApp = createSSRApp;
+exports.deepMerge = deepMerge$1;
 exports.defineComponent = defineComponent;
 exports.e = e;
 exports.error = error;
 exports.f = f;
+exports.getWindowInfo = getWindowInfo;
+exports.icons = icons;
 exports.index = index$1;
 exports.mixin = mixin;
 exports.mpMixin = mpMixin;
+exports.n = n;
 exports.o = o;
+exports.openType = openType;
 exports.p = p;
-exports.props = props;
+exports.props = props$8;
+exports.props$1 = props$7;
+exports.props$2 = props$6;
+exports.props$3 = props$5;
+exports.props$4 = props$4;
+exports.props$5 = props$3;
+exports.props$6 = props$2;
+exports.props$7 = props$1;
+exports.props$8 = props;
 exports.r = r;
 exports.ref = ref;
 exports.resolveComponent = resolveComponent;
 exports.s = s;
+exports.sleep = sleep;
 exports.t = t;
 exports.test = test;
+exports.throttle = throttle;
+exports.transitionMixin = transitionMixin;
 exports.uviewPlus = uviewPlus;
 exports.w = w;
 //# sourceMappingURL=../../.sourcemap/mp-weixin/common/vendor.js.map

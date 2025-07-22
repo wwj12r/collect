@@ -3,7 +3,7 @@
 		<view class="imgs">
 			<u-swiper :list="imgs" height="1100rpx" keyName="image" showTitle :autoplay="false" circular>
 				<template v-slot="{ item }">
-					<image :src="item" style="width: 100%; height: 1100rpx; object-fit: cover;" />
+					<image :src="item" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
 				</template>
 			</u-swiper>
 		</view>
@@ -35,7 +35,7 @@
 				</view>
 			</view>
 		</view>
-		<!-- <u-button type="primary" @click="handleClick">点我</u-button> -->
+		<u-button type="primary" @click="handleClick">点我</u-button>
 
 	</view>
 </template>
@@ -47,6 +47,7 @@ import {
 	ref,
 	watchEffect
 } from 'vue';
+
 export default defineComponent({
 	setup() {
 		const title = ref('ww12j')
@@ -70,50 +71,35 @@ export default defineComponent({
 });
 </script>
 
-<style>
-.detail-info-button-right-img {
-	width: 22rpx;
-	height: 24rpx;
-}
-
-.detail-info-button-right {
-	padding: 17rpx 25rpx;
-	border-radius: 100rpx;
-	background-color: #000;
-	font-weight: bold;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 7rpx;
-	color: #FFFFFF;
-	font-size: 28rpx;
-}
-
-.detail-info-button-left {
-	color: #FF4D00;
-	font-weight: bold;
-}
-
+<style lang="scss" scoped>
 .detail-info-button {
 	margin-top: 10rpx;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-}
 
-.detail-info-address-right {
-	white-space: nowrap;
-}
+	.detail-info-button-right-img {
+		width: 22rpx;
+		height: 24rpx;
+	}
 
-.detail-info-address-image {
-	width: 21rpx;
-	height: 24rpx;
-}
+	.detail-info-button-right {
+		padding: 12rpx 25rpx;
+		border-radius: 100rpx;
+		background-color: #000;
+		font-weight: bold;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 7rpx;
+		color: #FFFFFF;
+		font-size: 24rpx;
+	}
 
-.detail-info-address-view {
-	display: flex;
-	align-items: center;
-	gap: 16rpx;
+	.detail-info-button-left {
+		color: #FF4D00;
+		font-weight: bold;
+	}
 }
 
 .detail-info-address {
@@ -123,6 +109,21 @@ export default defineComponent({
 	align-items: start;
 	color: #999999;
 	justify-content: space-between;
+
+	.detail-info-address-right {
+		white-space: nowrap;
+	}
+
+	.detail-info-address-image {
+		width: 21rpx;
+		height: 24rpx;
+	}
+
+	.detail-info-address-view {
+		display: flex;
+		align-items: center;
+		gap: 16rpx;
+	}
 }
 
 .detail-info-time {
@@ -140,6 +141,7 @@ export default defineComponent({
 
 view {
 	box-sizing: border-box;
+	font-size: 26rpx;
 }
 
 image {
@@ -181,7 +183,7 @@ image {
 	height: 414rpx;
 	background-color: #fff;
 	border-radius: 33rpx;
-	padding: 33rpx 23rpx;
+	padding: 25rpx 23rpx;
 	overflow: hidden;
 	box-sizing: border-box;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -189,23 +191,30 @@ image {
 }
 
 .detail-title {
-	display: flex;
+
+	.detail-title-tips {
+		display: inline;
+		background-color: #FF4D00;
+		color: #fff;
+		font-weight: 500;
+		color: #FFFFFF;
+		padding: 5rpx 15rpx;
+		white-space: nowrap;
+		font-size: 20rpx;
+		margin-right: 14rpx;
+		border-radius: 6rpx;
+		vertical-align: middle;
+	}
+
+	.detail-title-title {
+		display: inline;
+		font-weight: 500;
+		color: #1A1A1A;
+		font-size: 34rpx;
+		vertical-align: middle;
+	}
 }
 
-.detail-title-tips {
-	background-color: #FF4D00;
-	color: #fff;
-	font-weight: 500;
-	color: #FFFFFF;
-	padding: 7rpx 20rpx;
-	white-space: nowrap;
-
-}
-
-.detail-title-title {
-	font-weight: 500;
-	color: #1A1A1A;
-}
 
 .detail-info {}
 
@@ -219,6 +228,7 @@ image {
 .detail-info-top-img {
 	width: 44rpx;
 	height: 44rpx;
+	border-radius: 50%;
 }
 
 .detail-info-top-view {

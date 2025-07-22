@@ -9,25 +9,33 @@
 		{
 			"path": "pages/detail/index",
 			"style": {
-				"navigationBarTitleText": "详情"
+				"navigationBarTitleText": "活动详情"
 			}
 		},
 		{
 			"path": "pages/center/index",
 			"style": {
-				"navigationBarTitleText": "创意中心"
+				"navigationBarTitleText": "创意中心",
+				"navigationStyle": "custom"
 			}
 		},
 		{
 			"path": "pages/gallery/index",
 			"style": {
-				"navigationBarTitleText": "展厅"
+				"navigationBarTitleText": "展厅",
+				"navigationStyle": "custom"
 			}
 		},
 		{
 			"path": "pages/user/index",
 			"style": {
 				"navigationBarTitleText": "我的"
+			}
+		},
+		{
+			"path": "pages/user/Activity/index",
+			"style": {
+				"navigationBarTitleText": "我的活动"
 			}
 		}
 	],

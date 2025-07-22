@@ -824,6 +824,11 @@
     "@babel/helper-string-parser" "^7.27.1"
     "@babel/helper-validator-identifier" "^7.27.1"
 
+"@dcloudio/uni-app@^2.0.2-4070520250711001":
+  version "2.0.2-4070520250711001"
+  resolved "https://registry.yarnpkg.com/@dcloudio/uni-app/-/uni-app-2.0.2-4070520250711001.tgz#71b234d5a43ca1822e0375b053385c954cde5cab"
+  integrity sha512-LNSEC+bRIUOIpWMCGyp+lLa05dnFOdSJ6V70I7IDy/Cs0LlxX84LGvCUctyol9vTLvsPS793hIK9lIOo65RuEQ==
+
 "@dcloudio/uni-cli-shared@3.0.0-alpha-4070520250704003":
   version "3.0.0-alpha-4070520250704003"
   resolved "https://registry.yarnpkg.com/@dcloudio/uni-cli-shared/-/uni-cli-shared-3.0.0-alpha-4070520250704003.tgz#2f73ee8960256d659c0880353fb8438b73264f28"

@@ -6,6 +6,7 @@
     "serve": "npm run dev:mp-weixin"
   },
   "dependencies": {
+    "@dcloudio/uni-app": "^2.0.2-4070520250711001",
     "uview-plus": "^3.4.51",
     "uview-ui": "^2.0.38",
     "vue": "^3.3.4"
