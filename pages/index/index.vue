@@ -35,7 +35,7 @@
 				</view>
 			</view>
 		</view>
-		<u-button type="primary" @click="handleClick">点我</u-button>
+		<!-- <u-button type="primary" @click="handleClick">点我</u-button> -->
 
 	</view>
 </template>
@@ -223,15 +223,15 @@ image {
 	align-items: center;
 	gap: 16rpx;
 	margin-top: 26rpx;
-}
 
-.detail-info-top-img {
-	width: 44rpx;
-	height: 44rpx;
-	border-radius: 50%;
-}
+	.detail-info-top-img {
+		width: 44rpx;
+		height: 44rpx;
+		border-radius: 50%;
+	}
 
-.detail-info-top-view {
-	color: #CCCCCC;
+	.detail-info-top-view {
+		color: #CCCCCC;
+	}
 }
 </style>

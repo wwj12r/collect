@@ -149,11 +149,11 @@ image.data-v-1cf27b2a {
   gap: 16rpx;
   margin-top: 26rpx;
 }
-.detail-info-top-img.data-v-1cf27b2a {
+.detail-info-top .detail-info-top-img.data-v-1cf27b2a {
   width: 44rpx;
   height: 44rpx;
   border-radius: 50%;
 }
-.detail-info-top-view.data-v-1cf27b2a {
+.detail-info-top .detail-info-top-view.data-v-1cf27b2a {
   color: #CCCCCC;
 }

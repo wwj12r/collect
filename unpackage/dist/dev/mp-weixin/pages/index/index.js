@@ -24,13 +24,11 @@ const _sfc_main = common_vendor.defineComponent({
 });
 if (!Array) {
   const _easycom_u_swiper2 = common_vendor.resolveComponent("u-swiper");
-  const _easycom_u_button2 = common_vendor.resolveComponent("u-button");
-  (_easycom_u_swiper2 + _easycom_u_button2)();
+  _easycom_u_swiper2();
 }
 const _easycom_u_swiper = () => "../../node-modules/uview-plus/components/u-swiper/u-swiper.js";
-const _easycom_u_button = () => "../../node-modules/uview-plus/components/u-button/u-button.js";
 if (!Math) {
-  (_easycom_u_swiper + _easycom_u_button)();
+  _easycom_u_swiper();
 }
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return {
@@ -59,11 +57,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     d: common_assets._imports_1,
     e: common_assets._imports_2,
     f: common_assets._imports_3,
-    g: common_vendor.o((...args) => _ctx.toDetail && _ctx.toDetail(...args)),
-    h: common_vendor.o(_ctx.handleClick),
-    i: common_vendor.p({
-      type: "primary"
-    })
+    g: common_vendor.o((...args) => _ctx.toDetail && _ctx.toDetail(...args))
   };
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-1cf27b2a"]]);
