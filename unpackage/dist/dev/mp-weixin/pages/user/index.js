@@ -19,11 +19,15 @@ const _sfc_main = {
   },
   methods: {
     goSetting() {
-      common_vendor.index.navigateTo({ url: "/pages/setting/index" });
+      common_vendor.index.navigateTo({ url: "/pages/user/setting" });
     },
     onActivityClick(item) {
       common_vendor.index.__f__("log", "at pages/user/index.vue:61", item);
       common_vendor.index.navigateTo({ url: "/pages/user/Activity/index" });
+    },
+    onManageClick(item) {
+      common_vendor.index.__f__("log", "at pages/user/index.vue:66", item);
+      common_vendor.index.navigateTo({ url: "/pages/user/Activity/manage" });
     },
     onToolClick(tool) {
       common_vendor.index.showToast({ title: tool.text, icon: "none" });
@@ -31,8 +35,12 @@ const _sfc_main = {
   }
 };
 if (!Array) {
-  const _component_uni_icons = common_vendor.resolveComponent("uni-icons");
-  _component_uni_icons();
+  const _easycom_u_icon2 = common_vendor.resolveComponent("u-icon");
+  _easycom_u_icon2();
+}
+const _easycom_u_icon = () => "../../node-modules/uview-plus/components/u-icon/u-icon.js";
+if (!Math) {
+  _easycom_u_icon();
 }
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return {
@@ -52,7 +60,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         }),
         c: common_vendor.t(item.text),
         d: item.text,
-        e: common_vendor.o(($event) => $options.onActivityClick(item), item.text)
+        e: common_vendor.o(($event) => $options.onManageClick(item), item.text)
       };
     }),
     d: common_vendor.f($data.tools, (tool, k0, i0) => {

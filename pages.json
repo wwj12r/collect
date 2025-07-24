@@ -7,16 +7,31 @@
 			}
 		},
 		{
-			"path": "pages/detail/index",
+			"path": "pages/index/detail",
 			"style": {
 				"navigationBarTitleText": "活动详情"
 			}
+		},
+		{
+			"path": "pages/index/success"
 		},
 		{
 			"path": "pages/center/index",
 			"style": {
 				"navigationBarTitleText": "创意中心",
 				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/center/idea",
+			"style": {
+				"navigationBarTitleText": "发布创意"
+			}
+		},
+		{
+			"path": "pages/center/detail",
+			"style": {
+				"navigationBarTitleText": "查看创意"
 			}
 		},
 		{
@@ -36,6 +51,36 @@
 			"path": "pages/user/Activity/index",
 			"style": {
 				"navigationBarTitleText": "我的活动"
+			}
+		},
+		{
+			"path": "pages/user/Activity/manage",
+			"style": {
+				"navigationBarTitleText": "活动管理"
+			}
+		},
+		{
+			"path": "pages/user/Activity/verify",
+			"style": {
+				"navigationBarTitleText": "活动核销"
+			}
+		},
+		{
+			"path": "pages/user/Activity/publish",
+			"style": {
+				"navigationBarTitleText": "发布活动"
+			}
+		},
+		{
+			"path": "pages/user/Activity/edit",
+			"style": {
+				"navigationBarTitleText": "编辑活动详情"
+			}
+		},
+		{
+			"path": "pages/user/setting",
+			"style": {
+				"navigationBarTitleText": "设置"
 			}
 		}
 	],

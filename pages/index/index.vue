@@ -58,7 +58,7 @@ export default defineComponent({
 		const toDetail = () => {
 			console.log(11)
 			uni.navigateTo({
-				url: '/pages/detail/index?id=123'
+				url: '/pages/index/detail?id=123'
 			});
 		}
 		return {

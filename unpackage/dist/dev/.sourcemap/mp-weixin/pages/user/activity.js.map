@@ -1,0 +1,1 @@
+{"version":3,"file":"activity.js","sources":["pages/user/activity.vue?type=page"],"sourcesContent":["import MiniProgramPage from '/Users/wangweijian/Desktop/scm/collect/pages/user/activity.vue'\nwx.createPage(MiniProgramPage)"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AACA,GAAG,WAAW,eAAe;"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"verify.js","sources":["pages/user/verify.vue?type=page"],"sourcesContent":["import MiniProgramPage from '/Users/wangweijian/Desktop/scm/collect/pages/user/verify.vue'\nwx.createPage(MiniProgramPage)"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AACA,GAAG,WAAW,eAAe;"}

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "发布活动",
+  "usingComponents": {
+    "u-icon": "../../../node-modules/uview-plus/components/u-icon/u-icon"
+  }
+}

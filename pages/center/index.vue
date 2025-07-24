@@ -5,7 +5,7 @@
 		<input class="search-input" v-model="searchText" placeholder="广东盖帮之深圳集章大会预告" />
 		<button class="search-btn" @click="onSearch">搜索</button>
 		<view class="search-icons">
-		  <uni-icons type="more-filled" size="28" color="#333" />
+		  <u-icon type="more-filled" size="28" color="#333" />
 		</view>
 	  </view>
   
@@ -33,7 +33,7 @@
 	  <!-- 热门创意话题 -->
 	  <view class="section-title">热门创意话题</view>
 	  <view class="topic-list">
-		<view class="topic-card" v-for="(topic, idx) in topics" :key="idx">
+		<view class="topic-card" v-for="(topic, idx) in topics" :key="idx" @click="onToDetail(topic)">
 		  <image :src="topic.img" class="topic-img" mode="aspectFill" />
 		  <view class="topic-desc">{{ topic.desc }}</view>
 		  <view class="topic-footer">
@@ -42,7 +42,7 @@
 			  <text class="user-name">{{ topic.user }}</text>
 			</view>
 			<view class="topic-stats">
-			  <uni-icons type="heart" size="20" color="#f56c6c" />
+			  <u-icon type="heart" size="20" color="#f56c6c" />
 			  <text class="stat">{{ topic.likes }}</text>
 			</view>
 		  </view>
@@ -51,7 +51,7 @@
   
 	  <!-- 悬浮发布按钮 -->
 	  <button class="fab" @click="onPublish">
-		<uni-icons type="plusempty" size="32" color="#fff" />
+		<u-icon type="plusempty" size="32" color="#fff" />
 	  </button>
 	</view>
   </template>
@@ -104,7 +104,10 @@
 	uni.showToast({ title: '搜索: ' + searchText.value, icon: 'none' })
   }
   function onPublish() {
-	uni.showToast({ title: '发布', icon: 'none' })
+	uni.navigateTo({ url: '/pages/center/idea' })
+  }
+  function onToDetail() {
+	uni.navigateTo({ url: '/pages/center/detail' })
   }
   </script>
   

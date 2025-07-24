@@ -11,7 +11,7 @@ const _sfc_main = common_vendor.defineComponent({
     const toDetail = () => {
       common_vendor.index.__f__("log", "at pages/index/index.vue:59", 11);
       common_vendor.index.navigateTo({
-        url: "/pages/detail/index?id=123"
+        url: "/pages/index/detail?id=123"
       });
     };
     return {

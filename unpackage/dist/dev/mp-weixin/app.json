@@ -1,11 +1,19 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/detail/index",
+    "pages/index/detail",
+    "pages/index/success",
     "pages/center/index",
+    "pages/center/idea",
+    "pages/center/detail",
     "pages/gallery/index",
     "pages/user/index",
-    "pages/user/Activity/index"
+    "pages/user/Activity/index",
+    "pages/user/Activity/manage",
+    "pages/user/Activity/verify",
+    "pages/user/Activity/publish",
+    "pages/user/Activity/edit",
+    "pages/user/setting"
   ],
   "window": {
     "navigationBarTextStyle": "black",

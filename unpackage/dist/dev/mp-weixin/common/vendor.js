@@ -11800,43 +11800,6 @@ const props$5 = defineMixin({
     }
   }
 });
-const props$4 = defineMixin({
-  props: {
-    // 是否显示遮罩
-    show: {
-      type: Boolean,
-      default: () => props$7.overlay.show
-    },
-    // 层级z-index
-    zIndex: {
-      type: [String, Number],
-      default: () => props$7.overlay.zIndex
-    },
-    // 遮罩的过渡时间，单位为ms
-    duration: {
-      type: [String, Number],
-      default: () => props$7.overlay.duration
-    },
-    // 不透明度值，当做rgba的第四个参数
-    opacity: {
-      type: [String, Number],
-      default: () => props$7.overlay.opacity
-    }
-  }
-});
-const props$3 = defineMixin({
-  props: {
-    bgColor: {
-      type: String,
-      default: () => props$7.statusBar.bgColor
-    },
-    // 状态栏获取得高度
-    height: {
-      type: Number,
-      default: () => props$7.statusBar.height
-    }
-  }
-});
 const icons = {
   "uicon-level": "",
   "uicon-column-line": "",
@@ -12051,7 +12014,7 @@ const icons = {
   "uicon-zh": "",
   "uicon-en": ""
 };
-const props$2 = defineMixin({
+const props$4 = defineMixin({
   props: {
     // 图标类名
     name: {
@@ -12137,6 +12100,43 @@ const props$2 = defineMixin({
     stop: {
       type: Boolean,
       default: () => props$7.icon.stop
+    }
+  }
+});
+const props$3 = defineMixin({
+  props: {
+    // 是否显示遮罩
+    show: {
+      type: Boolean,
+      default: () => props$7.overlay.show
+    },
+    // 层级z-index
+    zIndex: {
+      type: [String, Number],
+      default: () => props$7.overlay.zIndex
+    },
+    // 遮罩的过渡时间，单位为ms
+    duration: {
+      type: [String, Number],
+      default: () => props$7.overlay.duration
+    },
+    // 不透明度值，当做rgba的第四个参数
+    opacity: {
+      type: [String, Number],
+      default: () => props$7.overlay.opacity
+    }
+  }
+});
+const props$2 = defineMixin({
+  props: {
+    bgColor: {
+      type: String,
+      default: () => props$7.statusBar.bgColor
+    },
+    // 状态栏获取得高度
+    height: {
+      type: Number,
+      default: () => props$7.statusBar.height
     }
   }
 });

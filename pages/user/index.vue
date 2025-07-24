@@ -5,7 +5,7 @@
       <image class="avatar" src="https://your-image-url/avatar.jpg" />
       <view class="user-name">Momo大锤子</view>
       <view class="setting" @click="goSetting">
-        <uni-icons type="gear" size="28" color="#333" />
+        <u-icon type="gear" size="28" color="#333" />
         <text class="setting-text">设置</text>
       </view>
     </view>
@@ -14,8 +14,8 @@
     <view class="section">
       <view class="section-title">我的活动</view>
       <view class="activity-list">
-        <view class="activity-item" v-for="item in activities" :key="item.text" @click="onActivityClick(item)">
-          <uni-icons :type="item.icon" size="32" color="#222" />
+        <view class="activity-item" v-for="item in activities" :key="item.text" @click="onManageClick(item)">
+          <u-icon :type="item.icon" size="32" color="#222" />
           <text class="activity-text">{{ item.text }}</text>
         </view>
       </view>
@@ -26,7 +26,7 @@
       <view class="section-title">活动工具</view>
       <view class="tool-list">
         <view class="tool-item" v-for="tool in tools" :key="tool.text" @click="onActivityClick(tool)">
-          <uni-icons :type="tool.icon" size="32" color="#222" />
+          <u-icon :type="tool.icon" size="32" color="#222" />
           <text class="tool-text">{{ tool.text }}</text>
         </view>
       </view>
@@ -55,12 +55,17 @@ export default {
   methods: {
     goSetting() {
       // 跳转到设置页
-      uni.navigateTo({ url: '/pages/setting/index' })
+      uni.navigateTo({ url: '/pages/user/setting' })
     },
     onActivityClick(item) {
 		console.log(item)
       // 处理活动点击
 		uni.navigateTo({ url: '/pages/user/Activity/index' })
+    },
+    onManageClick(item) {
+		console.log(item)
+      // 处理活动点击
+		uni.navigateTo({ url: '/pages/user/Activity/manage' })
     },
     onToolClick(tool) {
       // 处理工具点击

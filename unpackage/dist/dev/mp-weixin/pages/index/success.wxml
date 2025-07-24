@@ -1,0 +1,1 @@
+<view class="success-page data-v-aad7d755"><image class="ok-img data-v-aad7d755" src="https://your-image-url/ok.png" mode="widthFix"/><view class="main-text data-v-aad7d755">信息提交成功</view><view class="sub-text data-v-aad7d755">等待审核</view><button class="notify-btn data-v-aad7d755" bindtap="{{a}}">审核后通知我</button></view>

@@ -1,8 +1,12 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 if (!Array) {
-  const _component_uni_icons = common_vendor.resolveComponent("uni-icons");
-  _component_uni_icons();
+  const _easycom_u_icon2 = common_vendor.resolveComponent("u-icon");
+  _easycom_u_icon2();
+}
+const _easycom_u_icon = () => "../../node-modules/uview-plus/components/u-icon/u-icon.js";
+if (!Math) {
+  _easycom_u_icon();
 }
 const _sfc_main = {
   __name: "index",
@@ -49,7 +53,10 @@ const _sfc_main = {
       common_vendor.index.showToast({ title: "搜索: " + searchText.value, icon: "none" });
     }
     function onPublish() {
-      common_vendor.index.showToast({ title: "发布", icon: "none" });
+      common_vendor.index.navigateTo({ url: "/pages/center/idea" });
+    }
+    function onToDetail() {
+      common_vendor.index.navigateTo({ url: "/pages/center/detail" });
     }
     return (_ctx, _cache) => {
       return {
@@ -86,7 +93,8 @@ const _sfc_main = {
             d: common_vendor.t(topic.user),
             e: "3edf87c6-1-" + i0,
             f: common_vendor.t(topic.likes),
-            g: idx
+            g: idx,
+            h: common_vendor.o(($event) => onToDetail(), idx)
           };
         }),
         h: common_vendor.p({

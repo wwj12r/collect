@@ -1,0 +1,1 @@
+{"version":3,"file":"success.js","sources":["pages/index/success.vue?type=page"],"sourcesContent":["import MiniProgramPage from '/Users/wangweijian/Desktop/scm/collect/pages/index/success.vue'\nwx.createPage(MiniProgramPage)"],"names":[],"mappings":";;;;;;;;;;;;;;;;AACA,GAAG,WAAW,eAAe;"}
