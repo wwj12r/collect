@@ -1,81 +1,84 @@
 <template>
 	<view class="detail-page">
 		<!-- 活动主图 -->
-		<image class="banner" src="https://your-image-url/banner.jpg" mode="widthFix" />
+		<!-- <image class="banner" :src="imgBaseUrl + detail.content?.photo" mode="widthFix" /> -->
+		<u-swiper v-if="detail.content?.length" :list="detail.content" height="1100rpx" keyName="id" interval="1500" showTitle :autoplay="autoplay" circular @touchstart.native="handleTouchStart" @change="onSwiperChange">
+			<template v-slot="{ item }">
+				<image :src="imgBaseUrl + item.headimg" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
+			</template>
+		</u-swiper>
 
-		<!-- 活动标题 -->
-		<view class="title">东山口套色章上线</view>
-		<view class="subtitle">东山口·扶光书店 × 幸运无限</view>
-
-		<!-- 活动主图下方图片 -->
-		<image class="main-img" src="https://your-image-url/main.jpg" mode="widthFix" />
-
-		<!-- 活动信息 -->
-		<view class="info-card">
-			<view class="tag">报名中</view>
-			<view class="event-title">广州东山口第一届集章大会，8月8日正式启动</view>
-		</view>
-
-		<!-- 主办方 -->
-		<view class="organizer">
-			<image class="avatar" src="https://your-image-url/avatar.jpg" />
-			<view class="org-name">Starshine·JS</view>
-			<button class="follow-btn">+关注</button>
-		</view>
-
-		<!-- 活动详情 -->
-		<view class="event-detail">
-			<view class="detail-row">
-				<text class="label">活动时间</text>
-				<text class="value">2025年08月08日 周日 13:00-18:00</text>
+		<view class="info">
+			<!-- 活动信息 -->
+			<view class="info-card">
+				<view class="tag">报名中</view>
+				<view class="event-title">广州东山口第一届集章大会，8月8日正式启动</view>
 			</view>
-			<view class="detail-row">
-				<text class="label">活动地点</text>
-				<text class="value">广州市越秀区文德路西场东街一巷285:05</text>
-			</view>
-			<view class="detail-row">
-				<text class="label">限定人数</text>
-				<text class="value">600人</text>
-			</view>
-			<view class="detail-row">
-				<text class="label">嘉宾阵容</text>
-				<text class="value">班班邮馆、Brian、小海狸的蓝莓花禾、Raven</text>
-			</view>
-		</view>
 
-		<!-- 报名条件 -->
-		<view class="section">
-			<view class="section-title">报名条件</view>
-			<view class="section-content">
-				需满足条件，报名获取资格码即可
-				<button class="copy-btn">复制内容</button>
-			</view>
-		</view>
-
-		<!-- 集章展示 -->
-		<view class="section">
-			<view class="section-title">集章展示</view>
-			<scroll-view class="stamps" scroll-x>
-				<view class="stamp-item" v-for="(img, idx) in stampImgs" :key="idx">
-					<image :src="img" mode="aspectFill" />
+			<!-- 主办方 -->
+			<view class="organizer">
+				<view class="organizer">
+					<image class="avatar" :src="imgBaseUrl + detail.content?.headimg" />
+					<view class="org-name">Starshine·JS</view>
+					<view class="org-name">发起人</view>
 				</view>
-			</scroll-view>
-		</view>
+				<button class="follow-btn">+关注</button>
+			</view>
 
-		<!-- 活动详情图片 -->
-		<view class="section">
-			<view class="section-title">活动详情</view>
-			<image class="detail-img" src="https://your-image-url/banner.jpg" mode="widthFix" />
-		</view>
+			<!-- 活动详情 -->
+			<view class="event-detail">
+				<view class="detail-row">
+					<text class="label">活动时间</text>
+					<text class="value">2025年08月08日 周日 13:00-18:00</text>
+				</view>
+				<view class="detail-row">
+					<text class="label">活动地点</text>
+					<text class="value">广州市越秀区文德路西场东街一巷285:05</text>
+				</view>
+				<view class="detail-row">
+					<text class="label">限定人数</text>
+					<text class="value">600人</text>
+				</view>
+				<view class="detail-row">
+					<text class="label">嘉宾阵容</text>
+					<text class="value">班班邮馆、Brian、小海狸的蓝莓花禾、Raven</text>
+				</view>
+			</view>
 
-		<!-- 报名按钮 -->
-		<view class="footer" @click="openPopUp" v-if="authorized">
-			<button class="signup-btn">报名（￥99）</button>
-		</view>
-		<view class="footer" v-else>
-			<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuthorize">
-				报名（￥99）
-			</button>
+			<!-- 报名条件 -->
+			<view class="section">
+				<view class="section-title">报名条件</view>
+				<view class="section-content">
+					需满足条件，报名获取资格码即可
+					<button class="copy-btn" @click="copyContent">复制内容</button>
+				</view>
+			</view>
+
+			<!-- 集章展示 -->
+			<view class="section">
+				<view class="section-title">集章展示</view>
+				<scroll-view class="stamps" scroll-x>
+					<view class="stamp-item" v-for="(img, idx) in stampImgs" :key="idx">
+						<image :src="img" mode="aspectFill" />
+					</view>
+				</scroll-view>
+			</view>
+
+			<!-- 活动详情图片 -->
+			<view class="section">
+				<view class="section-title">活动详情</view>
+				<image class="detail-img" src="https://your-image-url/banner.jpg" mode="widthFix" />
+			</view>
+
+			<!-- 报名按钮 -->
+			<view class="footer" @click="openPopUp" v-if="authorized">
+				<button class="signup-btn">报名（￥99）</button>
+			</view>
+			<view class="footer" v-else>
+				<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuthorize">
+					报名（￥99）
+				</button>
+			</view>
 		</view>
 	</view>
 	<!-- 报名弹窗 -->
@@ -106,31 +109,28 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { IndexApi } from '../../services'
-
-onMounted(() => {
-	// fetchData()
-})
-const loading = ref(false)
-
-// const fetchData = () => {
-// 	loading.value = true
-// 	uni.login({
-// 		provider: 'weixin',
-// 		success: (res) => {
-// 			const code = res.code
-// 			console.log('微信登录 code：', code)
-// 			IndexApi.postLogin({ code })
-// 		},
-// 		fail: (err) => {
-// 			console.error('微信登录失败', err)
-// 		}
-// 	})
-// }
+import { onLoad } from '@dcloudio/uni-app';
+import { imgBaseUrl } from '../../utils/enums';
 
 const popupRef = ref(null)
 const imgUrl = ref('')
 const showPopup = ref(false)
 const authorized = ref(uni.getStorageSync('token'))
+const detail = ref({})
+const loading = ref(false)
+
+onLoad((option) => {
+	fetchData(option.id)
+});
+
+onMounted((e) => {
+})
+
+const fetchData = async (id) => {
+	const res = await IndexApi.getActivitysignetDetail(id)
+	console.log(res)
+	detail.value = res
+}
 
 const hidePopup = () => {
 	popupRef.value.close()
@@ -235,6 +235,9 @@ const stampImgs = [
 
 
 <style scoped>
+.info{
+	padding: 30rpx 26rpx;
+}
 .signup-btn {
 	width: 90%;
 	background: #222;
@@ -354,7 +357,7 @@ const stampImgs = [
 }
 
 .detail-page {
-	background: #f7f7f7;
+	background: #fafafa;
 	min-height: 100vh;
 	padding-bottom: 120rpx;
 }
@@ -384,10 +387,9 @@ const stampImgs = [
 }
 
 .info-card {
-	background: #fff;
-	margin: 20rpx;
+	margin: 20rpx 0;
 	border-radius: 16rpx;
-	padding: 20rpx;
+	padding: 20rpx 0;
 	display: flex;
 	align-items: center;
 }
@@ -409,7 +411,7 @@ const stampImgs = [
 .organizer {
 	display: flex;
 	align-items: center;
-	margin: 0 20rpx 20rpx 20rpx;
+	justify-content: space-between;
 }
 
 .avatar {
@@ -426,23 +428,32 @@ const stampImgs = [
 
 .follow-btn {
 	font-size: 22rpx;
-	background: #3b6eea;
 	color: #fff;
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 45rpx;
+	border: 1px solid rgba(26, 26, 26, 1);
+	width: 126rpx;
 	border-radius: 8rpx;
 	padding: 4rpx 16rpx;
+	color: #1A1A1A;
+	margin: 0;
 }
 
 .event-detail {
-	background: #fff;
-	margin: 0 20rpx 20rpx 20rpx;
+	margin: 20rpx 0;
 	border-radius: 16rpx;
-	padding: 20rpx;
+	padding: 20rpx 0;
 }
 
 .detail-row {
 	display: flex;
 	align-items: center;
-	margin-bottom: 12rpx;
+	margin-bottom: 26rpx;
+	padding-bottom: 26rpx;
+	border-bottom: 1px dotted rgba(217, 217, 217, 1);
 }
 
 .label {
@@ -457,10 +468,9 @@ const stampImgs = [
 }
 
 .section {
-	background: #fff;
-	margin: 0 20rpx 20rpx 20rpx;
+	margin: 0 20rpx 0 20rpx;
 	border-radius: 16rpx;
-	padding: 20rpx;
+	padding: 20rpx 0;
 }
 
 .section-title {

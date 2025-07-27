@@ -24,14 +24,20 @@ const _sfc_main = {
     const onSwiperChange = (e) => {
       currentIndex.value = e.current;
     };
-    const toDetail = () => {
+    const autoplay = common_vendor.ref(true);
+    const handleTouchStart = () => {
+      autoplay.value = false;
+    };
+    const toDetail = (id) => {
       common_vendor.index.navigateTo({
-        url: "/pages/index/detail?id=123"
+        url: "/pages/index/detail?id=" + id
       });
     };
     return (_ctx, _cache) => {
-      return {
-        a: common_vendor.w(({
+      return common_vendor.e({
+        a: content.value.length
+      }, content.value.length ? {
+        b: common_vendor.w(({
           item
         }, s0, i0) => {
           return {
@@ -41,30 +47,33 @@ const _sfc_main = {
           };
         }, {
           name: "d",
-          path: "a",
+          path: "b",
           vueId: "1cf27b2a-0"
         }),
-        b: common_vendor.o(onSwiperChange),
-        c: common_vendor.p({
+        c: common_vendor.o(handleTouchStart),
+        d: common_vendor.o(onSwiperChange),
+        e: common_vendor.p({
           list: content.value,
           height: "1100rpx",
           keyName: "id",
+          interval: "1500",
           showTitle: true,
-          autoplay: false,
+          autoplay: autoplay.value,
           circular: true
-        }),
-        d: common_vendor.t(["", "待报名", "报名中", "已结束"][content.value[currentIndex.value].state]),
-        e: common_vendor.t(content.value[currentIndex.value].title),
-        f: common_vendor.unref(utils_enums.imgBaseUrl) + content.value[currentIndex.value].headimg,
-        g: common_vendor.t(content.value[currentIndex.value].nickname),
-        h: common_assets._imports_0,
-        i: common_vendor.t(content.value[currentIndex.value].startTime),
-        j: common_assets._imports_1,
-        k: common_vendor.t(content.value[currentIndex.value].address),
-        l: common_vendor.t(content.value[currentIndex.value].num),
-        m: common_assets._imports_2,
-        n: common_vendor.o(toDetail)
-      };
+        })
+      } : {}, {
+        f: common_vendor.t(["", "待报名", "报名中", "已结束"][content.value[currentIndex.value].state]),
+        g: common_vendor.t(content.value[currentIndex.value].title),
+        h: common_vendor.unref(utils_enums.imgBaseUrl) + content.value[currentIndex.value].headimg,
+        i: common_vendor.t(content.value[currentIndex.value].nickname),
+        j: common_assets._imports_0,
+        k: common_vendor.t(content.value[currentIndex.value].startTime),
+        l: common_assets._imports_1,
+        m: common_vendor.t(content.value[currentIndex.value].address),
+        n: common_vendor.t(content.value[currentIndex.value].num),
+        o: common_assets._imports_2,
+        p: common_vendor.o(($event) => toDetail(content.value[currentIndex.value].id))
+      });
     };
   }
 };

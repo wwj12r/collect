@@ -24,9 +24,9 @@
     "miniprogram": {
       "list": [
         {
-          "name": "pages/detail/index",
-          "pathName": "pages/detail/index",
-          "query": "",
+          "name": "pages/inde/detail",
+          "pathName": "pages/index/detail",
+          "query": "id=2",
           "scene": null,
           "launchMode": "default"
         }

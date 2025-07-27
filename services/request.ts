@@ -20,7 +20,7 @@ const request = <T = any>(options: RequestOptions): Promise<Response<T>> => {
 			method: options.method || 'GET',
 			data: options.data || {},
 			header: {
-				'access-token': uni.getStorageSync('token') ||,
+				'access-token': uni.getStorageSync('token') || '',
 				...options.header,
 			},
 			timeout: options.timeout || 60000,

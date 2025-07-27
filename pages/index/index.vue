@@ -1,7 +1,7 @@
 <template>
 	<view class="content">
 		<view class="imgs">
-			<u-swiper :list="content" height="1100rpx" keyName="id" showTitle :autoplay="false" circular @change="onSwiperChange">
+			<u-swiper v-if="content.length" :list="content" height="1100rpx" keyName="id" interval="1500" showTitle :autoplay="autoplay" circular @touchstart.native="handleTouchStart" @change="onSwiperChange">
 				<template v-slot="{ item }">
 					<image :src="imgBaseUrl + item.headimg" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
 				</template>
@@ -29,7 +29,7 @@
 				</view>
 				<view class="detail-info-button">
 					<view class="detail-info-button-left">{{ content[currentIndex].num }} 人已报名</view>
-					<view class="detail-info-button-right" @click="toDetail">
+					<view class="detail-info-button-right" @click="toDetail(content[currentIndex].id)">
 						<image class="detail-info-button-right-img" src="/static/index/button.png"></image>点击报名
 					</view>
 				</view>
@@ -57,14 +57,20 @@ const onSwiperChange = (e) => {
 	currentIndex.value = e.current
 }
 
+const autoplay = ref(true)
+
+// 手动滑动时中止自动播放
+const handleTouchStart = () => {
+	autoplay.value = false
+}
 
 const handleClick = () => {
 	console.log(112)
 }
 
-const toDetail = () => {
+const toDetail = (id) => {
 	uni.navigateTo({
-		url: '/pages/index/detail?id=123'
+		url: '/pages/index/detail?id=' + id
 	})
 }
 </script>

@@ -15,11 +15,16 @@ export const IndexApi = {
 	postPhonenumber(data) {
 		return request.post({ url: '/activitysignet/getphonenumber', data })
 	},
-
 	/**
-	 * 微信小程序获取手机号
+	 * 首页/活动列表页
 	*/
 	getActivitysignet(data) {
 		return request.get({ url: '/activitysignet', data })
+	},
+	/**
+	 * 活动详情
+	*/
+	getActivitysignetDetail(id: string) {
+		return request.get({ url: '/activitysignet/' + id })
 	},
 }
