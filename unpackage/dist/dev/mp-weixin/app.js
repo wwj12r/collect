@@ -16,6 +16,7 @@ if (!Math) {
   "./pages/user/Activity/publish.js";
   "./pages/user/Activity/edit.js";
   "./pages/user/setting.js";
+  "./pages/login/index.js";
 }
 const _sfc_main = {
   onLaunch: function() {

@@ -1,34 +1,34 @@
 <template>
 	<view class="content">
 		<view class="imgs">
-			<u-swiper :list="imgs" height="1100rpx" keyName="image" showTitle :autoplay="false" circular>
+			<u-swiper :list="content" height="1100rpx" keyName="id" showTitle :autoplay="false" circular @change="onSwiperChange">
 				<template v-slot="{ item }">
-					<image :src="item" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
+					<image :src="imgBaseUrl + item.headimg" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
 				</template>
 			</u-swiper>
 		</view>
 		<view class="detail">
 			<view class="detail-title">
-				<view class="detail-title-tips">报名中</view>
-				<view class="detail-title-title">广州东山口第一届集章大会，8月8日正式启动</view>
+				<view class="detail-title-tips">{{ ['', '待报名', '报名中', '已结束'][content[currentIndex].state] }}</view>
+				<view class="detail-title-title">{{ content[currentIndex].title }}</view>
 			</view>
 			<view class="detail-info">
 				<view class="detail-info-top">
-					<image class="detail-info-top-img" src="/static/logo.png"></image>
-					<view class="detail-info-top-view">Starshine-js</view>
+					<image class="detail-info-top-img" :src="imgBaseUrl + content[currentIndex].headimg"></image>
+					<view class="detail-info-top-view">{{ content[currentIndex].nickname }}</view>
 				</view>
 				<view class="detail-info-time">
-					<image class="detail-info-time-img" src="/static/index/time.png"></image>08-08 周日 13:00~18:00
+					<image class="detail-info-time-img" src="/static/index/time.png"></image>{{ content[currentIndex].startTime }}
 				</view>
 				<view class="detail-info-address">
 					<view class="detail-info-address-view">
 						<image class="detail-info-address-image" src="/static/index/address.png"></image>
-						广州市越秀区天河城百货负一楼285-05
+						{{ content[currentIndex].address }}
 					</view>
 					<view class="detail-info-address-right">距您 8.5km</view>
 				</view>
 				<view class="detail-info-button">
-					<view class="detail-info-button-left">3126 人已报名</view>
+					<view class="detail-info-button-left">{{ content[currentIndex].num }} 人已报名</view>
 					<view class="detail-info-button-right" @click="toDetail">
 						<image class="detail-info-button-right-img" src="/static/index/button.png"></image>点击报名
 					</view>
@@ -40,35 +40,33 @@
 	</view>
 </template>
 
-<script>
-import {
-	defineComponent,
-	reactive,
-	ref,
-	watchEffect
-} from 'vue';
+<script setup>
+import { ref, onMounted } from 'vue'
+import { IndexApi } from '../../services'
+import { imgBaseUrl } from '../../utils/enums'
+const content = ref([])
+const currentIndex = ref(0)
 
-export default defineComponent({
-	setup() {
-		const title = ref('ww12j')
-		const handleClick = () => {
-			console.log(112)
-		}
-		const imgs = ref(['/static/logo.png', '/static/logo.png', '/static/logo.png'])
-		const toDetail = () => {
-			console.log(11)
-			uni.navigateTo({
-				url: '/pages/index/detail?id=123'
-			});
-		}
-		return {
-			imgs,
-			title,
-			handleClick,
-			toDetail,
-		}
-	}
-});
+onMounted(() => {
+	IndexApi.getActivitysignet().then(res => {
+		content.value = res.content
+	})
+})
+
+const onSwiperChange = (e) => {
+	currentIndex.value = e.current
+}
+
+
+const handleClick = () => {
+	console.log(112)
+}
+
+const toDetail = () => {
+	uni.navigateTo({
+		url: '/pages/index/detail?id=123'
+	})
+}
 </script>
 
 <style lang="scss" scoped>
@@ -103,7 +101,7 @@ export default defineComponent({
 }
 
 .detail-info-address {
-	height: 60rpx;
+	height: 70rpx;
 	margin-top: 19rpx;
 	display: flex;
 	align-items: start;
@@ -191,6 +189,7 @@ image {
 }
 
 .detail-title {
+	height: 80rpx;
 
 	.detail-title-tips {
 		display: inline;

@@ -13,7 +13,8 @@
     "pages/user/Activity/verify",
     "pages/user/Activity/publish",
     "pages/user/Activity/edit",
-    "pages/user/setting"
+    "pages/user/setting",
+    "pages/login/index"
   ],
   "window": {
     "navigationBarTextStyle": "black",
@@ -32,12 +33,6 @@
         "text": "首页",
         "iconPath": "static/index/index.png",
         "selectedIconPath": "static/index/index-active.png"
-      },
-      {
-        "pagePath": "pages/center/index",
-        "text": "创意中心",
-        "iconPath": "static/center/center.png",
-        "selectedIconPath": "static/center/center-active.png"
       },
       {
         "pagePath": "pages/gallery/index",

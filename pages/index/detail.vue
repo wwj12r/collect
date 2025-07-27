@@ -69,8 +69,13 @@
 		</view>
 
 		<!-- 报名按钮 -->
-		<view class="footer" @click="showPopup = true">
+		<view class="footer" @click="openPopUp" v-if="authorized">
 			<button class="signup-btn">报名（￥99）</button>
+		</view>
+		<view class="footer" v-else>
+			<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuthorize">
+				报名（￥99）
+			</button>
 		</view>
 	</view>
 	<!-- 报名弹窗 -->
@@ -98,62 +103,136 @@
 	</u-popup>
 
 </template>
+<script setup>
+import { ref, onMounted } from 'vue'
+import { IndexApi } from '../../services'
 
-<script>
-import {
-	defineComponent,
-	reactive,
-	ref,
-	watchEffect
-} from 'vue';
-
-
-
-export default defineComponent({
-	setup() {
-		const popupRef = ref(null)
-		const imgUrl = ref('')
-		const showPopup = ref(false)
-		const hidePopup = () => {
-			popupRef.value.close()
-		}
-		const copyContent = () => {
-			uni.setClipboardData({
-				data: '发布一篇活动介绍到小红书',
-				success: () => {
-					uni.showToast({ title: '已复制', icon: 'none' })
-				}
-			})
-		}
-		const chooseImage = () => {
-			uni.chooseImage({
-				count: 1,
-				success: (res) => {
-					imgUrl.value = res.tempFilePaths[0]
-				}
-			})
-		}
-		const submit = () => {
-			uni.showToast({ title: '提交成功', icon: 'success' })
-			hidePopup()
-		}
-		return {
-			stampImgs: [
-				'https://your-image-url/stamp1.jpg',
-				'https://your-image-url/stamp2.jpg',
-				'https://your-image-url/stamp3.jpg'
-			],
-			popupRef,
-			imgUrl,
-			showPopup,
-			hidePopup,
-			copyContent,
-			chooseImage,
-			submit
-		}
-	}
+onMounted(() => {
+	// fetchData()
 })
+const loading = ref(false)
+
+// const fetchData = () => {
+// 	loading.value = true
+// 	uni.login({
+// 		provider: 'weixin',
+// 		success: (res) => {
+// 			const code = res.code
+// 			console.log('微信登录 code：', code)
+// 			IndexApi.postLogin({ code })
+// 		},
+// 		fail: (err) => {
+// 			console.error('微信登录失败', err)
+// 		}
+// 	})
+// }
+
+const popupRef = ref(null)
+const imgUrl = ref('')
+const showPopup = ref(false)
+const authorized = ref(uni.getStorageSync('token'))
+
+const hidePopup = () => {
+	popupRef.value.close()
+}
+
+const copyContent = () => {
+	uni.setClipboardData({
+		data: '发布一篇活动介绍到小红书',
+		success: () => {
+			uni.showToast({ title: '已复制', icon: 'none' })
+		}
+	})
+}
+
+const chooseImage = () => {
+	uni.chooseImage({
+		count: 1,
+		success: (res) => {
+			imgUrl.value = res.tempFilePaths[0]
+		}
+	})
+}
+
+const getAuthorize = () => {
+	uni.getSetting({
+		success: res => {
+			uni.showLoading({ title: '正在登录' })
+			if (res.authSetting['scope.userInfo']) {
+				login()
+			} else {
+				uni.authorize({
+					scope: 'scope.userInfo',
+					success: res => {
+						console.log(res)
+						login()
+					},
+					fail: err => {
+						console.log(err)
+						uni.hideLoading()
+					}
+				})
+			}
+		}
+	})
+}
+const login = () => {
+	uni.login({
+		provider: 'weixin',
+		success: res => {
+			getUserInfo(res.code)
+		},
+		fail: err => {
+			console.log(err)
+			uni.hideLoading()
+		}
+	})
+}
+const getUserInfo = (code) => {
+	uni.getUserInfo({
+		provider: 'weixin',
+		withCredentials: true,
+		success: res => {
+			console.log(code, JSON.stringify(res))
+			getToken(code, res)
+		},
+		fail: err => {
+			console.log(err)
+			uni.hideLoading()
+		},
+	})
+}
+const getToken = (code, userInfo) => {
+	IndexApi.postLogin({ code, userInfo: JSON.stringify(userInfo) }).then(res => {
+		console.log(res)
+		uni.setStorageSync('token', res.access_token)
+		showPopup.value = true
+		uni.hideLoading()
+	}).catch(rej => {
+		uni.hideLoading()
+	})
+}
+const submit = () => {
+	uni.showToast({ title: '提交成功', icon: 'success' })
+	hidePopup()
+}
+
+const openPopUp = () => {
+	// 微信登录逻辑（建议封装再开启）
+	if (!uni.getStorageSync('token')) {
+		uni.navigateTo({ url: '/pages/login/index' })
+	} else {
+		showPopup.value = true
+	}
+}
+
+const stampImgs = [
+	'https://your-image-url/stamp1.jpg',
+	'https://your-image-url/stamp2.jpg',
+	'https://your-image-url/stamp3.jpg'
+]
 </script>
+
 
 <style scoped>
 .signup-btn {

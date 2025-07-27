@@ -82,6 +82,12 @@
 			"style": {
 				"navigationBarTitleText": "设置"
 			}
+		},
+		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
 		}
 	],
 	"globalStyle": {
@@ -101,12 +107,12 @@
 				"iconPath": "static/index/index.png", // 未选中图标
 				"selectedIconPath": "static/index/index-active.png" // 选中图标
 			},
-			{
-				"pagePath": "pages/center/index",
-				"text": "创意中心",
-				"iconPath": "static/center/center.png",
-				"selectedIconPath": "static/center/center-active.png"
-			},
+			// {
+			// 	"pagePath": "pages/center/index",
+			// 	"text": "创意中心",
+			// 	"iconPath": "static/center/center.png",
+			// 	"selectedIconPath": "static/center/center-active.png"
+			// },
 			{
 				"pagePath": "pages/gallery/index",
 				"text": "展厅",

@@ -2571,15 +2571,6 @@ function inject(key, defaultValue, treatDefaultAsFactory = false) {
     warn$1(`inject() can only be used inside setup() or functional components.`);
   }
 }
-/*! #__NO_SIDE_EFFECTS__ */
-// @__NO_SIDE_EFFECTS__
-function defineComponent(options, extraOptions) {
-  return isFunction(options) ? (
-    // #8326: extend call and options.name access are considered side-effects
-    // by Rollup, so we have to wrap it in a pure-annotated IIFE.
-    /* @__PURE__ */ (() => extend({ name: options.name }, extraOptions, { setup: options }))()
-  ) : options;
-}
 const isKeepAlive = (vnode) => vnode.type.__isKeepAlive;
 function onActivated(hook, target) {
   registerKeepAliveHook(hook, "a", target);
@@ -12232,7 +12223,6 @@ exports.computed = computed;
 exports.config = config;
 exports.createSSRApp = createSSRApp;
 exports.deepMerge = deepMerge$1;
-exports.defineComponent = defineComponent;
 exports.e = e;
 exports.error = error;
 exports.f = f;
@@ -12243,6 +12233,7 @@ exports.mixin = mixin;
 exports.mpMixin = mpMixin;
 exports.n = n;
 exports.o = o;
+exports.onMounted = onMounted;
 exports.p = p;
 exports.props = props$6;
 exports.props$1 = props$5;
@@ -12259,6 +12250,7 @@ exports.sleep = sleep;
 exports.t = t;
 exports.test = test;
 exports.transitionMixin = transitionMixin;
+exports.unref = unref;
 exports.uviewPlus = uviewPlus;
 exports.w = w;
 //# sourceMappingURL=../../.sourcemap/mp-weixin/common/vendor.js.map

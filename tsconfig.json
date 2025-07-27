@@ -1,0 +1,9 @@
+{
+	"compilerOptions": {
+	  "types": ["@dcloudio/types"],
+	  "target": "es5",
+	  "module": "commonjs",
+	  "strict": true,
+	  "lib": ["es2015", "dom"]
+	}
+  }

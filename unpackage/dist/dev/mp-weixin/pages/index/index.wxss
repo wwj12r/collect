@@ -50,7 +50,7 @@
   font-weight: bold;
 }
 .detail-info-address.data-v-1cf27b2a {
-  height: 60rpx;
+  height: 70rpx;
   margin-top: 19rpx;
   display: flex;
   align-items: start;
@@ -122,6 +122,9 @@ image.data-v-1cf27b2a {
   overflow: hidden;
   box-sizing: border-box;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.detail-title.data-v-1cf27b2a {
+  height: 80rpx;
 }
 .detail-title .detail-title-tips.data-v-1cf27b2a {
   display: inline;
