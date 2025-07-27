@@ -22,7 +22,7 @@
 					<view class="org-name">{{ detail.content.nickName }}</view>
 					<view class="org-name">发起人</view>
 				</view>
-				<button class="follow-btn">+关注</button>
+				<button class="follow-btn" @click="follow">+关注</button>
 			</view>
 
 			<!-- 活动详情 -->
@@ -198,11 +198,23 @@ const chooseImage = () => {
 	})
 }
 const submit = async () => {
-	uni.showToast({ title: '提交成功', icon: 'success' })
-	const res = await uploadImg(imgUrl.value)
-	console.log(res)
+	try {
+		const res = await uploadImg(imgUrl.value)
+		const res2 = await IndexApi.postSignin({
+			id: detail.value.content.id,
+			photo: res.map(i => i.imgUrl).toString()
+		})
+		if (res2.msg) {
+			hidePopup()
+			uni.showToast({ title: res2.msg, icon: 'error' })
+			return
+		}
+		uni.showToast({ title: '提交成功', icon: 'success' })
+		uni.navigateTo({ url: '/pages/index/success' })
+	} catch (e) {
+		console.log(e)
+	}
 	hidePopup()
-	uni.navigateTo({ url: '/pages/index/success' })
 }
 
 const openPopUp = () => {
@@ -216,6 +228,13 @@ const toList = () => {
 }
 const getAuth = () => {
 	getAuthorize().then(res => showPopup.value = true)
+}
+
+const follow = () => {
+	IndexApi.postFollow({ userId: detail.value.content.author }).then(res => {
+		uni.showToast({ title: '关注成功！', icon: 'none' })
+		fetchData(detail.value.content.id)
+	})
 }
 </script>
 

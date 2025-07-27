@@ -1,9 +1,8 @@
 import { IndexApi } from "../services"
 import request from "../services/request"
 
-export const uploadImg = async (tempFilePaths) => {
-	const res = await IndexApi.postImage({ photo: tempFilePaths })
-	console.log(res)
+export const uploadImg = async (tempFilePaths: string[]) => {
+	const res = await Promise.all(await tempFilePaths.map(item => IndexApi.postImage(item)))
 	return res
 }
 
