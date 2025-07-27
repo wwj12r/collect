@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "展厅",
-  "navigationStyle": "custom",
-  "usingComponents": {
-    "stamp-preview-popup": "./components/preview"
-  }
-}

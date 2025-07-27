@@ -1,1 +1,0 @@
-{"version":3,"file":"setting.js","sources":["pages/user/setting.vue?type=page"],"sourcesContent":["import MiniProgramPage from '/Users/wangweijian/Desktop/scm/collect/pages/user/setting.vue'\nwx.createPage(MiniProgramPage)"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AACA,GAAG,WAAW,eAAe;"}
