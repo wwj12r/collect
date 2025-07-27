@@ -3,12 +3,12 @@
 		<view class="imgs">
 			<u-swiper v-if="content.length" :list="content" height="1100rpx" keyName="id" interval="1500" showTitle :autoplay="autoplay" circular @touchstart.native="handleTouchStart" @change="onSwiperChange">
 				<template v-slot="{ item }">
-					<image :src="imgBaseUrl + item.headimg" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
+					<image @click="toDetail(content[currentIndex].id)" :src="imgBaseUrl + item.headimg" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
 				</template>
 			</u-swiper>
 		</view>
 		<view class="detail">
-			<view class="detail-title">
+			<view class="detail-title" @click="toDetail(content[currentIndex].id)">
 				<view class="detail-title-tips">{{ ['', '待报名', '报名中', '已结束'][content[currentIndex].state] }}</view>
 				<view class="detail-title-title">{{ content[currentIndex].title }}</view>
 			</view>

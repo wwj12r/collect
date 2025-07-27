@@ -1,6 +1,6 @@
 <template>
 	<view class="success-page">
-	  <image class="ok-img" src="https://your-image-url/ok.png" mode="widthFix" />
+	  <image class="ok-img" src="/static/index/suc.png" mode="widthFix" />
 	  <view class="main-text">信息提交成功</view>
 	  <view class="sub-text">等待审核</view>
 	  <button class="notify-btn" @click="notifyMe">审核后通知我</button>
@@ -22,31 +22,34 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	padding-top: 80rpx;
   }
   .ok-img {
-	width: 180rpx;
-	margin-bottom: 32rpx;
+	width: 380rpx;
+	margin-bottom: 100rpx;
   }
   .main-text {
-	font-size: 32rpx;
+	font-size: 40rpx;
 	font-weight: bold;
-	color: #222;
-	margin-bottom: 12rpx;
+	color: rgba(26, 26, 26, 1);
+	margin-bottom: 22rpx;
 	text-align: center;
   }
   .sub-text {
-	font-size: 24rpx;
-	color: #bbb;
-	margin-bottom: 48rpx;
+	font-size: 28rpx;
+	color: rgba(153, 153, 153, 1);
+	margin-bottom: 138rpx;
 	text-align: center;
   }
   .notify-btn {
-	width: 60%;
-	background: #222;
+	width: 369rpx;
+	height: 76rpx;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: rgba(26, 26, 26, 1);
 	color: #fff;
-	font-size: 28rpx;
-	border-radius: 40rpx;
+	font-size: 32rpx;
+	border-radius: 100rpx;
 	padding: 18rpx 0;
 	font-weight: bold;
 	margin-top: 24rpx;

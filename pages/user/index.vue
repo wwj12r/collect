@@ -1,146 +1,175 @@
 <template>
-  <view class="mine-page">
-    <!-- 头部用户信息 -->
-    <view class="user-info">
-      <image class="avatar" src="https://your-image-url/avatar.jpg" />
-      <view class="user-name">Momo大锤子</view>
-      <view class="setting" @click="goSetting">
-        <u-icon type="gear" size="28" color="#333" />
-        <text class="setting-text">设置</text>
-      </view>
-    </view>
+	<view class="mine-page">
+		<!-- 头部用户信息 -->
+		<view class="user-info">
+			<image class="avatar" src="https://your-image-url/avatar.jpg" />
+			<view class="user-name">Momo大锤子</view>
+			<view class="setting" @click="goSetting">
+				<image src="/static/user/setting.png"></image>
+				<text class="setting-text">设置</text>
+			</view>
+		</view>
 
-    <!-- 我的活动 -->
-    <view class="section">
-      <view class="section-title">我的活动</view>
-      <view class="activity-list">
-        <view class="activity-item" v-for="item in activities" :key="item.text" @click="onManageClick(item)">
-          <u-icon :type="item.icon" size="32" color="#222" />
-          <text class="activity-text">{{ item.text }}</text>
-        </view>
-      </view>
-    </view>
+		<view class="section-title">我的活动</view>
+		<!-- 我的活动 -->
+		<view class="section">
+			<view class="activity-list">
+				<view class="activity-item" v-for="item in activities" :key="item.text" @click="onActivityClick(item)">
+					<image :src="'/static/user/' + item.icon + '.png'"></image>
+					<text class="activity-text">{{ item.text }}</text>
+					<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuth(item)" v-if="!authorized"></button>
+				</view>
+			</view>
+		</view>
 
-    <!-- 活动工具 -->
-    <view class="section">
-      <view class="section-title">活动工具</view>
-      <view class="tool-list">
-        <view class="tool-item" v-for="tool in tools" :key="tool.text" @click="onActivityClick(tool)">
-          <u-icon :type="tool.icon" size="32" color="#222" />
-          <text class="tool-text">{{ tool.text }}</text>
-        </view>
-      </view>
-    </view>
-  </view>
+		<view class="section-title">活动工具</view>
+		<!-- 活动工具 -->
+		<view class="section">
+			<view class="tool-list">
+				<view class="tool-item" v-for="item in tools" :key="item.text" @click="onActivityClick(item)">
+					<image :src="'/static/user/' + item.icon + '.png'"></image>
+					<text class="tool-text">{{ item.text }}</text>
+					<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuth(item)" v-if="!authorized"></button>
+				</view>
+			</view>
+		</view>
+	</view>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      activities: [
-        { icon: 'grid', text: '全部' },
-        { icon: 'circle', text: '痕章楼' },
-        { icon: 'list', text: '痕楼捺' },
-        { icon: 'checkbox', text: '已完成' }
-      ],
-      tools: [
-        { icon: 'plusempty', text: '发布活动' },
-        { icon: 'chatboxes', text: '活动管理' },
-        { icon: 'scan', text: '扫码核销' },
-        { icon: 'personadd', text: '发布印章' }
-      ]
-    }
-  },
-  methods: {
-    goSetting() {
-      // 跳转到设置页
-      uni.navigateTo({ url: '/pages/user/setting' })
-    },
-    onActivityClick(item) {
-		console.log(item)
-      // 处理活动点击
-		uni.navigateTo({ url: '/pages/user/Activity/index' })
-    },
-    onManageClick(item) {
-		console.log(item)
-      // 处理活动点击
-		uni.navigateTo({ url: '/pages/user/Activity/manage' })
-    },
-    onToolClick(tool) {
-      // 处理工具点击
-      uni.showToast({ title: tool.text, icon: 'none' })
-    }
-  }
+<script setup>
+import { ref, onMounted } from 'vue'
+import { getAuthorize } from '../../utils/utils'
+const authorized = ref(uni.getStorageSync('token'))
+const activities = [
+	{ icon: 'all', text: '全部', link: '/pages/user/Activity/index?type=1' },
+	{ icon: 'audit', text: '待审核', link: '/pages/user/Activity/index?type=2' },
+	{ icon: 'use', text: '待核销', link: '/pages/user/Activity/index?type=3' },
+	{ icon: 'done', text: '已完成', link: '/pages/user/Activity/index?type=4' }
+]
+const tools = [
+	{ icon: 'publish', text: '发布活动', link: '/pages/user/Activity/publish' },
+	{ icon: 'manage', text: '活动管理', link: '/pages/user/Activity/manage' },
+	{ icon: 'scan', text: '扫码核销', link: '/pages/user/Activity/verify' },
+	{ icon: 'print', text: '发布印章', link: '/pages/user/Print/index' }
+]
+const goSetting = () => {
+	// 跳转到设置页
+	uni.navigateTo({ url: '/pages/user/setting' })
+}
+const onActivityClick = (item) => {
+	// 处理活动点击
+	console.log(authorized.value)
+	if (!authorized.value) return
+	uni.navigateTo({ url: item.link })
+}
+
+const getAuth = (item) => {
+	getAuthorize().then(res => uni.navigateTo({ url: item.link }))
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .mine-page {
-  background: #f7f7f7;
-  min-height: 100vh;
-  padding-bottom: 40rpx;
+	background: #f7f7f7;
+	min-height: 100vh;
 }
+
 .user-info {
-  display: flex;
-  align-items: center;
-  padding: 40rpx 30rpx 20rpx 30rpx;
-  background: #fff;
-  border-radius: 0 0 24rpx 24rpx;
-  position: relative;
+	display: flex;
+	align-items: center;
+	padding: 40rpx 30rpx 20rpx 30rpx;
+	border-radius: 0 0 24rpx 24rpx;
+	position: relative;
 }
+
 .avatar {
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 50%;
-  margin-right: 24rpx;
-  border: 2rpx solid #eee;
+	width: 100rpx;
+	height: 100rpx;
+	border-radius: 50%;
+	margin-right: 24rpx;
+	border: 2rpx solid #eee;
 }
+
 .user-name {
-  font-size: 32rpx;
-  font-weight: bold;
-  flex: 1;
+	font-size: 32rpx;
+	font-weight: bold;
+	flex: 1;
 }
+
 .setting {
-  display: flex;
-  align-items: center;
-  position: absolute;
-  right: 30rpx;
-  top: 50%;
-  transform: translateY(-50%);
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	position: absolute;
+	right: 30rpx;
+	top: 50%;
+	gap: 12rpx;
+	transform: translateY(-50%);
+
+	image {
+		width: 40rpx;
+		height: 40rpx;
+		object-fit: contain;
+	}
 }
+
 .setting-text {
-  font-size: 22rpx;
-  margin-left: 6rpx;
-  color: #888;
+	font-size: 22rpx;
+	margin-left: 6rpx;
+	color: #888;
 }
+
 .section {
-  margin: 32rpx 20rpx 0 20rpx;
-  background: #fff;
-  border-radius: 20rpx;
-  padding: 24rpx 0 10rpx 0;
+	margin: 20rpx 20rpx 0 20rpx;
+	background: #fff;
+	border-radius: 20rpx;
+	padding: 24rpx 0 10rpx 0;
+	position: relative;
+
+	image {
+		width: 40rpx;
+		height: 40rpx;
+		object-fit: contain;
+	}
+
+	.signup-btn {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		opacity: 0;
+	}
 }
+
 .section-title {
-  font-size: 26rpx;
-  font-weight: bold;
-  margin-left: 32rpx;
-  margin-bottom: 18rpx;
+	font-size: 26rpx;
+	font-weight: bold;
+	margin-left: 32rpx;
+	margin-top: 18rpx;
 }
-.activity-list, .tool-list {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding-bottom: 10rpx;
+
+.activity-list,
+.tool-list {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	padding-bottom: 10rpx;
 }
-.activity-item, .tool-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
+
+.activity-item,
+.tool-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	flex: 1;
+	position: relative;
 }
-.activity-text, .tool-text {
-  font-size: 22rpx;
-  color: #222;
-  margin-top: 8rpx;
+
+.activity-text,
+.tool-text {
+	font-size: 22rpx;
+	color: #222;
+	margin-top: 8rpx;
 }
 </style>

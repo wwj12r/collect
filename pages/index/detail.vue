@@ -2,24 +2,24 @@
 	<view class="detail-page">
 		<!-- 活动主图 -->
 		<!-- <image class="banner" :src="imgBaseUrl + detail.content?.photo" mode="widthFix" /> -->
-		<u-swiper v-if="detail.content?.length" :list="detail.content" height="1100rpx" keyName="id" interval="1500" showTitle :autoplay="autoplay" circular @touchstart.native="handleTouchStart" @change="onSwiperChange">
+		<u-swiper v-if="detail.content?.photo?.split(',')?.length" :list="detail.content?.photo?.split(',')" height="520rpx" keyName="image" interval="5000" showTitle :autoplay="autoplay" circular @touchstart.native="handleTouchStart">
 			<template v-slot="{ item }">
-				<image :src="imgBaseUrl + item.headimg" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
+				<image :src="imgBaseUrl + item" mode="aspectFill" style="width: 100%; height: 520rpx; object-fit: cover;" />
 			</template>
 		</u-swiper>
 
 		<view class="info">
 			<!-- 活动信息 -->
 			<view class="info-card">
-				<view class="tag">报名中</view>
-				<view class="event-title">广州东山口第一届集章大会，8月8日正式启动</view>
+				<view class="tag">{{ ['', '待报名', '报名中', '已结束'][detail.content.state] }}</view>
+				<view class="event-title">{{ detail.content.title }}</view>
 			</view>
 
 			<!-- 主办方 -->
 			<view class="organizer">
 				<view class="organizer">
 					<image class="avatar" :src="imgBaseUrl + detail.content?.headimg" />
-					<view class="org-name">Starshine·JS</view>
+					<view class="org-name">{{ detail.content.nickName }}</view>
 					<view class="org-name">发起人</view>
 				</view>
 				<button class="follow-btn">+关注</button>
@@ -29,81 +29,120 @@
 			<view class="event-detail">
 				<view class="detail-row">
 					<text class="label">活动时间</text>
-					<text class="value">2025年08月08日 周日 13:00-18:00</text>
+					<text class="value">{{ detail.content.startTime }}</text>
 				</view>
 				<view class="detail-row">
 					<text class="label">活动地点</text>
-					<text class="value">广州市越秀区文德路西场东街一巷285:05</text>
+					<text class="value">{{ detail.content.address }}</text>
 				</view>
 				<view class="detail-row">
 					<text class="label">限定人数</text>
-					<text class="value">600人</text>
+					<text class="value">{{ detail.content.limitNum }}人</text>
 				</view>
 				<view class="detail-row">
-					<text class="label">嘉宾阵容</text>
-					<text class="value">班班邮馆、Brian、小海狸的蓝莓花禾、Raven</text>
+					<text class="label">活动主办</text>
+					<!-- <text class="value"><ExpandableText :text="'detail.content.sponsordetail.content.sponsordetail.content.sponsordetail.content.sponsordetail.content.sponsordetail.content.sponsordetail.content.sponsor'" :maxLines="2" icon-color="#888" :icon-size="22" /></text> -->
+					<view class="value">
+						<ExpandableText :text="detail.content.sponsor" :maxLines="2" icon-color="rgba(26, 26, 26, 1)" :icon-size="24" />
+					</view>
 				</view>
 			</view>
 
 			<!-- 报名条件 -->
-			<view class="section">
-				<view class="section-title">报名条件</view>
-				<view class="section-content">
-					需满足条件，报名获取资格码即可
-					<button class="copy-btn" @click="copyContent">复制内容</button>
+			<view class="section" v-if="detail.content.condition">
+				<view class="section-title">
+					<view>
+						<image src="/static/index/tag.png"></image>报名条件
+					</view>
+					<view class="section-tips">
+						完成条件后，报名时提交截图即可
+					</view>
+				</view>
+				<view class="section-content red">
+					发布一篇活动介绍到小红书
+					<!-- <button class="copy-btn" @click="copyContent">复制内容</button> -->
+					<view class="copy-btn" @click="copyContent(detail.content.condition)">
+						<image class="copy-btn-img" src="/static/index/button.png"></image>复制内容
+					</view>
 				</view>
 			</view>
 
 			<!-- 集章展示 -->
 			<view class="section">
-				<view class="section-title">集章展示</view>
-				<scroll-view class="stamps" scroll-x>
-					<view class="stamp-item" v-for="(img, idx) in stampImgs" :key="idx">
-						<image :src="img" mode="aspectFill" />
+				<view class="section-title">
+					<view>
+						<image src="/static/index/stamp.png"></image>集章展示
 					</view>
-				</scroll-view>
+					<view class="section-tips" @click="toList">
+						查看更多
+					</view>
+				</view>
+				<view class="stampImgs">
+					<view v-for="(img, idx) in detail.content.collectImgs.split(',').slice(0, 8)" :key="idx" class="stamp-img-item">
+						<image :src="imgBaseUrl + img" mode="aspectFill" />
+					</view>
+				</view>
 			</view>
 
 			<!-- 活动详情图片 -->
 			<view class="section">
-				<view class="section-title">活动详情</view>
-				<image class="detail-img" src="https://your-image-url/banner.jpg" mode="widthFix" />
+				<view class="section-title">
+					<view>
+						<image src="/static/index/activity.png"></image>活动详情
+					</view>
+				</view>
+				<image class="detail-img" :src="imgBaseUrl + detail.content.content" mode="widthFix" />
 			</view>
 
 			<!-- 报名按钮 -->
-			<view class="footer" @click="openPopUp" v-if="authorized">
-				<button class="signup-btn">报名（￥99）</button>
-			</view>
-			<view class="footer" v-else>
-				<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuthorize">
-					报名（￥99）
+			<view class="footer">
+				<button class="signup-btn disabled" v-if="detail.content.state == 1">待报名</button>
+				<button class="signup-btn disabled" v-else-if="detail.content.state == 3">已结束</button>
+				<button class="signup-btn" @click="openPopUp" v-else-if="detail.content.state == 2 && authorized">报名（￥{{ detail.content.registrationFee }}）</button>
+				<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuth" v-if="detail.content.state == 2 && !authorized">
+					报名（￥{{ detail.content.registrationFee }}）
 				</button>
 			</view>
 		</view>
 	</view>
 	<!-- 报名弹窗 -->
-	<u-popup :show="showPopup" @close="showPopup = false" @open="showPopup = true" :mask-click="false">
+	<u-popup :show="showPopup" @close="showPopup = false" @open="showPopup = true" :mask-click="false" border-radius="20" :safe-area-inset-bottom="true" round="20">
 		<view class="popup-content">
 			<view class="popup-title">
 				提交报名信息
-				<!-- <u-icons type="closeempty" size="24" class="close-btn" @click="hidePopup" /> -->
+				<view class="close-btn">
+					<u-icon name="arrow-down" custom-class="close-btn" @click="hidePopup" />
+				</view>
 			</view>
 			<view class="popup-desc">平台将会保护你的个人隐私，当前信息方便组织方联系你</view>
-			<view class="section-title">报名条件</view>
-			<view class="requirement-row">
-				<text>发布一篇活动介绍到小红书</text>
-				<button class="copy-btn" @click="copyContent">复制内容</button>
+			<view class="section-title">
+				<view>
+					<image src="/static/index/tag.png"></image>报名条件
+				</view>
+				<view class="section-tips">
+					完成条件后，报名时提交截图即可
+				</view>
+			</view>
+			<view class="section-content red" v-if="detail.content.condition">
+				发布一篇活动介绍到小红书
+				<!-- <button class="copy-btn" @click="copyContent">复制内容</button> -->
+				<view class="copy-btn" @click="copyContent(detail.content.condition)">
+					<image class="copy-btn-img" src="/static/index/button.png"></image>复制内容
+				</view>
 			</view>
 			<view class="upload-area">
 				<view class="upload-box" @click="chooseImage">
-					<image v-if="imgUrl" :src="imgUrl" class="upload-img" />
-					<view v-else class="plus">+</view>
+					<image v-if="imgUrl.length" v-for="(img, idx) in imgUrl" :src="img" :key="idx" class="upload-img" />
+					<view v-else class="upload-empty">
+						<image class="plus" src="/static/index/add.png"></image>
+					</view>
 				</view>
-				<view class="upload-tip">请上传已完成报名条件的截图</view>
+				<view v-if="!imgUrl.length" class="upload-tip">请上传已完成报名条件的截图</view>
 			</view>
-			<button class="submit-btn" :disabled="!imgUrl" @click="submit">提交</button>
+			<button class="submit-btn" :disabled="!imgUrl.length" @click="submit">提交</button>
 		</view>
 	</u-popup>
+
 
 </template>
 <script setup>
@@ -111,9 +150,12 @@ import { ref, onMounted } from 'vue'
 import { IndexApi } from '../../services'
 import { onLoad } from '@dcloudio/uni-app';
 import { imgBaseUrl } from '../../utils/enums';
+import { getGeoCoder, getAuthorize, uploadImg } from '../../utils/utils';
+import ExpandableText from '@/components/ExpandableText.vue'
+
 
 const popupRef = ref(null)
-const imgUrl = ref('')
+const imgUrl = ref([])
 const showPopup = ref(false)
 const authorized = ref(uni.getStorageSync('token'))
 const detail = ref({})
@@ -128,17 +170,19 @@ onMounted((e) => {
 
 const fetchData = async (id) => {
 	const res = await IndexApi.getActivitysignetDetail(id)
-	console.log(res)
 	detail.value = res
+	console.log(res)
+	const geo = await getGeoCoder(res.content.address)
+	console.log(geo)
 }
 
 const hidePopup = () => {
-	popupRef.value.close()
+	showPopup.value = false
 }
 
-const copyContent = () => {
+const copyContent = (text) => {
 	uni.setClipboardData({
-		data: '发布一篇活动介绍到小红书',
+		data: text,
 		success: () => {
 			uni.showToast({ title: '已复制', icon: 'none' })
 		}
@@ -147,97 +191,60 @@ const copyContent = () => {
 
 const chooseImage = () => {
 	uni.chooseImage({
-		count: 1,
+		count: 9,
 		success: (res) => {
-			imgUrl.value = res.tempFilePaths[0]
+			imgUrl.value = res.tempFilePaths
 		}
 	})
 }
-
-const getAuthorize = () => {
-	uni.getSetting({
-		success: res => {
-			uni.showLoading({ title: '正在登录' })
-			if (res.authSetting['scope.userInfo']) {
-				login()
-			} else {
-				uni.authorize({
-					scope: 'scope.userInfo',
-					success: res => {
-						console.log(res)
-						login()
-					},
-					fail: err => {
-						console.log(err)
-						uni.hideLoading()
-					}
-				})
-			}
-		}
-	})
-}
-const login = () => {
-	uni.login({
-		provider: 'weixin',
-		success: res => {
-			getUserInfo(res.code)
-		},
-		fail: err => {
-			console.log(err)
-			uni.hideLoading()
-		}
-	})
-}
-const getUserInfo = (code) => {
-	uni.getUserInfo({
-		provider: 'weixin',
-		withCredentials: true,
-		success: res => {
-			console.log(code, JSON.stringify(res))
-			getToken(code, res)
-		},
-		fail: err => {
-			console.log(err)
-			uni.hideLoading()
-		},
-	})
-}
-const getToken = (code, userInfo) => {
-	IndexApi.postLogin({ code, userInfo: JSON.stringify(userInfo) }).then(res => {
-		console.log(res)
-		uni.setStorageSync('token', res.access_token)
-		showPopup.value = true
-		uni.hideLoading()
-	}).catch(rej => {
-		uni.hideLoading()
-	})
-}
-const submit = () => {
+const submit = async () => {
 	uni.showToast({ title: '提交成功', icon: 'success' })
+	const res = await uploadImg(imgUrl.value)
+	console.log(res)
 	hidePopup()
+	uni.navigateTo({ url: '/pages/index/success' })
 }
 
 const openPopUp = () => {
-	// 微信登录逻辑（建议封装再开启）
-	if (!uni.getStorageSync('token')) {
-		uni.navigateTo({ url: '/pages/login/index' })
-	} else {
-		showPopup.value = true
-	}
+	showPopup.value = true
 }
-
-const stampImgs = [
-	'https://your-image-url/stamp1.jpg',
-	'https://your-image-url/stamp2.jpg',
-	'https://your-image-url/stamp3.jpg'
-]
+const toList = () => {
+	console.log(detail)
+	uni.navigateTo({
+		url: '/pages/index/list?id=' + detail.value.content.id
+	})
+}
+const getAuth = () => {
+	getAuthorize().then(res => showPopup.value = true)
+}
 </script>
 
 
-<style scoped>
-.info{
+<style lang="scss" scoped>
+.card-swiper-wrapper {
+	width: 100%;
+	overflow: visible;
+}
+
+.card-item {
+	width: 70vw;
+	/* 每个卡片宽度 = 70% 屏幕宽度 */
+	margin: 0 10rpx;
+	border-radius: 16rpx;
+	overflow: hidden;
+}
+
+.card-img {
+	width: 100%;
+	height: 300rpx;
+	/* 你自己定义高度 */
+	border-radius: 16rpx;
+}
+
+.info {
 	padding: 30rpx 26rpx;
 }
+
 .signup-btn {
 	width: 90%;
 	background: #222;
@@ -248,6 +255,12 @@ const stampImgs = [
 	font-weight: bold;
 	margin: 40rpx auto;
 	display: block;
+
+	&.disabled {
+		background-color: #f7f7f7;
+		color: rgba(0, 0, 0, .3);
+
+	}
 }
 
 .popup-content {
@@ -262,8 +275,16 @@ const stampImgs = [
 	font-size: 32rpx;
 	font-weight: bold;
 	text-align: center;
-	margin-bottom: 12rpx;
+	margin-bottom: 32rpx;
 	position: relative;
+	color: rgba(64, 33, 49, 1);
+	display: flex;
+	justify-content: center;
+
+	.u-icon {
+		margin-left: auto;
+		font-size: 16rpx;
+	}
 }
 
 .close-btn {
@@ -276,13 +297,33 @@ const stampImgs = [
 	font-size: 22rpx;
 	color: #888;
 	text-align: center;
-	margin-bottom: 24rpx;
+	margin-bottom: 50rpx;
 }
 
 .section-title {
-	font-size: 26rpx;
+	font-size: 32rpx;
 	font-weight: bold;
 	margin-bottom: 12rpx;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	color: rgba(26, 26, 26, 1);
+
+	view {
+		display: flex;
+		align-items: center;
+		gap: 10rpx;
+	}
+
+	image {
+		width: 28rpx;
+		height: 28rpx;
+	}
+
+	.section-tips {
+		color: rgba(153, 153, 153, 1);
+		font-size: 22rpx;
+	}
 }
 
 .requirement-row {
@@ -304,28 +345,44 @@ const stampImgs = [
 }
 
 .upload-area {
-	display: flex;
-	align-items: center;
-	margin-bottom: 18rpx;
+	margin-bottom: 68rpx;
+	margin-top: 33rpx;
 }
 
 .upload-box {
-	width: 120rpx;
-	height: 120rpx;
-	background: #f2f2f2;
+	width: 100%;
+	margin-bottom: 20rpx;
 	border-radius: 12rpx;
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	justify-content: start;
+	flex-wrap: wrap;
 	margin-right: 18rpx;
 	overflow: hidden;
 	position: relative;
+	gap: 12rpx;
+
+	.upload-empty {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: #f2f2f2;
+		width: 246rpx;
+		height: 246rpx;
+	}
+
+	.plus {
+		width: 48rpx;
+		height: 48rpx;
+	}
 }
 
 .upload-img {
-	width: 100%;
-	height: 100%;
+	width: 220rpx;
+	height: 220rpx;
 	object-fit: cover;
+	border-radius: 20rpx;
 }
 
 .plus {
@@ -335,11 +392,12 @@ const stampImgs = [
 
 .upload-tip {
 	font-size: 22rpx;
-	color: #888;
+	color: rgba(64, 33, 49, 1);
 }
 
 .submit-btn {
-	width: 100%;
+	width: 350rpx;
+	height: 76rpx;
 	background: #222;
 	color: #fff;
 	font-size: 28rpx;
@@ -348,6 +406,9 @@ const stampImgs = [
 	font-weight: bold;
 	margin-top: 24rpx;
 	opacity: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .submit-btn:disabled {
@@ -387,9 +448,8 @@ const stampImgs = [
 }
 
 .info-card {
-	margin: 20rpx 0;
+	margin: 0 0 20rpx;
 	border-radius: 16rpx;
-	padding: 20rpx 0;
 	display: flex;
 	align-items: center;
 }
@@ -404,7 +464,7 @@ const stampImgs = [
 }
 
 .event-title {
-	font-size: 28rpx;
+	font-size: 40rpx;
 	font-weight: bold;
 }
 
@@ -412,6 +472,7 @@ const stampImgs = [
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	color: rgba(153, 153, 153, 1);
 }
 
 .avatar {
@@ -443,9 +504,9 @@ const stampImgs = [
 }
 
 .event-detail {
-	margin: 20rpx 0;
+	margin: 20rpx 0 0;
 	border-radius: 16rpx;
-	padding: 20rpx 0;
+	padding: 20rpx 0 0;
 }
 
 .detail-row {
@@ -453,32 +514,63 @@ const stampImgs = [
 	align-items: center;
 	margin-bottom: 26rpx;
 	padding-bottom: 26rpx;
-	border-bottom: 1px dotted rgba(217, 217, 217, 1);
+	position: relative;
+}
+
+.detail-row::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	height: 1px;
+	/* 虚线厚度 */
+	background-image: repeating-linear-gradient(to right,
+			rgba(217, 217, 217, 1) 0px,
+			rgba(217, 217, 217, 1) 2px,
+			transparent 2px,
+			transparent 5px);
 }
 
 .label {
 	width: 140rpx;
-	color: #888;
+	color: rgba(179, 179, 179, 1);
 	font-size: 22rpx;
+	flex: none;
 }
 
 .value {
 	font-size: 24rpx;
-	color: #333;
+	color: rgba(26, 26, 26, 1);
+	flex: 1;
+	overflow: hidden;
+	word-break: break-all;
 }
 
 .section {
-	margin: 0 20rpx 0 20rpx;
+	margin: 20rpx 0;
 	border-radius: 16rpx;
-	padding: 20rpx 0;
-}
+	padding: 20rpx 0 0;
 
-.section-title {
-	font-size: 26rpx;
-	font-weight: bold;
-	margin-bottom: 12rpx;
-	display: flex;
-	align-items: center;
+	.stampImgs {
+		display: flex;
+		gap: 16px;
+		overflow: scroll;
+
+		.stamp-img-item {
+			width: 270rpx;
+
+			image {
+				border-radius: 20rpx;
+				width: 270rpx;
+				height: 360rpx;
+				box-shadow:
+					0 2px 4px rgba(191, 191, 191, 0.15),
+					0 8px 24px rgba(191, 191, 191, 0.30);
+
+			}
+		}
+	}
 }
 
 .section-content {
@@ -487,6 +579,32 @@ const stampImgs = [
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	background-color: rgba(237, 237, 237, 1);
+	border-radius: 20rpx;
+	padding: 33rpx;
+	height: 22rpx;
+
+	&.red {
+		color: rgba(64, 33, 49, 1);
+	}
+
+	.copy-btn-img {
+		width: 22rpx;
+		height: 24rpx;
+	}
+
+	.copy-btn {
+		padding: 12rpx 25rpx;
+		border-radius: 100rpx;
+		background-color: #000;
+		font-weight: bold;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 7rpx;
+		color: #FFFFFF;
+		font-size: 24rpx;
+	}
 }
 
 .copy-btn {
@@ -533,19 +651,23 @@ const stampImgs = [
 	bottom: 0;
 	width: 100%;
 	background: #fff;
-	padding: 20rpx 0;
+	padding: 18rpx 0 64rpx;
 	box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.05);
 	display: flex;
 	justify-content: center;
 }
 
 .signup-btn {
-	width: 90%;
+	width: 370rpx;
+	height: 76rpx;
 	background: #222;
 	color: #fff;
 	font-size: 32rpx;
 	border-radius: 50rpx;
-	padding: 20rpx 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	font-weight: bold;
+	margin: 0;
 }
 </style>

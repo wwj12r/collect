@@ -13,7 +13,16 @@
 			}
 		},
 		{
-			"path": "pages/index/success"
+			"path": "pages/index/list",
+			"style": {
+				"navigationBarTitleText": "图片列表"
+			}
+		},
+		{
+			"path": "pages/index/success",
+			"style": {
+				"navigationBarTitleText": ""
+			}
 		},
 		{
 			"path": "pages/center/index",
@@ -44,7 +53,7 @@
 		{
 			"path": "pages/user/index",
 			"style": {
-				"navigationBarTitleText": "我的"
+				"navigationBarTitleText": ""
 			}
 		},
 		{
@@ -75,6 +84,18 @@
 			"path": "pages/user/Activity/edit",
 			"style": {
 				"navigationBarTitleText": "编辑活动详情"
+			}
+		},
+		{
+			"path": "pages/user/Print/index",
+			"style": {
+				"navigationBarTitleText": "我的印章"
+			}
+		},
+		{
+			"path": "pages/user/Print/publish",
+			"style": {
+				"navigationBarTitleText": "发布印章"
 			}
 		},
 		{
