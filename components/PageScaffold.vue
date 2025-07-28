@@ -1,11 +1,11 @@
 <template>
 	<view 
-		class="page-scaffold !bg-red-500 mb-4"
+		class="page-scaffold"
 		:class="customClass"
 		:style="customStyle"
 	>
 		<slot />
-	</view>
+	</view>	
 </template>
 
 <script setup>
