@@ -2,8 +2,7 @@ import { IndexApi } from "../services"
 import request from "../services/request"
 
 export const uploadImg = async (tempFilePaths: string[]) => {
-	const res = await Promise.all(await tempFilePaths.map(item => IndexApi.postImage(item)))
-	return res
+	return Promise.all(await tempFilePaths.map(item => IndexApi.postImage(item)))
 }
 
 export const getGeoCoder = async (address: string) => {

@@ -13,6 +13,12 @@ interface Response<T = any> {
     header: Record<string, string>;
 }
 
+export interface BizResponse<T = any> {
+    ret: number;
+    msg: string;
+    datas: T
+}
+
 const request = <T = any>(options: RequestOptions): Promise<Response<T>> => {
     return new Promise((resolve, reject) => {
         uni.request({
