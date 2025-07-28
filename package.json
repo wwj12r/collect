@@ -8,6 +8,8 @@
   "dependencies": {
     "@dcloudio/types": "^3.4.16",
     "@dcloudio/uni-app": "^2.0.2-4070520250711001",
+    "dayjs": "^1.11.13",
+    "eventemitter3": "^5.0.1",
     "uview-plus": "^3.4.51",
     "uview-ui": "^2.0.38",
     "vue": "^3.3.4"
