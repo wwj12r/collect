@@ -1,6 +1,7 @@
 import App from './App'
 import uviewPlus from 'uview-plus'
 import 'uview-plus/index.scss' // ✅ 引入样式（不能漏）
+import './tailwind.css' // ✅ 引入 Tailwind CSS
 
 
 // #ifndef VUE3

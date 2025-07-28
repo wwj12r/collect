@@ -1,6 +1,6 @@
 <template>
 	<view 
-		class="page-scaffold" 
+		class="page-scaffold !bg-red-500 mb-4"
 		:class="customClass"
 		:style="customStyle"
 	>
