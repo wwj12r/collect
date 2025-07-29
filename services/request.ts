@@ -19,6 +19,21 @@ export interface BizResponse<T = any> {
     datas: T
 }
 
+export interface PaginationRequest {
+    page: number
+    perPage: number
+}
+
+export interface PaginationResponse<T = any> {
+    content: T[];
+    page: {
+      page: number
+      pageSize: number
+      totalCount: number
+      pageCount: number
+    }
+}
+
 const request = <T = any>(options: RequestOptions): Promise<Response<T>> => {
     return new Promise((resolve, reject) => {
         uni.request({

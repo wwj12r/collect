@@ -65,7 +65,9 @@
 		{
 			"path": "pages/user/Activity/manage",
 			"style": {
-				"navigationBarTitleText": "活动管理"
+				"navigationBarTitleText": "活动管理",
+				"onReachBottomDistance": 100,
+				"enablePullDownRefresh": true
 			}
 		},
 		{

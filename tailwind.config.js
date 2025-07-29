@@ -16,7 +16,13 @@ module.exports = {
   },
   // Tailwind CSS v3 配置
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'branding-primary': '#1a1a1a',
+        'branding-grey': '#999999',
+        'branding-orange': '#FF4D00'
+      },
+    },
   },
   plugins: [],
 };
