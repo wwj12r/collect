@@ -2,7 +2,7 @@
 	<view class="ticket-page">
 		<!-- 顶部状态 -->
 		<view class="status-bar">
-			<u-icon type="back" size="22" color="#222" @click="goBack" />
+			<image src="/static/user/activity-position.png" mode="aspectFit" class="w-4 h-4"  />
 			<text class="status-text">待现场使用</text>
 		</view>
 		<view class="tip-time">请在{{ useTime }} 前到现场使用</view>
@@ -50,7 +50,6 @@
 import { ref } from 'vue'
 import VerifySuccessPopup from './components/VerifySuccessPopup.vue'
 
-
 const useTime = '2025-05-12 09:52:10'
 const event = {
 	img: 'https://your-image-url/event.jpg',
@@ -85,7 +84,7 @@ function shareText() {
 .status-bar {
 	display: flex;
 	align-items: center;
-	padding: 32rpx 24rpx 0 24rpx;
+	padding: 32rpx 24rpx 12rpx 24rpx;
 }
 
 .status-text {
@@ -97,7 +96,7 @@ function shareText() {
 .tip-time {
 	font-size: 22rpx;
 	color: #888;
-	margin: 8rpx 0 18rpx 24rpx;
+	margin: 8rpx 0 48rpx 24rpx;
 }
 
 .ticket-card {

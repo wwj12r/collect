@@ -17,7 +17,7 @@ defineProps({
 	customStyle: {
 		type: [String, Object],
 		default: ''
-	}
+	},
 })
 </script>
 

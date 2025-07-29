@@ -86,11 +86,11 @@
 				
 				<uni-forms-item 
 					label="活动参与人数" 
-					name="people" 
+					name="limitNum" 
 					required
 				>
 					<uni-easyinput 
-						v-model="form.people" 
+						v-model="form.limitNum" 
 						placeholder="请输入"
 						type="number"
 						:inputBorder="false"
@@ -102,11 +102,11 @@
 				
 				<uni-forms-item 
 					label="报名费用" 
-					name="fee" 
+					name="registrationFee" 
 					required
 				>
 					<uni-easyinput 
-						v-model="form.fee" 
+						v-model="form.registrationFee" 
 						placeholder="输入0元即为免费  请输入"
 						type="number"
 						:clearable="true"
@@ -118,11 +118,11 @@
 				
 				<uni-forms-item 
 					label="报名方式" 
-					name="signupType" 
+					name="type" 
 					required
 				>
 					<uni-data-checkbox 
-						v-model="form.signupType"
+						v-model="form.type"
 						:localdata="signupTypeOptions"
 						selectedColor="#1a1a1a"
 					/>
@@ -174,6 +174,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import dayjs from 'dayjs'
 import BizSection from '@/components/BizSection.vue'
 import PageScaffold from '@/components/PageScaffold.vue'
@@ -194,12 +195,6 @@ onUnmounted(() => {
 	eventEmitter.off(EVENT_TYPE.ACTIVITY_CONFIG_UPDATED, onActivityConfigUpdated)
 })
 
-// 表单引用
-const formRef = ref(null)
-
-// 提交状态
-const submitLoading = ref(false)
-
 // 表单数据
 const form = ref({
 	title: '',
@@ -207,12 +202,35 @@ const form = ref({
 	date: '',
 	formatDate: '',
 	detailConfig: '',
-	people: '',
-	fee: '',
-	signupType: 1,
+	limitNum: '',
+	registrationFee: '',
+	type: 1,
 	condition: '',
 	conditionDetail: ''
 })
+onLoad(async (query) => {
+	if (!query.id) {
+		return
+	}
+	const res = await ActivityApi.fetchActivityDetail(query.id)
+	const dateRange = [dayjs(res.content.startTime, 'YYYY-MM-DD HH:mm:ss').valueOf(), dayjs(res.content.endTime, 'YYYY-MM-DD HH:mm:ss').valueOf()]
+	form.value = {
+		title: res.content.title,
+		address: res.content.address,
+		date: dateRange,
+		limitNum: res.content.limitNum,
+		type: Number(res.content.type),
+		condition: res.content.condition,
+		registrationFee: res.content.registrationFee,
+	}
+	onDateChange(dateRange)
+})
+
+// 表单引用
+const formRef = ref(null)
+
+// 提交状态
+const submitLoading = ref(false)
 
 // 报名方式选项
 const signupTypeOptions = ref([
@@ -257,7 +275,7 @@ const rules = ref({
 			}
 		]
 	},
-	people: {
+	limitNum: {
 		rules: [
 			{
 				required: true,
@@ -269,7 +287,7 @@ const rules = ref({
 			}
 		]
 	},
-	fee: {
+	registrationFee: {
 		rules: [
 			{
 				required: true,
@@ -281,7 +299,7 @@ const rules = ref({
 			}
 		]
 	},
-	signupType: {
+	type: {
 		rules: [
 			{
 				required: true,
@@ -362,8 +380,8 @@ async function submit() {
 			photo: activityConfig.value.mainImages.join(','),
 			content: activityConfig.value.detailImages.join(','),
 			collectImgs: activityConfig.value.stampImages.join(','),
-			type: form.value.signupType === 'apply' ? 1 : 2,
-			limitNum: Number(form.value.people),
+			type: form.value.type,
+			limitNum: Number(form.value.limitNum),
 			condition: form.value.condition,
 			intro: activityConfig.value.intro,
 		}

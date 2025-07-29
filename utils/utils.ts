@@ -1,5 +1,10 @@
 import { IndexApi } from "../services"
 import request from "../services/request"
+import { imgBaseUrl } from "./enums";
+
+export const prefillImageUrl = (url: string) => {
+	return imgBaseUrl + url;
+}
 
 export const uploadImg = async (tempFilePaths: string[]) => {
 	return Promise.all(await tempFilePaths.map(item => IndexApi.postImage(item)))
