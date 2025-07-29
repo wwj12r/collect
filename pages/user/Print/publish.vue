@@ -7,7 +7,7 @@
 		<view class="img-upload" @click="chooseImage">
 			<image v-if="imgUrl" :src="imgUrl" class="img" mode="aspectFill" />
 			<view v-else class="img-placeholder">
-				<u-icon type="plusempty" size="36" color="#bbb" />
+				<image class="add-icon" src="/static/index/add.png" />
 			</view>
 		</view>
 
@@ -24,6 +24,8 @@
 
 <script setup>
 import { ref } from 'vue'
+import { ActivityApi } from '../../../services/activity'
+import { uploadImg } from '../../../utils/utils'
 
 const imgUrl = ref('')
 const title = ref('')
@@ -38,7 +40,7 @@ function chooseImage() {
 	})
 }
 
-function submit() {
+const submit = async () => {
 	if (!imgUrl.value) {
 		uni.showToast({ title: '请上传图片', icon: 'none' })
 		return
@@ -51,9 +53,16 @@ function submit() {
 		uni.showToast({ title: '请输入正文', icon: 'none' })
 		return
 	}
+	const photo = await uploadImg([imgUrl.value]).then(res => res[0].imgUrl)
+	console.log(photo)
+	const res = await ActivityApi.postContentcreate({
+		title: title.value,
+		content: content.value,
+		photo
+	})
 	uni.showToast({ title: '发布成功', icon: 'success' })
 	// 这里可对接后端API
-	uni.navigateTo({ url: '/pages/index/success' })
+	uni.navigateBack()
 }
 </script>
 
@@ -89,6 +98,10 @@ function submit() {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	image{
+		width: 30rpx;
+		height: 30rpx;
+	}
 }
 
 .title-input {

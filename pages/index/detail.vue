@@ -11,7 +11,7 @@
 		<view class="info">
 			<!-- 活动信息 -->
 			<view class="info-card">
-				<view class="tag">{{ ['', '待报名', '报名中', '已结束'][detail.content.state] }}</view>
+				<view class="tag">{{ detail.activitySignetStateList[detail.content.state] }}</view>
 				<view class="event-title">{{ detail.content.title }}</view>
 			</view>
 
@@ -22,7 +22,8 @@
 					<view class="org-name">{{ detail.content.nickName }}</view>
 					<view class="org-name">发起人</view>
 				</view>
-				<button class="follow-btn" @click="follow">+关注</button>
+				<button class="follow-btn" @click="follow" v-if="!detail.content.isFollow">+关注</button>
+				<button class="follow-btn followed" v-else>已关注</button>
 			</view>
 
 			<!-- 活动详情 -->
@@ -96,8 +97,8 @@
 
 			<!-- 报名按钮 -->
 			<view class="footer">
-				<button class="signup-btn disabled" v-if="detail.content.state == 1">待报名</button>
-				<button class="signup-btn disabled" v-else-if="detail.content.state == 3">已结束</button>
+				<button class="signup-btn disabled" v-if="detail.content.state == 1">{{ detail.activitySignetStateList[detail.content.state] }}</button>
+				<button class="signup-btn disabled" v-else-if="detail.content.state == 3">{{ detail.activitySignetStateList[detail.content.state] }}</button>
 				<button class="signup-btn" @click="openPopUp" v-else-if="detail.content.state == 2 && authorized">报名（￥{{ detail.content.registrationFee }}）</button>
 				<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuth" v-if="detail.content.state == 2 && !authorized">
 					报名（￥{{ detail.content.registrationFee }}）
@@ -520,6 +521,12 @@ const follow = () => {
 	padding: 4rpx 16rpx;
 	color: #1A1A1A;
 	margin: 0;
+
+	&.followed {
+		background: #eee;
+		color: #aaa;
+		border: 1px solid #eee;
+	}
 }
 
 .event-detail {
@@ -600,7 +607,7 @@ const follow = () => {
 	justify-content: space-between;
 	background-color: rgba(237, 237, 237, 1);
 	border-radius: 20rpx;
-	padding: 33rpx;
+	padding: 42rpx 33rpx;
 	height: 22rpx;
 
 	&.red {

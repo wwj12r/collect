@@ -41,15 +41,15 @@ import { ref, onMounted } from 'vue'
 import { getAuthorize } from '../../utils/utils'
 const authorized = ref(uni.getStorageSync('token'))
 const activities = [
-	{ icon: 'all', text: '全部', link: '/pages/user/Activity/index?type=1' },
-	{ icon: 'audit', text: '待审核', link: '/pages/user/Activity/index?type=2' },
-	{ icon: 'use', text: '待核销', link: '/pages/user/Activity/index?type=3' },
+	{ icon: 'all', text: '全部', link: '/pages/user/Activity/index?type=1,2,3,4' },
+	{ icon: 'audit', text: '待审核', link: '/pages/user/Activity/index?type=1' },
+	{ icon: 'use', text: '待核销', link: '/pages/user/Activity/index?type=2' },
 	{ icon: 'done', text: '已完成', link: '/pages/user/Activity/index?type=4' }
 ]
 const tools = [
 	{ icon: 'publish', text: '发布活动', link: '/pages/user/Activity/publish' },
 	{ icon: 'manage', text: '活动管理', link: '/pages/user/Activity/manage' },
-	{ icon: 'scan', text: '扫码核销', link: '/pages/user/Activity/verify' },
+	{ icon: 'scan', text: '扫码核销', link: '/pages/user/scan' },
 	{ icon: 'print', text: '发布印章', link: '/pages/user/Print/index' }
 ]
 const goSetting = () => {

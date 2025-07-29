@@ -6,15 +6,62 @@
 			<text class="add-text">发布我的印章</text>
 		</view>
 		<!-- 其余图片 -->
-		<view v-for="(img, idx) in detail.content.collectImgs.split(',').slice(0, 11)" :key="idx" class="stamp-img-item">
-			<image :src="imgBaseUrl + img" mode="aspectFill" />
+		<view v-for="(img, idx) in list" :key="idx" class="stamp-img-item">
+			<image :src="imgBaseUrl + img.photo" mode="aspectFill" />
 		</view>
 	</view>
 </template>
-<script>
-const toPublish = () => {
-	uni.navigateTo({ url: '/pages/user/Rrint/publish' })
+<script setup>
+import { ref, onMounted } from 'vue'
+import { ActivityApi } from '../../../services/activity'
+import { onReachBottom, onShow } from '@dcloudio/uni-app'
+import { imgBaseUrl } from '../../../utils/enums'
+
+const list = ref([])
+const page = ref(1)
+const pageSize = 10
+const loading = ref(false)
+const finished = ref(false)
+
+const getList = () => {
+	console.log(loading.value, finished.value)
+	if (loading.value || finished.value) return
+	loading.value = true
+	const userId = uni.getStorageSync('userId')
+	ActivityApi.getContentlist({ page: page.value, perPage: pageSize, state: userId }).then(res => {
+		if (res.content && res.content.length > 0) {
+			list.value.push(...res.content)
+			page.value++
+		} else {
+			finished.value = true
+		}
+		loading.value = false
+	}).catch(err => {
+		loading.value = false
+	})
 }
+
+const toPublish = () => {
+	finished.value = false
+	uni.navigateTo({ url: '/pages/user/Print/publish' })
+}
+const resetList= () => {
+  list.value = []
+  page.value = 1
+  finished.value = false
+}
+onShow(() => {
+	resetList()
+	getList()
+})
+
+// onMounted(() => {
+// 	getList()
+// })
+
+onReachBottom(() => {
+	getList()
+})
 </script>
 
 <style scoped lang="scss">
@@ -53,8 +100,8 @@ const toPublish = () => {
 }
 
 .add-icon {
-	width: 60rpx;
-	height: 60rpx;
+	width: 60rpx!important;
+	height: 60rpx!important;
 	margin-bottom: 10rpx;
 }
 

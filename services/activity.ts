@@ -6,12 +6,12 @@ export interface PublishActivityRequest {
 	address: string
 	startTime: string
 	endTime: string
-  photo: string
-  content: string
-  collectImgs: string
-  type: number
+	photo: string
+	content: string
+	collectImgs: string
+	type: number
 	condition: string
-  limitNum: number
+	limitNum: number
 	intro: string
 }
 
@@ -53,9 +53,9 @@ export const ActivityApi = {
 	 * 根据 Postman 文档: https://documenter.getpostman.com/view/3444793/2sB34kEeJG#e68c801e-7022-4796-bf91-2949f61f327d
 	 */
 	publishActivity(data: PublishActivityRequest) {
-		return request.post<BizResponse>({ 
-			url: '/activitysignet', 
-			data 
+		return request.post<BizResponse>({
+			url: '/activitysignet',
+			data
 		})
 	},
 
@@ -91,5 +91,22 @@ export const ActivityApi = {
 			url: '/activitysignet/publishlist',
 			data
 		})
+	},
+
+	getMylist(data) {
+		return request.get({ url: '/activitysignet/mylist', data })
+	},
+
+	getQrcodeConfirm(data) {
+		return request.get({ url: '/activitysignet/confirm', data })
+	},
+
+	getContentlist(data) {
+		return request.get({ url: '/activitysignet/contentlist', data })
+	},
+
+	postContentcreate(data) {
+		return request.post({ url: '/activitysignet/contentcreate', data })
 	}
+
 }
