@@ -9,7 +9,7 @@
 
 		<!-- 活动信息卡片 -->
 		<view class="ticket-card">
-			<view class="flex items-start flex-row gap-4 p-4">
+			<view class="flex items-start flex-row gap-4 p-4 pb-0">
 				<image class="w-[200rpx] h-[200rpx]" v-if="getPhotoFromStringSlice(activity.photo)" :src="getPhotoFromStringSlice(activity.photo)"  mode="aspectFill" />
 				<view class="pt-4 font-bold">{{ activity?.title }}, {{ activity?.startTime }}, 正式启动</view>
 			</view>
@@ -38,7 +38,7 @@
 			</view>
 
 			<!-- 操作按钮 -->
-			<view class="flex flex-row justify-around mt-6 mx-4 pt-6 border-t-2 border-dashed border-branding-light-grey">
+			<view class="flex flex-row justify-around mt-4 mx-4 pt-6 border-t-2 border-dashed border-branding-light-grey">
 				<button plain class="!border-none flex flex-col items-center gap-2 text-xs" @click="save">
 					<image src="/static/user/qrcode-save.png" mode="aspectFit" class="w-6 h-6" />
 					保存到相册
@@ -84,7 +84,6 @@ onLoad(async (query) => {
 	uni.setStorageSync('currentActivityId', query.id)
 	
 	const res = await ActivityApi.fetchActivityDetail(query.id)
-	console.log(res)
 	let formatTime = ''
 	const mapDayToChn = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 	if (dayjs(res.content.startTime).isSame(dayjs(res.content.endTime), 'day')) {
@@ -123,7 +122,6 @@ onLoad(async (query) => {
 		return
 	}
 	const res = await ActivityApi.fetchActivityVerifyQrCode(query.id)
-	console.log(res)
 	qrcodeUrl.value = res.imgUrl
 })
 
