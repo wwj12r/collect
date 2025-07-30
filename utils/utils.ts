@@ -1,9 +1,15 @@
 import { IndexApi } from "../services"
-import request from "../services/request"
 import { imgBaseUrl } from "./enums";
 
 export const prefillImageUrl = (url: string) => {
 	return imgBaseUrl + url;
+}
+
+export const getPhotoFromStringSlice = (photo: string) => {
+	if (photo) {
+		return prefillImageUrl(photo.split(',')[0])
+	}
+	return ''
 }
 
 /**

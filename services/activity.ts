@@ -59,6 +59,13 @@ export const ActivityApi = {
 		})
 	},
 
+	republishActivity(data: PublishActivityRequest, id: string) {
+		return request.put<BizResponse>({
+			url: `/activitysignet/${id}`,
+			data
+		})
+	},
+
 	/**
 	 * 修改活动状态
 	 * Like https://documenter.getpostman.com/view/3444793/2sB34kEeJG#dda0a658-ff90-4a44-a8fa-3879376f067c
@@ -107,6 +114,19 @@ export const ActivityApi = {
 
 	postContentcreate(data) {
 		return request.post({ url: '/activitysignet/contentcreate', data })
+	},
+	
+	/**
+	 * 获取活动核销二维码
+	 * @param id 活动id
+	 * @returns 二维码图片url
+	 * @link https://documenter.getpostman.com/view/3444793/2sB34kEeJG#1dc4bc79-f96d-4d95-950e-564f49c4c690
+	 */
+	fetchActivityVerifyQrCode(id: string) {
+		return request.get<{imgUrl: string}>({
+			url: `/activitysignet/qrcodeauthor`,
+			data: { id }
+		})
 	}
 
 }

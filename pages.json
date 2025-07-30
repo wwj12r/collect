@@ -76,7 +76,9 @@
 		{
 			"path": "pages/user/Activity/verify",
 			"style": {
-				"navigationBarTitleText": "活动核销"
+				"navigationBarTitleText": "活动核销",
+				"enableShareTimeline": true,
+				"enableShareAppMessage": true
 			}
 		},
 		{
