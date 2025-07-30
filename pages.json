@@ -48,7 +48,10 @@
 			"path": "pages/gallery/index",
 			"style": {
 				"navigationBarTitleText": "展厅",
-				"navigationStyle": "custom"
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false,
+				"enableShareAppMessage": true,
+				"onReachBottomDistance": 100
 			}
 		},
 		{

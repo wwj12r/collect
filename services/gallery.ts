@@ -6,7 +6,14 @@ export const GalleryApi = {
 	/**
 	 * 集章卡册列表
 	*/
-	getContentuserlist() {
-		return request.post({ url: '/activitysignet/contentuserlist' })
+	getContentuserlist(data) {
+		return request.get({ url: '/activitysignet/contentuserlist', data })
+	},
+
+	/**
+	 * 活动点赞
+	*/
+	postZan(data) {
+		return request.post({ url: '/activitysignet/zan', data })
 	},
 }

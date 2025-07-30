@@ -2,12 +2,13 @@
 	<view class="mine-page">
 		<!-- 头部用户信息 -->
 		<view class="user-info">
-			<image class="avatar" src="https://your-image-url/avatar.jpg" />
-			<view class="user-name">Momo大锤子</view>
+			<image class="avatar" :src="imgBaseUrl + user.headimg" />
+			<view class="user-name">{{ user.nickname }}</view>
 			<view class="setting" @click="goSetting">
 				<image src="/static/user/setting.png"></image>
 				<text class="setting-text">设置</text>
 			</view>
+			<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuth(item)" v-if="!tokenRef"></button>
 		</view>
 
 		<view class="section-title">我的活动</view>
@@ -17,7 +18,7 @@
 				<view class="activity-item" v-for="item in activities" :key="item.text" @click="onActivityClick(item)">
 					<image :src="'/static/user/' + item.icon + '.png'"></image>
 					<text class="activity-text">{{ item.text }}</text>
-					<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuth(item)" v-if="!authorized"></button>
+					<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuth(item)" v-if="!tokenRef"></button>
 				</view>
 			</view>
 		</view>
@@ -29,7 +30,7 @@
 				<view class="tool-item" v-for="item in tools" :key="item.text" @click="onActivityClick(item)">
 					<image :src="'/static/user/' + item.icon + '.png'"></image>
 					<text class="tool-text">{{ item.text }}</text>
-					<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuth(item)" v-if="!authorized"></button>
+					<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuth(item)" v-if="!tokenRef"></button>
 				</view>
 			</view>
 		</view>
@@ -39,7 +40,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getAuthorize } from '../../utils/utils'
-const authorized = ref(uni.getStorageSync('token'))
+import { useToken } from '../../hooks/userToken'
+import { onShow } from '@dcloudio/uni-app'
+import { UserApi } from '../../services/user'
+import { imgBaseUrl } from '../../utils/enums'
+const { tokenRef, setToken } = useToken()
+const user = ref({})
 const activities = [
 	{ icon: 'all', text: '全部', link: '/pages/user/Activity/index?type=1,2,3,4' },
 	{ icon: 'audit', text: '待审核', link: '/pages/user/Activity/index?type=1' },
@@ -58,14 +64,19 @@ const goSetting = () => {
 }
 const onActivityClick = (item) => {
 	// 处理活动点击
-	console.log(authorized.value)
-	if (!authorized.value) return
+	console.log(tokenRef.value)
+	if (!tokenRef.value) return
 	uni.navigateTo({ url: item.link })
 }
 
 const getAuth = (item) => {
-	getAuthorize().then(res => uni.navigateTo({ url: item.link }))
+	getAuthorize().then(res => item.link ? uni.navigateTo({ url: item.link }) : UserApi.getUser().then(res => user.value = res))
 }
+onMounted(() => {
+	// getList()
+	UserApi.getUser().then(res => user.value = res)
+})
+
 </script>
 
 <style scoped lang="scss">
@@ -131,15 +142,15 @@ const getAuth = (item) => {
 		height: 40rpx;
 		object-fit: contain;
 	}
+}
 
-	.signup-btn {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		opacity: 0;
-	}
+.signup-btn {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
 }
 
 .section-title {

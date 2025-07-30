@@ -1,84 +1,179 @@
 <template>
 	<view class="album-page">
 		<!-- 顶部背景大图 -->
-		<view class="header">
-			<image class="header-bg" src="https://your-image-url/top-bg.jpg" mode="aspectFill" />
-			<!-- 标题贴纸 -->
-			<image class="title-sticker" src="https://your-image-url/title-sticker.png" mode="widthFix" />
-			<!-- 右上角菜单按钮 -->
-			<view class="menu-btn" @click="onMenuClick">
-				<uni-icons type="more-filled" size="32" color="#333" />
-			</view>
+		<view class="header" v-if="list.length || !tokenRef">
+			<image class="header-bg" src="/static/gallery/bg.png" mode="aspectFill" />
+			<image class="header-bg-title" src="/static/gallery/bg-title.png" mode="aspectFill" />
+		</view>
+		<view v-if="!list.length && tokenRef" class="album-empty">
+			<image src="/static/gallery/empty.png"></image>
+			<view>今日牌运: 空空如也!</view>
+			<text>去创意广场收集电子章吧~</text>
 		</view>
 
 		<!-- 集章卡片网格 -->
-		<view class="card-grid">
-			<view class="card-item" v-for="(card, idx) in cards" :key="idx" @click="showPopup = true">
-				<image class="card-img" :src="card.img" mode="aspectFill" />
-				<view class="card-title">{{ card.title }}</view>
+		<view class="card-grid" v-if="tokenRef">
+			<view class="card-item" v-for="(card, idx) in list" :key="idx" @click="previewImg(card)">
+				<image class="card-img" :src="card.headimg" mode="aspectFill" />
 			</view>
 		</view>
+		<view v-else>
+			<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuth">
+				登录查看
+			</button>
+		</view>
 	</view>
-	<StampPreviewPopup v-model:show="showPopup" :imgUrl="imgUrl" title="Be Water My friend" desc="" subDesc="If you love life, don't waste time, for time is what life is made up of." @share="uni.showToast({ title: '分享', icon: 'none' })" @like="uni.showToast({ title: '点赞', icon: 'none' })" />
+	<StampPreviewPopup v-model:show="showPopup" :imgUrl="active.headimg" @like="zan" />
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import StampPreviewPopup from './components/preview.vue'
+import { getAuthorize } from '../../utils/utils'
+import { GalleryApi } from '../../services/gallery'
+import { onReachBottom, onShow, onLoad, onShareAppMessage } from '@dcloudio/uni-app'
+import { useToken } from '../../hooks/userToken'
+const { tokenRef, setToken } = useToken()
+
+onShareAppMessage(() => {
+	console.log(showPopup.value)
+	return {
+		title: '我的展厅',
+		imageUrl: active.value.headimg,
+		path: '/pages/gallery/index?id=' + uni.getStorageSync('userId')
+	}
+})
+
+const list = ref([])
+const page = ref(1)
+const pageSize = 10
+const loading = ref(false)
+const finished = ref(false)
+const active = ref({})
+
+const getList = (id) => {
+	if (loading.value || finished.value) return
+	loading.value = true
+	uni.showLoading()
+	GalleryApi.getContentuserlist({ page: page.value, perPage: pageSize, userId: id || '' }).then(res => {
+		uni.hideLoading()
+		if (res.content && res.content.length > 0) {
+			list.value.push(...res.content)
+			page.value++
+		} else {
+			finished.value = true
+		}
+		loading.value = false
+	}).catch(err => {
+		uni.hideLoading()
+		loading.value = false
+	})
+}
+// onMounted(() => {
+// 	tokenRef.value && getList()
+// })
+
+onShow((option) => {
+	resetList()
+	(tokenRef.value || option.id) && getList(option.id)
+});
+onReachBottom(() => {
+	tokenRef.value && getList()
+})
 
 const showPopup = ref(false)
 
-const cards = ref([
-	{
-		img: 'https://your-image-url/bruce-lee.jpg',
-		title: 'Be Water My friend'
-	},
-	{
-		img: 'https://your-image-url/jaychou.jpg',
-		title: '咏叹不褪晓'
-	},
-	{
-		img: 'https://your-image-url/slamdunk.jpg',
-		title: 'SLAM DUNK'
-	},
-	{
-		img: 'https://your-image-url/canton-tower.jpg',
-		title: 'CANTON TOWER'
-	},
-	{
-		img: 'https://your-image-url/stephen-jay.jpg',
-		title: 'STEPHEN CHOW JAY CHOU'
-	},
-	{
-		img: 'https://your-image-url/stamp-collection.jpg',
-		title: ''
-	}
-])
+const getAuth = () => {
+	getAuthorize().then(res => {
+		setToken(uni.getStorageSync('token'));
+		getList()
+	})
+}
 
+const resetList= () => {
+  list.value = []
+  page.value = 1
+  finished.value = false
+}
 
-const onMenuClick = () => {
-	uni.showToast({ title: '菜单点击', icon: 'none' })
+const previewImg = (item) => {
+	showPopup.value = true
+	active.value = item
+}
+
+const zan = async () => {
+	await GalleryApi.postZan({id: active.value.id})
+	uni.showToast({ title: '点赞成功！' })
+	showPopup.value = false
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.album-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-top: 338rpx;
+
+	image {
+		width: 328rpx;
+		height: 398rpx;
+	}
+
+	view {
+		margin-top: 100rpx;
+		font-size: 40rpx;
+		font-weight: bold;
+		color: rgba(26, 26, 26, 1);
+	}
+
+	text {
+		margin-top: 29rpx;
+		font-size: 28rpx;
+		color: rgba(153, 153, 153, 1);
+	}
+}
+
+.signup-btn {
+	width: 90%;
+	background: #222;
+	color: #fff;
+	font-size: 32rpx;
+	border-radius: 50rpx;
+	padding: 20rpx 0;
+	font-weight: bold;
+	margin: 40rpx auto;
+	display: block;
+
+	&.disabled {
+		background-color: #f7f7f7;
+		color: rgba(0, 0, 0, .3);
+
+	}
+}
+
 .album-page {
-	background: #f7f7f7;
+	background: #f0f2f5;
 	min-height: 100vh;
 }
 
 .header {
 	position: relative;
 	width: 100%;
-	height: 260rpx;
+	height: 870rpx;
 }
 
 .header-bg {
 	width: 100%;
-	height: 260rpx;
-	object-fit: cover;
-	border-bottom-left-radius: 32rpx;
-	border-bottom-right-radius: 32rpx;
+	height: 870rpx;
+}
+
+.header-bg-title {
+	position: absolute;
+	width: 341rpx;
+	height: 241rpx;
+	top: 200rpx;
+	left: 372rpx;
 }
 
 .title-sticker {
@@ -103,7 +198,8 @@ const onMenuClick = () => {
 }
 
 .card-grid {
-	margin-top: 60rpx;
+	position: relative;
+	margin-top: -386rpx;
 	padding: 0 24rpx;
 	display: flex;
 	flex-wrap: wrap;
@@ -111,24 +207,18 @@ const onMenuClick = () => {
 }
 
 .card-item {
-	width: 47%;
-	background: #fff;
-	border-radius: 18rpx;
-	margin-bottom: 28rpx;
+	width: 344rpx;
+	height: 386rpx;
+	border-radius: 20rpx;
 	box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
 	overflow: hidden;
-	border: 2rpx dashed #ccc;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	padding-bottom: 12rpx;
+	margin-bottom: 20rpx;
 }
 
 .card-img {
 	width: 100%;
-	height: 200rpx;
+	height: 100%;
 	object-fit: cover;
-	border-bottom: 1rpx solid #eee;
 }
 
 .card-title {
