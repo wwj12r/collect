@@ -67,7 +67,7 @@
 <script setup>
 import { ref } from 'vue'
 import VerifySuccessPopup from './components/VerifySuccessPopup.vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 import { ActivityApi } from '../../../services/activity'
 import { getPhotoFromStringSlice, prefillImageUrl } from '../../../utils/utils'
 import dayjs from 'dayjs'
@@ -192,6 +192,24 @@ function save() {
 		}
 	})
 }
+
+// 分享给朋友
+onShareAppMessage(() => {
+	return {
+		title: `${activity.value.title || '活动二维码'}`,
+		path: `/pages/user/Activity/verify?id=${activity.value.id || ''}`,
+		imageUrl: qrcodeUrl.value ? prefillImageUrl(qrcodeUrl.value) : ''
+	}
+})
+
+// 分享到朋友圈
+onShareTimeline(() => {
+	return {
+		title: `${activity.value.title || '活动二维码'}`,
+		query: `id=${activity.value.id || ''}`,
+		imageUrl: qrcodeUrl.value ? prefillImageUrl(qrcodeUrl.value) : ''
+	}
+})
 
 </script>
 
