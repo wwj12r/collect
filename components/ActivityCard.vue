@@ -18,7 +18,8 @@
     <!-- 活动主体 -->
     <view class="flex m-3 mt-0">
       <image 
-        :src="prefillImageUrl(activity.photo)" 
+        v-if="getPhotoFromStringSlice(activity.photo)"
+        :src="getPhotoFromStringSlice(activity.photo)" 
         class="rounded-lg mr-2 flex-shrink-0" 
         mode="aspectFill"
         style="width: 226rpx; height: 192rpx; border-radius: 12rpx;"
@@ -120,7 +121,7 @@
 <script setup>
 import { useAction } from '../hooks/useAction';
 import { ActivityApi, ActivityState, ActivityStateLabelMapper } from '../services/activity';
-import { prefillImageUrl } from '../utils/utils';
+import { getPhotoFromStringSlice } from '../utils/utils';
 
 const emit = defineEmits(['scan', 'refresh'])
 
@@ -204,7 +205,9 @@ const [unpublishLoading, unpublish] = useAction({
 })
 
 const onScan = () => {
-  emit('scan', activity)
+  uni.navigateTo({
+    url: `/pages/user/scan?id=${props.activity.id}`
+  })
 }
 
 const onReEdit = () => {

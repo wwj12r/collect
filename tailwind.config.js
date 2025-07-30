@@ -20,7 +20,8 @@ module.exports = {
       colors: {
         'branding-primary': '#1a1a1a',
         'branding-grey': '#999999',
-        'branding-orange': '#FF4D00'
+        'branding-orange': '#FF4D00',
+        'branding-light-grey': '#f7f7f7'
       },
     },
   },

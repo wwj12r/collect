@@ -34,14 +34,6 @@ const { data, status, loadMore, refresh } = useList(fetchData)
 onReachBottom(loadMore)
 onPullDownRefresh(refresh)
 
-const onScan = (activity) => {
-  console.log('扫码核销', activity)
-  uni.showToast({
-    title: '扫码核销功能',
-    icon: 'none'
-  })
-}
-
 const onGenerateCode = (activity) => {
   console.log('生成核销码', activity)
   uni.showToast({

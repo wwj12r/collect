@@ -164,9 +164,9 @@
 
 		<!-- 发布按钮 -->
 		<FixedBottomButton
-			text="发布活动"
+			:text="activityId ? '编辑活动' : '发布活动'"
 			:loading="submitLoading"
-			loading-text="发布中..."
+			:loading-text="activityId ? '编辑中...' : '发布中...'"
 			@click="submit"
 		/>
 	</PageScaffold>
@@ -188,11 +188,19 @@ const onActivityConfigUpdated = (data) => {
 	activityConfig.value = data
 }
 
+const onActivityConfigGet = () => {
+	if (activityConfig.value) {
+		eventEmitter.emit(EVENT_TYPE.ACTIVITY_CONFIG_TRANSFER, activityConfig.value)
+	}
+}
+
 onMounted(() => {
 	eventEmitter.on(EVENT_TYPE.ACTIVITY_CONFIG_UPDATED, onActivityConfigUpdated)
+	eventEmitter.on(EVENT_TYPE.ACTIVITY_CONFIG_GET, onActivityConfigGet)
 })
 onUnmounted(() => {
 	eventEmitter.off(EVENT_TYPE.ACTIVITY_CONFIG_UPDATED, onActivityConfigUpdated)
+	eventEmitter.off(EVENT_TYPE.ACTIVITY_CONFIG_GET, onActivityConfigGet)
 })
 
 // 表单数据
@@ -208,10 +216,13 @@ const form = ref({
 	condition: '',
 	conditionDetail: ''
 })
+
+const activityId = ref()
 onLoad(async (query) => {
 	if (!query.id) {
 		return
 	}
+	activityId.value = query.id
 	const res = await ActivityApi.fetchActivityDetail(query.id)
 	const dateRange = [dayjs(res.content.startTime, 'YYYY-MM-DD HH:mm:ss').valueOf(), dayjs(res.content.endTime, 'YYYY-MM-DD HH:mm:ss').valueOf()]
 	form.value = {
@@ -223,6 +234,15 @@ onLoad(async (query) => {
 		condition: res.content.condition,
 		registrationFee: res.content.registrationFee,
 	}
+
+	activityConfig.value = {
+		photo: res.content.photo?.split(','),
+		content: res.content.content?.split(','),
+		collectImgs: res.content.collectImgs?.split(','),
+		intro: res.content.intro,
+	}
+
+
 	onDateChange(dateRange)
 })
 
@@ -324,23 +344,21 @@ function onDateChange(value) {
 	const endDate = dayjs(end);
 	const mapDayToChn = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 	if (endDate.isSame(startDate, 'day') && endDate.isSame(startDate, 'year') && endDate.isSame(dayjs(), 'year')){
-		form.value.formatDate = `${startDate.format('MM月DD日')} ${mapDayToChn[startDate.day()]} ${startDate.format('hh:mm')}~${endDate.format('hh:mm')}`;
+		form.value.formatDate = `${startDate.format('MM月DD日')} ${mapDayToChn[startDate.day()]} ${startDate.format('hh:mm')} ~ ${endDate.format('hh:mm')}`;
 		return;
 	}
 	
 	if (endDate.isSame(startDate, 'month') && endDate.isSame(startDate, 'year') && endDate.isSame(dayjs(), 'year')){
-		form.value.formatDate = `${startDate.format('MM月')}${startDate.format('DD日')} ${startDate.format('hh:mm')}~${endDate.format('DD日')} ${endDate.format('hh:mm')}`;
+		form.value.formatDate = `${startDate.format('MM月')}${startDate.format('DD日')} ${startDate.format('hh:mm')} ~ ${endDate.format('DD日')} ${endDate.format('hh:mm')}`;
 		return;
 	}
 
 	if (endDate.isSame(startDate, 'year') && endDate.isSame(dayjs(), 'year')) {
-		form.value.formatDate = `${startDate.format('MM月DD日 hh:mm')}
-		~${endDate.format('MM月DD日 hh:mm')}`;
+		form.value.formatDate = `${startDate.format('MM月DD日 hh:mm')} ~ ${endDate.format('MM月DD日 hh:mm')}`;
 		return
 	}
 	
-	form.value.formatDate = `${startDate.format('YYYY年MM月DD日 hh:mm')}
-	~${endDate.format('YYYY年MM月DD日 hh:mm')}`;
+	form.value.formatDate = `${startDate.format('YYYY年MM月DD日 hh:mm')} ~ ${endDate.format('YYYY年MM月DD日 hh:mm')}`;
 }
 
 // 跳转到编辑页面
@@ -377,27 +395,30 @@ async function submit() {
 			address: form.value.address,
 			startTime: dayjs(form.value.date[0]).format('YYYY-MM-DD HH:mm:ss'),
 			endTime: dayjs(form.value.date[1]).format('YYYY-MM-DD HH:mm:ss'),
-			photo: activityConfig.value.mainImages.join(','),
-			content: activityConfig.value.detailImages.join(','),
-			collectImgs: activityConfig.value.stampImages.join(','),
+			photo: activityConfig.value.photo.join(','),
+			content: activityConfig.value.content.join(','),
+			collectImgs: activityConfig.value.collectImgs.join(','),
+			intro: activityConfig.value.intro,
 			type: form.value.type,
 			limitNum: Number(form.value.limitNum),
 			condition: form.value.condition,
-			intro: activityConfig.value.intro,
 		}
 
-		console.log('提交数据:', submitData)
-
-		// 这里调用 API 发布活动
-		// await api.activity.create(submitData)
-		const res = await ActivityApi.publishActivity(submitData)
-		console.log(res)
-
-		uni.showToast({
-			title: '发布成功',
-			icon: 'success',
-			duration: 2000
-		})
+		if (activityId.value) {
+			await ActivityApi.republishActivity(submitData, activityId.value)
+			uni.showToast({
+				title: '编辑成功',
+				icon: 'success',
+				duration: 2000
+			})
+		} else {
+			await ActivityApi.publishActivity(submitData)
+			uni.showToast({
+				title: '发布成功',
+				icon: 'success',
+				duration: 2000
+			})
+		}
 
 		// 延迟跳转
 		setTimeout(() => {
