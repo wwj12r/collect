@@ -9,7 +9,7 @@
 		</view>
 		<view class="detail">
 			<view class="detail-title" @click="toDetail(content[currentIndex].id)">
-				<view class="detail-title-tips">{{ ['', '下架', '报名中', '已结束'][content[currentIndex].state] }}</view>
+				<view class="detail-title-tips">{{ isPastTime(content[currentIndex].endTime) ? '已结束' : ['', '下架', '报名中', '已结束'][content[currentIndex].state] }}</view>
 				<view class="detail-title-title">{{ content[currentIndex].title }}</view>
 			</view>
 			<view class="detail-info">
@@ -25,7 +25,7 @@
 						<image class="detail-info-address-image" src="/static/index/address.png"></image>
 						{{ content[currentIndex].address }}
 					</view>
-					<view class="detail-info-address-right">距您 8.5km</view>
+					<view class="detail-info-address-right" v-if="content[currentIndex].distance">距您 {{ content[currentIndex].distance }} km</view>
 				</view>
 				<view class="detail-info-button">
 					<view class="detail-info-button-left">{{ content[currentIndex].num }} 人已报名</view>
@@ -43,15 +43,42 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { IndexApi } from '../../services'
-import { getFullImageUrl } from '../../utils/utils'
+import { getDistance, getFullImageUrl, getGeoCoder, isPastTime } from '../../utils/utils'
 const content = ref([])
 const currentIndex = ref(0)
 
 onMounted(() => {
 	IndexApi.getActivitysignet().then(res => {
 		content.value = res.content
+		getDistances()
 	})
 })
+
+const getDistances = async () => {
+	wx.getLocation({
+		type: 'gcj02', // 返回可以用于wx.openLocation的坐标
+		success(res) {
+			const userLat = res.latitude;
+			const userLng = res.longitude;
+			content.value.map(async (item, index) => {
+				try {
+					const geo = await getGeoCoder(item.address)
+					console.log(geo)
+					const targetLat = geo.lat;
+					const targetLng = geo.lng;
+
+					const distance = getDistance(userLat, userLng, targetLat, targetLng);
+					content.value[index] = { ...content.value[index], distance: distance.toFixed(2) }
+				} catch {
+					content.value[index] = { ...content.value[index], distance: 0 }
+				}
+			})
+		},
+		fail(err) {
+			console.error('获取定位失败', err);
+		}
+	});
+}
 
 const onSwiperChange = (e) => {
 	currentIndex.value = e.current

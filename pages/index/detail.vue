@@ -10,7 +10,7 @@
 		<view class="info">
 			<!-- 活动信息 -->
 			<view class="info-card">
-				<view class="tag">{{ detail.activitySignetStateList[detail.content.state] }}</view>
+				<view class="tag">{{ isPastTime(detail.content.endTime) ? '已结束' : detail.activitySignetStateList[detail.content.state] }}</view>
 				<view class="event-title">{{ detail.content.title }}</view>
 			</view>
 
@@ -33,7 +33,7 @@
 				</view>
 				<view class="detail-row">
 					<text class="label">活动地点</text>
-					<view class="value valueview" @click="toAddress">{{ detail.content.address }}<uni-icons type="right" /></view>
+					<view class="value valueview" @click="toAddress">{{ detail.content.address }}<uni-icons v-if="geoRef.lng" type="right" /></view>
 				</view>
 				<view class="detail-row">
 					<text class="label">限定人数</text>
@@ -97,11 +97,10 @@
 			<!-- 报名按钮 -->
 			<view class="footer">
 				<button class="signup-btn disabled" v-if="detail.content.state == 1">{{ detail.activitySignetStateList[detail.content.state] }}</button>
-				<button class="signup-btn disabled" v-else-if="detail.content.state == 3">{{ detail.activitySignetStateList[detail.content.state] }}</button>
-				<button class="signup-btn" @click="openPopUp" v-else-if="detail.content.state == 2 && authorized">报名（￥{{ detail.content.registrationFee }}）</button>
-				<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuth" v-if="detail.content.state == 2 && !authorized">
-					报名（￥{{ detail.content.registrationFee }}）
-				</button>
+				<button class="signup-btn disabled" v-else-if="detail.content.state == 3 || isPastTime(detail.content.endTime)">已结束</button>
+				<button class="signup-btn" @click="openPopUp" v-else-if="detail.content.state == 2 && detail.content.orderId == 0">报名（￥{{ detail.content.registrationFee }}）</button>
+				<button class="signup-btn disabled" v-else-if="detail.content.orderId > 0">{{ detail.content.activitySignetOrderStateList[detail.content.orderState] }}</button>
+				<button class="signup-btnall" open-type="getUserInfo" @getuserinfo="getAuth" v-if="!authorized"></button>
 			</view>
 		</view>
 	</view>
@@ -149,7 +148,7 @@
 import { ref, onMounted } from 'vue'
 import { IndexApi } from '../../services'
 import { onLoad } from '@dcloudio/uni-app';
-import { getGeoCoder, getAuthorize, uploadImg, getFullImageUrl } from '../../utils/utils';
+import { getGeoCoder, getAuthorize, uploadImg, getFullImageUrl, isPastTime } from '../../utils/utils';
 import ExpandableText from '@/components/ExpandableText.vue'
 
 
@@ -173,11 +172,11 @@ const fetchData = async (id) => {
 	IndexApi.getActivitysignetDetail(id || detail.value.id).then(async (res) => {
 		detail.value = res
 		console.log(res)
+		// IndexApi.getMyDetail(res.content.orderId).then(user => userStatus.value = user)
 		const geo = await getGeoCoder(res.content.address)
 		console.log(geo)
 		geoRef.value = geo
 	})
-	IndexApi.getMyDetail(id || detail.value.id).then(user => userStatus.value = user)
 }
 
 const toAddress = () => {
@@ -234,6 +233,7 @@ const submit = async (direct) => {
 			})
 		}
 		uni.hideLoading()
+		fetchData()
 		if (result.msg) {
 			hidePopup()
 			uni.showToast({ title: result.msg, icon: 'error' })
@@ -243,7 +243,6 @@ const submit = async (direct) => {
 		if (detail.value.content.type == 1) {
 			uni.navigateTo({ url: '/pages/index/success' })
 		}
-		fetchData()
 	} catch (e) {
 		console.log(e)
 	}
@@ -251,7 +250,7 @@ const submit = async (direct) => {
 }
 
 const openPopUp = () => {
-	if (detail.value.content.condition == 1) {
+	if (detail.value.content.condition) {
 		showPopup.value = true
 	} else {
 		submit(true)
@@ -317,6 +316,15 @@ const follow = () => {
 		color: rgba(0, 0, 0, .3);
 
 	}
+}
+
+.signup-btnall {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
 }
 
 .popup-content {
@@ -601,7 +609,7 @@ const follow = () => {
 	flex: none;
 }
 
-.valueview{
+.valueview {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;

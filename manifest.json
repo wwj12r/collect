@@ -63,6 +63,9 @@
                 "desc" : "我们需要获取您的地理位置，用于地图定位"
             }
         },
+        "requiredPrivateInfos": [
+            "getLocation"
+        ],
         "lazyCodeLoading" : "requiredComponents"
     },
     "mp-alipay" : {

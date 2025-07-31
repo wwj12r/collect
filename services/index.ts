@@ -66,7 +66,7 @@ export const IndexApi = {
 	 * 活动报名
 	*/
 	postSignin(data) {
-		return request.post({ url: '/activitysignet/signin', data })
+		return request.postOriginal({ url: '/activitysignet/signin', data })
 	},
 	/**
 	 * 关注用户
