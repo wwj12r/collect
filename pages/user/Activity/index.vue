@@ -33,7 +33,7 @@
             </view>
             <view class="detail-row">
               <text class="label">活动地址：</text>
-              <text class="value">{{ item.address }}</text>
+              <view class="value valueview" @click="toAddress(item.address)">{{ item.address }}<uni-icons type="right" size="10"></uni-icons></view>
               <!-- <uni-icons type="right" size="18" color="rgba(26, 26, 26, 1)" class="arrow" /> -->
             </view>
           </view>
@@ -53,7 +53,7 @@ import { ref, computed, onMounted } from 'vue'
 import { ActivityApi } from '../../../services/activity'
 import { onReachBottom, } from '@dcloudio/uni-app'
 import { onLoad } from '@dcloudio/uni-app';
-import { getFullImageUrl } from '../../../utils/utils';
+import { getFullImageUrl, getGeoCoder } from '../../../utils/utils';
 const list = ref([])
 const page = ref(1)
 const pageSize = 10
@@ -72,6 +72,24 @@ const getList = () => {
     page.value++
     loading.value = false
   })
+}
+
+
+const toAddress = async (address) => {
+  const geo = await getGeoCoder(address)
+  wx.openLocation({
+    latitude: geo.lat, // 纬度（Number 类型）
+    longitude: geo.lng, // 经度（Number 类型）
+    // name: detail.value.content.address, // 位置名称（可选）
+    address: address, // 详细地址信息（可选）
+    scale: 18, // 缩放比例，范围5~18，默认为18
+    success: function () {
+      console.log('打开地图成功');
+    },
+    fail: function (err) {
+      console.error('打开地图失败', err);
+    }
+  });
 }
 
 onLoad((option) => {
@@ -264,6 +282,14 @@ const btnClick = (item) => {
 
 .detail-row {
   margin-bottom: 13rpx;
+  display: flex;
+
+  .valueview {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
 
 .label {
