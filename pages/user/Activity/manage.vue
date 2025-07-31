@@ -10,7 +10,13 @@
       @refresh="onRefreshItem(index, activity)"
       customClass="mb-2"
     />
-    <uni-load-more :status="status" />
+    
+    <uni-load-more v-if="!empty" :status="status" />
+    <view v-else class="activity-empty">
+      <image src="/static/user/activity-empty.png"></image>
+      <view>暂无内容</view>
+      <text>活动箱饿晕了…急需支援...</text>
+    </view>
   </PageScaffold>
 </template>
 
@@ -29,7 +35,8 @@ const fetchData = async (page) => {
   return response.content
 }
 
-const { data, status, loadMore, refresh } = useList(fetchData)
+const { data, status, loadMore, refresh, empty } = useList(fetchData)
+console.log('empty', empty.value)
 
 const onRefreshItem = async (index, activity) => {
   const response = await ActivityApi.fetchActivityDetail(activity.id)
@@ -65,5 +72,28 @@ const onTakeDown = (activity) => {
 </script>
 
 <style scoped>
-/* 保留必要的自定义样式，主要用于小程序兼容性 */
+.activity-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 338rpx;
+
+  image {
+    width: 402rpx;
+    height: 308rpx;
+  }
+
+  view {
+    margin-top: 100rpx;
+    font-size: 40rpx;
+    font-weight: bold;
+    color: rgba(26, 26, 26, 1);
+  }
+
+  text {
+    margin-top: 29rpx;
+    font-size: 28rpx;
+    color: rgba(153, 153, 153, 1);
+  }
+}
 </style>

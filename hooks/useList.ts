@@ -1,4 +1,4 @@
-import { onMounted, ref } from "vue"
+import { onMounted, ref, watch } from "vue"
 
 type Fetch<T> = (page: number, pageSize: number) => Promise<T[]>
 
@@ -8,6 +8,7 @@ export const useList = <T>(fetch: Fetch<T>, pageSize = 10) => {
   const page = ref(1)
   const loading = ref(false)
   const hasMore = ref(true)
+  const empty = ref(false)
 
   const loadMore = async () => {
     if (loading.value || !hasMore.value) return
@@ -28,6 +29,10 @@ export const useList = <T>(fetch: Fetch<T>, pageSize = 10) => {
         status.value = 'no-more'
       } else {
         status.value = 'no-more'
+      }
+
+      if (newData.length === 0) {
+        empty.value = true
       }
     } catch (error) {
       console.error('Load more failed:', error)
@@ -81,6 +86,7 @@ export const useList = <T>(fetch: Fetch<T>, pageSize = 10) => {
     page,
     loadMore,
     refresh,
-    reset
+    reset,
+    empty
   }
 }
