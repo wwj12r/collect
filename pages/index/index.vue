@@ -9,7 +9,7 @@
 		</view>
 		<view class="detail">
 			<view class="detail-title" @click="toDetail(content[currentIndex].id)">
-				<view class="detail-title-tips">{{ isPastTime(content[currentIndex].endTime) ? '已结束' : ['', '下架', '报名中', '已结束'][content[currentIndex].state] }}</view>
+				<view class="detail-title-tips">{{ isPastTime(content[currentIndex]?.endTime) ? '已结束' : ['', '下架', '报名中', '已结束'][content[currentIndex].state] }}</view>
 				<view class="detail-title-title">{{ content[currentIndex].title }}</view>
 			</view>
 			<view class="detail-info">
@@ -63,7 +63,6 @@ const getDistances = async () => {
 			content.value.map(async (item, index) => {
 				try {
 					const geo = await getGeoCoder(item.address)
-					console.log(geo)
 					const targetLat = geo.lat;
 					const targetLng = geo.lng;
 

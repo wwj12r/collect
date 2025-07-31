@@ -99,7 +99,7 @@
 				<button class="signup-btn disabled" v-if="detail.content.state == 1">{{ detail.activitySignetStateList[detail.content.state] }}</button>
 				<button class="signup-btn disabled" v-else-if="detail.content.state == 3 || isPastTime(detail.content.endTime)">已结束</button>
 				<button class="signup-btn" @click="openPopUp" v-else-if="detail.content.state == 2 && detail.content.orderId == 0">报名（￥{{ detail.content.registrationFee }}）</button>
-				<button class="signup-btn disabled" v-else-if="detail.content.orderId > 0">{{ detail.content.activitySignetOrderStateList[detail.content.orderState] }}</button>
+				<button class="signup-btn disabled" v-else-if="detail.content.orderId > 0">{{ detail?.activitySignetOrderStateList?.[detail.content.orderState] }}</button>
 				<button class="signup-btnall" open-type="getUserInfo" @getuserinfo="getAuth" v-if="!authorized"></button>
 			</view>
 		</view>
@@ -233,7 +233,7 @@ const submit = async (direct) => {
 			})
 		}
 		uni.hideLoading()
-		fetchData()
+		fetchData(detail.value.content.id)
 		if (result.msg) {
 			hidePopup()
 			uni.showToast({ title: result.msg, icon: 'error' })

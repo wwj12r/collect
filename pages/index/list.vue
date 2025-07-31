@@ -1,7 +1,7 @@
 <template>
 	<view class="stampImgs-grid">
 		<view v-for="(img, idx) in detail.content.collectImgs.split(',')" :key="idx" class="stamp-img-item">
-			<image :src="getFullImageUrl(img)" mode="aspectFill" />
+			<image :src="getFullImageUrl(img)" @click="previewImage(idx)" mode="aspectFill" />
 		</view>
 	</view>
 </template>
@@ -15,6 +15,14 @@ const detail = ref({})
 onLoad((option) => {
 	fetchData(option.id)
 });
+
+const previewImage = (index) => {
+	const imgs = detail.value.content.collectImgs.split(',').map(i => getFullImageUrl(i))
+    uni.previewImage({
+      current: imgs[index], // 当前显示图片的 http 链接
+      urls: imgs // 需要预览的图片 http 链接列表
+    })
+}
 
 const fetchData = async (id) => {
 	const res = await IndexApi.getActivitysignetDetail(id)
