@@ -53,14 +53,14 @@ export const ActivityApi = {
 	 * 根据 Postman 文档: https://documenter.getpostman.com/view/3444793/2sB34kEeJG#e68c801e-7022-4796-bf91-2949f61f327d
 	 */
 	publishActivity(data: PublishActivityRequest) {
-		return request.post<BizResponse>({
+		return request.postOriginal<BizResponse>({
 			url: '/activitysignet',
 			data
 		})
 	},
 
 	republishActivity(data: PublishActivityRequest, id: string) {
-		return request.put<BizResponse>({
+		return request.putOrigin<BizResponse>({
 			url: `/activitysignet/${id}`,
 			data
 		})
@@ -71,7 +71,7 @@ export const ActivityApi = {
 	 * Like https://documenter.getpostman.com/view/3444793/2sB34kEeJG#dda0a658-ff90-4a44-a8fa-3879376f067c
 	 */
 	changeActivityState(id: string, state: ActivityState) {
-		return request.post<BizResponse>({
+		return request.postOriginal<BizResponse>({
 			url: `/activitysignet/updatestate`,
 			data: {
 				id,

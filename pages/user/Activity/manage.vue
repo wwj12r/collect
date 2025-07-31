@@ -7,7 +7,7 @@
       @scan="onScan(activity)"
       @generateCode="onGenerateCode(activity)"
       @takeDown="onTakeDown(activity)"
-      @refresh="refresh"
+      @refresh="onRefreshItem(index, activity)"
       customClass="mb-2"
     />
     <uni-load-more :status="status" />
@@ -30,6 +30,11 @@ const fetchData = async (page) => {
 }
 
 const { data, status, loadMore, refresh } = useList(fetchData)
+
+const onRefreshItem = async (index, activity) => {
+  const response = await ActivityApi.fetchActivityDetail(activity.id)
+  data.value[index] = response.content
+}
 
 onReachBottom(loadMore)
 onPullDownRefresh(refresh)

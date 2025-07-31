@@ -521,6 +521,7 @@
 				}, 50)
 			},
 			close() {
+				this.$emit("hide");
 				setTimeout(() => {
 					this.pickerVisible = false
 					this.$emit('maskClick', this.value)

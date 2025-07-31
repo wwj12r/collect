@@ -33,7 +33,7 @@
             <text class="text-xs text-gray-600 flex-shrink-0">活动时间：</text>
             <text class="text-xs text-gray-800 flex-1">{{ activity.startTime }}</text>
           </view>
-          <view class="flex items-center">
+          <view class="flex items-center" @click="navigateToMap(activity.address)">
             <text class="text-xs text-gray-600 flex-shrink-0">活动地址：</text>
             <text class="text-xs text-gray-800 flex-1 min-w-0 truncate">{{ activity.address }}</text>
             <uni-icons type="right" size="16" color="#bbb" class="flex-shrink-0 ml-1" />
@@ -121,7 +121,7 @@
 <script setup>
 import { useAction } from '../hooks/useAction';
 import { ActivityApi, ActivityState, ActivityStateLabelMapper } from '../services/activity';
-import { getPhotoFromStringSlice } from '../utils/utils';
+import { getPhotoFromStringSlice, navigateToMap } from '../utils/utils';
 
 const emit = defineEmits(['scan', 'refresh'])
 
@@ -142,12 +142,6 @@ const props = defineProps({
       num: 0,
       limitNum: 0,
       state: null,
-      // stats: {
-      //   joined: 0,
-      //   liked: 0,
-      //   verified: 0,
-      //   unverified: 0
-      // }
     })
   },
   customClass: {
