@@ -71,15 +71,14 @@ export default {
     },
     post: async <T = any>(option: any) => {
         const res: any = await request({ method: 'POST', ...option });
-        console.log('res', res)
         return (res?.message === 'success' || res?.message === '成功' || res?.code == 200 || res.msg === 'success')
             ? res?.hasOwnProperty('data')
                 ? (res.data as unknown as T)
                 : null
             : res;
     },
-    postOriginal: async (option: any) => {
-        const res = await request({ method: 'POST', ...option });
+    postOriginal: async <T = any> (option: any): Promise<T> => {
+        const res = await request({ method: 'POST', ...option }) as T;
         return res;
     },
     delete: async <T = any>(option: any) => {
@@ -93,6 +92,10 @@ export default {
                 ? (res.data as unknown as T)
                 : null
             : res;
+    },
+    putOrigin: async <T = any>(option: any): Promise<T> => {
+        const res: any = await request({ method: 'PUT', ...option });
+        return res;
     },
     download: async <T = any>(option: any) => {
         const res = await request({ method: 'POST', responseType: 'blob', ...option });

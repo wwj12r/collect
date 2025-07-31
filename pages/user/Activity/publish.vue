@@ -27,6 +27,8 @@
 						suffix-icon-style="color: #1a1a1a;"
 						placeholder-style="color: #999;"
 						:inputBorder="false"
+						:trim="true"
+						:disabled="readonly"
 					/>
 				</uni-forms-item>
 				
@@ -43,6 +45,8 @@
 						suffix-icon-style="color: #1a1a1a;"
 						placeholder-style="color: #999;"
 						:inputBorder="false"
+						:trim="true"
+						:disabled="readonly"
 					/>
 				</uni-forms-item>
 				
@@ -58,6 +62,8 @@
 						placeholder="请选择日期"
 						@change="onDateChange"
 						return-type="timestamp"
+						@show="onShowDatePicker"
+						@hide="onHideDatePicker"
 					>
 						<view class="date-text" :class="{ active: !!form.formatDate }">
 							{{ form.formatDate || '请选择日期' }}
@@ -95,10 +101,12 @@
 						v-model="form.limitNum" 
 						placeholder="请输入"
 						type="number"
+						:trim="true"
 						:inputBorder="false"
 						suffix-icon="compose"
 						suffix-icon-style="color: #1a1a1a;"
 						placeholder-style="color: #999;"
+						:disabled="readonly"
 					/>
 				</uni-forms-item>
 				
@@ -138,27 +146,31 @@
 					<uni-easyinput 
 						v-model="form.condition" 
 						placeholder="填写用户须输入的内容"
+						:trim="true"
 						:clearable="true"
 						:inputBorder="false"
 						suffix-icon="compose"
 						suffix-icon-style="color: #1a1a1a;"
+						:disabled="readonly"
 					/>
 				</uni-forms-item>
 				
 				<uni-forms-item 
-					name="conditionDetail"
+					name="shareContent"
 					class="condition-detail"
 					labelWidth="0"
 					style="padding: 0;"
 				>
 					<uni-easyinput 
-						v-model="form.conditionDetail" 
+						v-model="form.shareContent" 
 						type="textarea"
+						:trim="true"
 						placeholder="输入分享内容"
 						:auto-height="true"
 						maxlength="500"
 						:inputBorder="false"
 						class="condition-detail-input"
+						:disabled="readonly"
 					/>
 				</uni-forms-item>
 			</BizSection>
@@ -205,6 +217,11 @@ onUnmounted(() => {
 	eventEmitter.off(EVENT_TYPE.ACTIVITY_CONFIG_GET, onActivityConfigGet)
 })
 
+const readonly = ref(false)
+
+const onShowDatePicker = () => readonly.value = true
+const onHideDatePicker = () => readonly.value = false
+
 // 表单数据
 const form = ref({
 	title: '',
@@ -216,7 +233,7 @@ const form = ref({
 	// registrationFee: '',
 	type: 1,
 	condition: '',
-	conditionDetail: ''
+	shareContent: ''
 })
 
 const activityId = ref()
@@ -404,6 +421,7 @@ async function submit() {
 			type: form.value.type,
 			limitNum: Number(form.value.limitNum),
 			condition: form.value.condition,
+			shareContent: form.value.shareContent,
 		}
 
 		if (activityId.value) {
@@ -579,7 +597,7 @@ async function submit() {
 
 /* uni-easyinput 组件样式定制 - 参考原设计 */
 :deep(.uni-easyinput) {
-	background: #f7f7f7;
+	background: transparent!important;
 	border-radius: 8rpx;
 	border: none;
 }
@@ -587,7 +605,7 @@ async function submit() {
 :deep(.uni-easyinput__content) {
 	padding: 12rpx 16rpx;
 	font-size: 22rpx;
-	background: transparent;
+	background: transparent!important;
 }
 
 :deep(.uni-easyinput__content-input) {

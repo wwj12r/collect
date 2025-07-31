@@ -43,10 +43,10 @@
 					<image src="/static/user/qrcode-save.png" mode="aspectFit" class="w-6 h-6" />
 					保存到相册
 				</button>
-				<button plain class="!border-none flex flex-col items-center gap-2 text-xs" open-type="share">
+				<!-- <button plain class="!border-none flex flex-col items-center gap-2 text-xs" open-type="share">
 					<image src="/static/user/share-to-group.png" mode="aspectFit" class="w-6 h-6" />
 					分享至朋友圈
-				</button>
+				</button> -->
 				<button plain class="!border-none flex flex-col items-center gap-2 text-xs" open-type="share">
 					<image src="/static/user/share-to-friend.png" mode="aspectFit" class="w-6 h-6" />
 					分享至好友

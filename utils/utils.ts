@@ -25,7 +25,7 @@ export const uploadImg = async (tempFilePaths: string[]): Promise<{ imgUrl: stri
 	return results as { imgUrl: string }[];
 }
 
-export const getGeoCoder = async (address: string) => {
+export const getGeoCoder = async (address: string): Promise<{ lat: number, lng: number }> => {
 	return new Promise(resolve => {
 		const qqmapsdk = new QQMapWX({
 			key: 'FGOBZ-4CG33-K523G-OVTXS-7UEJV-OUBGX'
@@ -112,6 +112,23 @@ export const getFullImageUrl = (url: string) => {
 	return url?.startsWith('http') ? url : imgBaseUrl + url
 }
 
+export const navigateToMap = async (address: string) => {
+	const geo = await getGeoCoder(address)
+	uni.openLocation({
+		latitude: geo.lat, // 纬度（Number 类型）
+		longitude: geo.lng, // 经度（Number 类型）
+		// name: detail.value.content.address, // 位置名称（可选）
+		address, // 详细地址信息（可选）
+		scale: 18, // 缩放比例，范围5~18，默认为18
+		success: function () {
+			console.log('打开地图成功');
+		},
+		fail: function (err) {
+			console.error('打开地图失败', err);
+		}
+	});
+}
+
 export const getDistance = (lat1, lon1, lat2, lon2) => {
 	const toRad = val => val * Math.PI / 180;
 	const R = 6371; // 地球半径（单位：公里）
@@ -131,4 +148,4 @@ export const isPastTime = (timeStr) => {
 	const inputTime = new Date(timeStr.replace(/-/g, '/')); // Safari 兼容性
 	const now = new Date();
 	return inputTime < now;
-  }
+}
