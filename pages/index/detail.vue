@@ -1,10 +1,9 @@
 <template>
 	<view class="detail-page">
 		<!-- 活动主图 -->
-		<!-- <image class="banner" :src="imgBaseUrl + detail.content?.photo" mode="widthFix" /> -->
 		<u-swiper v-if="detail.content?.photo?.split(',')?.length" :list="detail.content?.photo?.split(',')" height="520rpx" keyName="image" interval="5000" showTitle :autoplay="autoplay" circular @touchstart.native="handleTouchStart">
 			<template v-slot="{ item }">
-				<image :src="imgBaseUrl + item" mode="aspectFill" style="width: 100%; height: 520rpx; object-fit: cover;" />
+				<image :src="getFullImageUrl(item)" mode="aspectFill" style="width: 100%; height: 520rpx; object-fit: cover;" />
 			</template>
 		</u-swiper>
 
@@ -18,7 +17,7 @@
 			<!-- 主办方 -->
 			<view class="organizer">
 				<view class="organizer">
-					<image class="avatar" :src="imgBaseUrl + detail.content?.headimg" />
+					<image class="avatar" :src="getFullImageUrl(detail.content?.headimg)" />
 					<view class="org-name">{{ detail.content.nickName }}</view>
 					<view class="org-name">发起人</view>
 				</view>
@@ -34,7 +33,7 @@
 				</view>
 				<view class="detail-row">
 					<text class="label">活动地点</text>
-					<text class="value">{{ detail.content.address }}</text>
+					<view class="value valueview" @click="toAddress">{{ detail.content.address }}<uni-icons type="right" /></view>
 				</view>
 				<view class="detail-row">
 					<text class="label">限定人数</text>
@@ -80,7 +79,7 @@
 				</view>
 				<view class="stampImgs">
 					<view v-for="(img, idx) in detail.content.collectImgs.split(',').slice(0, 8)" :key="idx" class="stamp-img-item">
-						<image :src="imgBaseUrl + img" mode="aspectFill" />
+						<image :src="getFullImageUrl(img)" mode="aspectFill" />
 					</view>
 				</view>
 			</view>
@@ -92,7 +91,7 @@
 						<image src="/static/index/activity.png"></image>活动详情
 					</view>
 				</view>
-				<image class="detail-img" :src="imgBaseUrl + detail.content.content" mode="widthFix" />
+				<image class="detail-img" :src="getFullImageUrl(detail.content.content)" mode="widthFix" />
 			</view>
 
 			<!-- 报名按钮 -->
@@ -150,8 +149,7 @@
 import { ref, onMounted } from 'vue'
 import { IndexApi } from '../../services'
 import { onLoad } from '@dcloudio/uni-app';
-import { imgBaseUrl } from '../../utils/enums';
-import { getGeoCoder, getAuthorize, uploadImg } from '../../utils/utils';
+import { getGeoCoder, getAuthorize, uploadImg, getFullImageUrl } from '../../utils/utils';
 import ExpandableText from '@/components/ExpandableText.vue'
 
 
@@ -160,7 +158,9 @@ const imgUrl = ref([])
 const showPopup = ref(false)
 const authorized = ref(uni.getStorageSync('token'))
 const detail = ref({})
+const userStatus = ref({})
 const loading = ref(false)
+const geoRef = ref({})
 
 onLoad((option) => {
 	fetchData(option.id)
@@ -170,11 +170,31 @@ onMounted((e) => {
 })
 
 const fetchData = async (id) => {
-	const res = await IndexApi.getActivitysignetDetail(id)
-	detail.value = res
-	console.log(res)
-	const geo = await getGeoCoder(res.content.address)
-	console.log(geo)
+	IndexApi.getActivitysignetDetail(id || detail.value.id).then(async (res) => {
+		detail.value = res
+		console.log(res)
+		const geo = await getGeoCoder(res.content.address)
+		console.log(geo)
+		geoRef.value = geo
+	})
+	IndexApi.getMyDetail(id || detail.value.id).then(user => userStatus.value = user)
+}
+
+const toAddress = () => {
+	console.log(geoRef.value)
+	wx.openLocation({
+		latitude: geoRef.value.lat, // 纬度（Number 类型）
+		longitude: geoRef.value.lng, // 经度（Number 类型）
+		// name: detail.value.content.address, // 位置名称（可选）
+		address: detail.value.content.address, // 详细地址信息（可选）
+		scale: 18, // 缩放比例，范围5~18，默认为18
+		success: function () {
+			console.log('打开地图成功');
+		},
+		fail: function (err) {
+			console.error('打开地图失败', err);
+		}
+	});
 }
 
 const hidePopup = () => {
@@ -198,20 +218,32 @@ const chooseImage = () => {
 		}
 	})
 }
-const submit = async () => {
+const submit = async (direct) => {
 	try {
-		const res = await uploadImg(imgUrl.value)
-		const res2 = await IndexApi.postSignin({
-			id: detail.value.content.id,
-			photo: res.map(i => i.imgUrl).toString()
-		})
-		if (res2.msg) {
+		uni.showLoading()
+		let result
+		if (direct) {
+			result = await IndexApi.postSignin({
+				id: detail.value.content.id,
+			})
+		} else {
+			const res = await uploadImg(imgUrl.value)
+			result = await IndexApi.postSignin({
+				id: detail.value.content.id,
+				photo: res.map(i => i.imgUrl).toString()
+			})
+		}
+		uni.hideLoading()
+		if (result.msg) {
 			hidePopup()
-			uni.showToast({ title: res2.msg, icon: 'error' })
+			uni.showToast({ title: result.msg, icon: 'error' })
 			return
 		}
 		uni.showToast({ title: '提交成功', icon: 'success' })
-		uni.navigateTo({ url: '/pages/index/success' })
+		if (detail.value.content.type == 1) {
+			uni.navigateTo({ url: '/pages/index/success' })
+		}
+		fetchData()
 	} catch (e) {
 		console.log(e)
 	}
@@ -219,7 +251,11 @@ const submit = async () => {
 }
 
 const openPopUp = () => {
-	showPopup.value = true
+	if (detail.value.content.condition == 1) {
+		showPopup.value = true
+	} else {
+		submit(true)
+	}
 }
 const toList = () => {
 	console.log(detail)
@@ -563,6 +599,12 @@ const follow = () => {
 	color: rgba(179, 179, 179, 1);
 	font-size: 22rpx;
 	flex: none;
+}
+
+.valueview{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .value {

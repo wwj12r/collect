@@ -60,7 +60,7 @@
         "usingComponents" : true,
         "permission" : {
             "scope.userLocation" : {
-                "desc" : "导航地点用"
+                "desc" : "我们需要获取您的地理位置，用于地图定位"
             }
         },
         "lazyCodeLoading" : "requiredComponents"

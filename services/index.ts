@@ -74,4 +74,10 @@ export const IndexApi = {
 	postFollow(data) {
 		return request.post({ url: '/user/userflollow', data })
 	},
+	/**
+	 * 我的活动详情
+	*/
+	getMyDetail(id) {
+		return request.get({ url: '/activitysignet/mydetail', data: { id } })
+	},
 }

@@ -5,7 +5,7 @@
 			<view class="info-row" @click="changeAvatar">
 				<text class="label">头像</text>
 				<view class="info">
-					<image class="avatar" :src="imgBaseUrl + user.headimg" />
+					<image class="avatar" :src="getFullImageUrl(user.headimg)" />
 					<uni-icons type="right" size="20" color="#bbb" />
 				</view>
 			</view>
@@ -30,7 +30,7 @@
 				<text class="label">手机号码</text>
 				<view>
 					<view class="value orange info">{{ user.phone ? user.phone : '点击获取手机号' }}
-						<button class="phone-button" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber"></button>
+						<button v-if="!user.phone" class="phone-button" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber"></button>
 					</view>
 
 				</view>
@@ -46,8 +46,7 @@ import { onMounted, ref } from 'vue'
 import { useToken } from '../../hooks/userToken'
 import { UserApi } from '../../services/user'
 import { IndexApi } from '../../services'
-import { uploadImg } from '../../utils/utils'
-import { imgBaseUrl } from '../../utils/enums'
+import { uploadImg, getFullImageUrl } from '../../utils/utils'
 const { tokenRef, setToken, clearToken } = useToken()
 
 const user = ref({})

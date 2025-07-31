@@ -1,7 +1,7 @@
 <template>
 	<view class="stampImgs-grid">
 		<view v-for="(img, idx) in detail.content.collectImgs.split(',')" :key="idx" class="stamp-img-item">
-			<image :src="imgBaseUrl + img" mode="aspectFill" />
+			<image :src="getFullImageUrl(img)" mode="aspectFill" />
 		</view>
 	</view>
 </template>
@@ -9,7 +9,7 @@
 import { ref, onMounted } from 'vue'
 import { IndexApi } from '../../services'
 import { onLoad } from '@dcloudio/uni-app';
-import { imgBaseUrl } from '../../utils/enums';
+import { getFullImageUrl } from '../../utils/utils';
 const detail = ref({})
 
 onLoad((option) => {

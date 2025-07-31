@@ -54,9 +54,9 @@ const active = ref({})
 const getList = (id) => {
 	if (loading.value || finished.value) return
 	loading.value = true
-	uni.showLoading()
+	// uni.showLoading()
 	GalleryApi.getContentuserlist({ page: page.value, perPage: pageSize, userId: id || '' }).then(res => {
-		uni.hideLoading()
+		// uni.hideLoading()
 		if (res.content && res.content.length > 0) {
 			list.value.push(...res.content)
 			page.value++
@@ -73,9 +73,17 @@ const getList = (id) => {
 // 	tokenRef.value && getList()
 // })
 
+const resetList = () => {
+	list.value = []
+	page.value = 1
+	finished.value = false
+}
+
 onShow((option) => {
-	resetList()
-	(tokenRef.value || option.id) && getList(option.id)
+	list.value = []
+	page.value = 1
+	finished.value = false;
+	(tokenRef.value || option?.id) && getList(option?.id)
 });
 onReachBottom(() => {
 	tokenRef.value && getList()
@@ -90,19 +98,13 @@ const getAuth = () => {
 	})
 }
 
-const resetList= () => {
-  list.value = []
-  page.value = 1
-  finished.value = false
-}
-
 const previewImg = (item) => {
 	showPopup.value = true
 	active.value = item
 }
 
 const zan = async () => {
-	await GalleryApi.postZan({id: active.value.id})
+	await GalleryApi.postZan({ id: active.value.id })
 	uni.showToast({ title: '点赞成功！' })
 	showPopup.value = false
 }

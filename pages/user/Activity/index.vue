@@ -16,7 +16,7 @@
         </view>
         <view class="card-main">
           <view class="card-content">
-            <image :src="imgBaseUrl + item.photo" class="card-img" mode="aspectFill" />
+            <image :src="getFullImageUrl(item.photo)" class="card-img" mode="aspectFill" />
             <view class="card-info">
               <view class="card-title">{{ item.title }}</view>
               <view class="card-status">
@@ -52,8 +52,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { ActivityApi } from '../../../services/activity'
 import { onReachBottom, } from '@dcloudio/uni-app'
-import { imgBaseUrl } from '../../../utils/enums'
 import { onLoad } from '@dcloudio/uni-app';
+import { getFullImageUrl } from '../../../utils/utils';
 const list = ref([])
 const page = ref(1)
 const pageSize = 10

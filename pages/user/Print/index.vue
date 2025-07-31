@@ -7,7 +7,7 @@
 		</view>
 		<!-- 其余图片 -->
 		<view v-for="(img, idx) in list" :key="idx" class="stamp-img-item">
-			<image :src="imgBaseUrl + img.photo" mode="aspectFill" />
+			<image :src="getFullImageUrl(img.photo)" mode="aspectFill" />
 		</view>
 	</view>
 </template>
@@ -15,7 +15,7 @@
 import { ref, onMounted } from 'vue'
 import { ActivityApi } from '../../../services/activity'
 import { onReachBottom, onShow } from '@dcloudio/uni-app'
-import { imgBaseUrl } from '../../../utils/enums'
+import { getFullImageUrl } from '../../../utils/utils'
 
 const list = ref([])
 const page = ref(1)

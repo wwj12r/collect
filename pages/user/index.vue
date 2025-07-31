@@ -2,8 +2,8 @@
 	<view class="mine-page">
 		<!-- 头部用户信息 -->
 		<view class="user-info">
-			<image class="avatar" :src="imgBaseUrl + user.headimg" />
-			<view class="user-name">{{ user.nickname }}</view>
+			<image class="avatar" :src="getFullImageUrl(user.headimg)" />
+			<view class="user-name">{{ user.nickname || '点击登录' }}</view>
 			<view class="setting" @click="goSetting">
 				<image src="/static/user/setting.png"></image>
 				<text class="setting-text">设置</text>
@@ -39,12 +39,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getAuthorize } from '../../utils/utils'
+import { getAuthorize, getFullImageUrl } from '../../utils/utils'
 import { useToken } from '../../hooks/userToken'
 import { onShow } from '@dcloudio/uni-app'
 import { UserApi } from '../../services/user'
-import { imgBaseUrl } from '../../utils/enums'
-const { tokenRef, setToken } = useToken()
+const { tokenRef } = useToken()
 const user = ref({})
 const activities = [
 	{ icon: 'all', text: '全部', link: '/pages/user/Activity/index?type=1,2,3,4' },
@@ -70,10 +69,11 @@ const onActivityClick = (item) => {
 }
 
 const getAuth = (item) => {
-	getAuthorize().then(res => item.link ? uni.navigateTo({ url: item.link }) : UserApi.getUser().then(res => user.value = res))
+	getAuthorize().then(res => item?.link ? uni.navigateTo({ url: item.link }) : UserApi.getUser().then(res => user.value = res))
 }
-onMounted(() => {
+onShow(() => {
 	// getList()
+	console.log(tokenRef.value)
 	UserApi.getUser().then(res => user.value = res)
 })
 

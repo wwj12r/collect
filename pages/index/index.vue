@@ -3,7 +3,7 @@
 		<view class="imgs">
 			<u-swiper v-if="content.length" :list="content" height="1100rpx" keyName="id" interval="1500" showTitle :autoplay="autoplay" circular @touchstart.native="handleTouchStart" @change="onSwiperChange">
 				<template v-slot="{ item }">
-					<image @click="toDetail(content[currentIndex].id)" :src="imgBaseUrl + item.headimg" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
+					<image @click="toDetail(content[currentIndex].id)" :src="getFullImageUrl(item.headimg)" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
 				</template>
 			</u-swiper>
 		</view>
@@ -14,7 +14,7 @@
 			</view>
 			<view class="detail-info">
 				<view class="detail-info-top">
-					<image class="detail-info-top-img" :src="imgBaseUrl + content[currentIndex].headimg"></image>
+					<image class="detail-info-top-img" :src="getFullImageUrl(content[currentIndex].headimg)"></image>
 					<view class="detail-info-top-view">{{ content[currentIndex].nickname }}</view>
 				</view>
 				<view class="detail-info-time">
@@ -43,7 +43,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { IndexApi } from '../../services'
-import { imgBaseUrl } from '../../utils/enums'
+import { getFullImageUrl } from '../../utils/utils'
 const content = ref([])
 const currentIndex = ref(0)
 

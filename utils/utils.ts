@@ -1,5 +1,9 @@
 import { IndexApi } from "../services"
 import { imgBaseUrl } from "./enums";
+// 用ES6的import方式引入QQMapWX，避免require导致的类型错误
+import QQMapWX from '../utils/qqmap';
+import { useToken } from "../hooks/userToken";
+
 
 export const prefillImageUrl = (url: string) => {
 	return imgBaseUrl + url;
@@ -22,15 +26,29 @@ export const uploadImg = async (tempFilePaths: string[]): Promise<{ imgUrl: stri
 }
 
 export const getGeoCoder = async (address: string) => {
-	const res = await uni.request({
-		url: `https://apis.map.qq.com/ws/geocoder/v1/?address=${address}&key=FGOBZ-4CG33-K523G-OVTXS-7UEJV-OUBGX`
+	return new Promise(resolve => {
+		const qqmapsdk = new QQMapWX({
+			key: 'FGOBZ-4CG33-K523G-OVTXS-7UEJV-OUBGX'
+		})
+		qqmapsdk.geocoder({
+			address,
+			success: (e) => {
+				resolve(e?.result?.location)
+			},
+			fail: function (error) {
+				console.error(error);
+			},
+		})
 	})
-	console.log(res)
+	// const res = await uni.request({
+	// 	url: `https://apis.map.qq.com/ws/geocoder/v1?location=${address}&key=FGOBZ-4CG33-K523G-OVTXS-7UEJV-OUBGX`
+	// })
 }
 
 
 
 export const getAuthorize = () => {
+	const { tokenRef, setToken } = useToken()
 	return new Promise(resolve => {
 		uni.getSetting({
 			success: res => {
@@ -47,7 +65,7 @@ export const getAuthorize = () => {
 
 									IndexApi.postLogin({ code: code.code, userInfo: JSON.stringify(res) }).then(res => {
 										console.log(res)
-										uni.setStorageSync('token', res.access_token)
+										setToken(res.access_token)
 										uni.setStorageSync('userId', res.userId)
 										// showPopup.value = true
 										resolve(res)
@@ -87,4 +105,8 @@ export const getAuthorize = () => {
 			}
 		})
 	})
+}
+
+export const getFullImageUrl = (url: string) => {
+	return url?.startsWith('http') ? url : imgBaseUrl + url
 }
