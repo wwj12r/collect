@@ -12,7 +12,7 @@
 		<BizSection title="活动介绍" icon="/static/user/activity-intro.png" customStyle="margin-bottom: 20rpx!important;">
 			<textarea
 				class="textarea"
-				v-model="editData.intro"
+				v-model="editData.introduction"
 				placeholder="输入正文"
 				maxlength="500"
 				auto-height
@@ -43,7 +43,7 @@
 		photo: [],
 		collectImgs: [],
 		content: [],
-		intro: ''
+		introduction: ''
 	})
 
 	onMounted(() => {
@@ -54,12 +54,28 @@
 	})
   
   function save() {
+		if (!editData.value.photo.length) {
+			uni.showToast({ title: '请上传活动主图', icon: 'none' })
+			return
+		}
+		if (!editData.value.collectImgs.length) {
+			uni.showToast({ title: '请上传集章展示', icon: 'none' })
+			return
+		}
+		if (!editData.value.content.length) {
+			uni.showToast({ title: '请上传活动详情', icon: 'none' })
+			return
+		}
+		if (!editData.value.introduction?.trim()) {
+			uni.showToast({ title: '请输入活动介绍', icon: 'none' })
+			return
+		}
 		uni.showToast({ title: '保存成功', icon: 'success' })
 		eventEmitter.emit(EVENT_TYPE.ACTIVITY_CONFIG_UPDATED, {
 			photo: editData.value.photo,
 			collectImgs: editData.value.collectImgs,
 			content: editData.value.content,
-			intro: editData.value.intro
+			introduction: editData.value.introduction
 		})
 		setTimeout(() => {
 			uni.navigateBack()

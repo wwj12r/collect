@@ -12,7 +12,7 @@ export interface PublishActivityRequest {
 	type: number
 	condition: string
 	limitNum: number
-	intro: string
+	introduction: string
 }
 
 export interface FetchActivityManageListRequest {

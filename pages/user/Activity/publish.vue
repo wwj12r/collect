@@ -5,7 +5,7 @@
 			:model="form" 
 			:rules="rules"
 			label-position="left"
-			label-width="260rpx"
+			label-width="200rpx"
 		>
 			<!-- 基础信息 -->
 			<BizSection 
@@ -77,6 +77,7 @@
 					label="活动详情配置" 
 					name="detailConfig" 
 					required
+					labelWidth="260rpx"
 				>
 					<view @click="onToEdit" class="edit-config" :class="{ selected: !!activityConfig }">
 						{{ activityConfig ? '已配置' : '请选择' }}
@@ -88,6 +89,7 @@
 					label="活动参与人数" 
 					name="limitNum" 
 					required
+					labelWidth="260rpx"
 				>
 					<uni-easyinput 
 						v-model="form.limitNum" 
@@ -100,7 +102,7 @@
 					/>
 				</uni-forms-item>
 				
-				<uni-forms-item 
+				<!-- <uni-forms-item 
 					label="报名费用" 
 					name="registrationFee" 
 					required
@@ -114,7 +116,7 @@
 						suffix-icon-style="color: #bbb"
 						:inputBorder="false"
 					/>
-				</uni-forms-item>
+				</uni-forms-item> -->
 				
 				<uni-forms-item 
 					label="报名方式" 
@@ -211,7 +213,7 @@ const form = ref({
 	formatDate: '',
 	detailConfig: '',
 	limitNum: '',
-	registrationFee: '',
+	// registrationFee: '',
 	type: 1,
 	condition: '',
 	conditionDetail: ''
@@ -232,14 +234,14 @@ onLoad(async (query) => {
 		limitNum: res.content.limitNum,
 		type: Number(res.content.type),
 		condition: res.content.condition,
-		registrationFee: res.content.registrationFee,
+		// registrationFee: res.content.registrationFee,
 	}
 
 	activityConfig.value = {
 		photo: res.content.photo?.split(','),
 		content: res.content.content?.split(','),
 		collectImgs: res.content.collectImgs?.split(','),
-		intro: res.content.intro,
+		introduction: res.content.introduction,
 	}
 
 
@@ -307,18 +309,18 @@ const rules = ref({
 			}
 		]
 	},
-	registrationFee: {
-		rules: [
-			{
-				required: true,
-				errorMessage: '请输入报名费用'
-			},
-			{
-				format: 'number',
-				errorMessage: '报名费用必须为数字'
-			}
-		]
-	},
+	// registrationFee: {
+	// 	rules: [
+	// 		{
+	// 			required: true,
+	// 			errorMessage: '请输入报名费用'
+	// 		},
+	// 		{
+	// 			format: 'number',
+	// 			errorMessage: '报名费用必须为数字'
+	// 		}
+	// 	]
+	// },
 	type: {
 		rules: [
 			{
@@ -398,26 +400,44 @@ async function submit() {
 			photo: activityConfig.value.photo.join(','),
 			content: activityConfig.value.content.join(','),
 			collectImgs: activityConfig.value.collectImgs.join(','),
-			intro: activityConfig.value.intro,
+			introduction: activityConfig.value.introduction,
 			type: form.value.type,
 			limitNum: Number(form.value.limitNum),
 			condition: form.value.condition,
 		}
 
 		if (activityId.value) {
-			await ActivityApi.republishActivity(submitData, activityId.value)
-			uni.showToast({
-				title: '编辑成功',
-				icon: 'success',
-				duration: 2000
-			})
+			const res = await ActivityApi.republishActivity(submitData, activityId.value)
+			console.log(res)
+			if (res.ret === 0) {
+				uni.showToast({
+					title: '编辑成功',
+					icon: 'success',
+					duration: 2000
+				})
+			} else {
+				uni.showToast({
+					title: res.msg,
+					icon: 'none',
+					duration: 2000
+				})
+			}
 		} else {
-			await ActivityApi.publishActivity(submitData)
-			uni.showToast({
-				title: '发布成功',
-				icon: 'success',
-				duration: 2000
-			})
+			const res = await ActivityApi.publishActivity(submitData)
+			console.log(res)
+			if (res.ret === 0) {
+				uni.showToast({
+					title: '发布成功',
+					icon: 'success',
+					duration: 2000
+				})
+			} else {
+				uni.showToast({
+					title: res.msg,
+					icon: 'none',
+					duration: 2000
+				})
+			}
 		}
 
 		// 延迟跳转
@@ -473,7 +493,7 @@ async function submit() {
 	justify-content: flex-end;
 	gap: 10rpx;
 	font-size: 22rpx;
-	white-space: pre;
+	white-space: break-spaces;
 }
 
 .date-text.active {
