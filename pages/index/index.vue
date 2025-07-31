@@ -9,7 +9,7 @@
 		</view>
 		<view class="detail">
 			<view class="detail-title" @click="toDetail(content[currentIndex].id)">
-				<view class="detail-title-tips">{{ ['', '下架', '报名中', '已结束'][content[currentIndex].state] }}</view>
+				<view class="detail-title-tips">{{ isPastTime(content[currentIndex].endTime) ? '已结束' : ['', '下架', '报名中', '已结束'][content[currentIndex].state] }}</view>
 				<view class="detail-title-title">{{ content[currentIndex].title }}</view>
 			</view>
 			<view class="detail-info">
@@ -43,7 +43,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { IndexApi } from '../../services'
-import { getDistance, getFullImageUrl, getGeoCoder } from '../../utils/utils'
+import { getDistance, getFullImageUrl, getGeoCoder, isPastTime } from '../../utils/utils'
 const content = ref([])
 const currentIndex = ref(0)
 
