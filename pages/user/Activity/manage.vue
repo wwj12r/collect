@@ -36,7 +36,6 @@ const fetchData = async (page) => {
 }
 
 const { data, status, loadMore, refresh, empty } = useList(fetchData)
-console.log('empty', empty.value)
 
 const onRefreshItem = async (index, activity) => {
   const response = await ActivityApi.fetchActivityDetail(activity.id)
@@ -44,7 +43,10 @@ const onRefreshItem = async (index, activity) => {
 }
 
 onReachBottom(loadMore)
-onPullDownRefresh(refresh)
+onPullDownRefresh(async () => {
+  await refresh()
+  uni.stopPullDownRefresh()
+})
 
 const onGenerateCode = (activity) => {
   console.log('生成核销码', activity)
@@ -55,7 +57,6 @@ const onGenerateCode = (activity) => {
 }
 
 const onTakeDown = (activity) => {
-  console.log('下架活动', activity)
   uni.showModal({
     title: '确认下架',
     content: '确定要下架这个活动吗？',

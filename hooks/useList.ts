@@ -50,7 +50,7 @@ export const useList = <T>(fetch: Fetch<T>, pageSize = 10) => {
     data.value = []
     
     try {
-      const newData = await fetch(1)
+      const newData = await fetch(1, pageSize)
       
       if (newData && newData.length > 0) {
         data.value = newData
