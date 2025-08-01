@@ -524,6 +524,7 @@
 				this.$emit("hide");
 				setTimeout(() => {
 					this.pickerVisible = false
+					this.$emit('hide')
 					this.$emit('maskClick', this.value)
 					this.$refs.mobile && this.$refs.mobile.close()
 				}, 20)
@@ -616,6 +617,7 @@
 				}
 				this.setEmit(this.displayValue)
 				this.pickerVisible = false
+				this.$emit('hide')
 			},
 			leftChange(e) {
 				const {
@@ -687,6 +689,7 @@
 			confirmRangeChange() {
 				if (!this.tempRange.startDate || !this.tempRange.endDate) {
 					this.pickerVisible = false
+					this.$emit('hide')
 					return
 				}
 				if (!checkDate(this.tempRange.startDate)) {
@@ -775,6 +778,7 @@
 				const displayRange = [start, end]
 				this.setEmit(displayRange)
 				this.pickerVisible = false
+				this.$emit('hide')
 			},
 			handleStartAndEnd(before, after, temp = false) {
 				if (!before) return

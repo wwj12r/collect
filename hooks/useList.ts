@@ -31,7 +31,7 @@ export const useList = <T>(fetch: Fetch<T>, pageSize = 10) => {
         status.value = 'no-more'
       }
 
-      if (newData.length === 0) {
+      if (data.value.length === 0) {
         empty.value = true
       }
     } catch (error) {
