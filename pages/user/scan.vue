@@ -35,6 +35,10 @@ const orderSn = ref('')
 const userName = ref('')
 const scansuc = ref(false)
 
+onLoad((options) => {
+	getCode(options.code)
+})
+
 function scanCode() {
 	uni.scanCode({
 		onlyFromCamera: true,
@@ -43,17 +47,21 @@ function scanCode() {
 			console.log('扫码结果:', res)
 			scansuc.value = true
 			if (res.errMsg === 'scanCode:ok' && res.result) {
-				ActivityApi.getQrcodeConfirm({ code: res.result }).then(res => {
-					orderSn.value = res?.orderSn || ''
-					nickname.value = res?.nickname || ''
-					if (res.msg) {
-						uni.showToast({ title: res.msg })
-					}
-				})
+				getCode(res.result)
 			}
 		},
 		fail: (err) => {
 			uni.showToast({ title: '扫码失败', icon: 'none' })
+		}
+	})
+}
+
+const getCode = (code) => {
+	ActivityApi.getQrcodeConfirm({ code: code }).then(res => {
+		orderSn.value = res?.orderSn || ''
+		nickname.value = res?.nickname || ''
+		if (res.msg) {
+			uni.showToast({ title: res.msg })
 		}
 	})
 }
@@ -74,18 +82,21 @@ function scanCode() {
 	height: 384rpx;
 	margin: 100rpx auto;
 }
-.imgage-fail{
+
+.imgage-fail {
 	width: 330rpx;
 	height: 278rpx;
 	margin: 100rpx auto 0;
 }
-.info-warning{
+
+.info-warning {
 	margin-top: 100rpx;
 	font-size: 45rpx;
 	font-weight: bold;
 	color: rgba(26, 26, 26, 1);
 }
-.info-tips{
+
+.info-tips {
 	margin-top: 28rpx;
 	font-size: 30rpx;
 	color: rgba(153, 153, 153, 1);

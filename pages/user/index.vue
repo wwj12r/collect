@@ -54,7 +54,7 @@ const activities = [
 const tools = [
 	{ icon: 'publish', text: '发布活动', link: '/pages/user/Activity/publish' },
 	{ icon: 'manage', text: '活动管理', link: '/pages/user/Activity/manage' },
-	{ icon: 'scan', text: '扫码核销', link: '/pages/user/scan' },
+	{ icon: 'scan', text: '扫码核销' },
 	{ icon: 'print', text: '发布印章', link: '/pages/user/Print/index' }
 ]
 const goSetting = () => {
@@ -65,7 +65,11 @@ const onActivityClick = (item) => {
 	// 处理活动点击
 	console.log(tokenRef.value)
 	if (!tokenRef.value) return
-	uni.navigateTo({ url: item.link })
+	if (item.link) {
+		uni.navigateTo({ url: item.link })
+	} else {
+		scanCode()
+	}
 }
 
 const getAuth = (item) => {
@@ -76,6 +80,26 @@ onShow(() => {
 	console.log(tokenRef.value)
 	UserApi.getUser().then(res => user.value = res)
 })
+
+
+
+function scanCode() {
+	uni.scanCode({
+		onlyFromCamera: true,
+		success: (res) => {
+			// 这里可以处理扫码结果 res.result
+			console.log('扫码结果:', res)
+			scansuc.value = true
+			if (res.errMsg === 'scanCode:ok' && res.result) {
+				uni.navigateTo({ url: '/pages/user/scan?code=' + res.result })
+
+			}
+		},
+		fail: (err) => {
+			uni.showToast({ title: '扫码失败', icon: 'none' })
+		}
+	})
+}
 
 </script>
 

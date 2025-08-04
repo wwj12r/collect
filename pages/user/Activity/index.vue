@@ -126,7 +126,7 @@ const changeTab = (val) => {
 const btnClick = (item) => {
   console.log(item.state)
   if (item.state == 2 || item.state == 4) {
-    uni.navigateTo({ url: '/pages/user/Activity/verify?id=' + item.id })
+    uni.navigateTo({ url: '/pages/user/Activity/verify?type=user&id=' + item.id })
   } else if (item.state == 1) {
     uni.showToast({title: '订单审核中'})
   }

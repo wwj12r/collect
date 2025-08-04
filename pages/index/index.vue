@@ -3,12 +3,12 @@
 		<view class="imgs">
 			<u-swiper v-if="content.length" :list="content" height="1100rpx" keyName="id" interval="1500" showTitle :autoplay="autoplay" circular @touchstart.native="handleTouchStart" @change="onSwiperChange">
 				<template v-slot="{ item }">
-					<image @click="toDetail(content[currentIndex].id)" :src="getFullImageUrl(item.photo)" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
+					<image @click.stop="toDetail(content[currentIndex].id)" :src="getFullImageUrl(item.photo)" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
 				</template>
 			</u-swiper>
 		</view>
-		<view class="detail">
-			<view class="detail-title" @click="toDetail(content[currentIndex].id)">
+		<view class="detail" @click.stop="toDetail(content[currentIndex].id)">
+			<view class="detail-title">
 				<view class="detail-title-tips">{{ isPastTime(content[currentIndex]?.endTime) ? '已结束' : ['', '下架', '报名中', '已结束'][content[currentIndex].state] }}</view>
 				<view class="detail-title-title">{{ content[currentIndex].title }}</view>
 			</view>
@@ -29,7 +29,7 @@
 				</view>
 				<view class="detail-info-button">
 					<view class="detail-info-button-left">{{ content[currentIndex].num }} 人已报名</view>
-					<view class="detail-info-button-right" @click="toDetail(content[currentIndex].id)">
+					<view class="detail-info-button-right">
 						<image class="detail-info-button-right-img" src="/static/index/button.png"></image>点击报名
 					</view>
 				</view>
