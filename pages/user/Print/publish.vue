@@ -55,13 +55,13 @@ const submit = async () => {
 	}
 	const photo = await uploadImg([imgUrl.value]).then(res => res[0].imgUrl)
 	console.log(photo)
+	uni.showLoading({ title: '发布中...' })
 	const res = await ActivityApi.postContentcreate({
 		title: title.value,
 		content: content.value,
 		photo
 	})
 	uni.showToast({ title: '发布成功', icon: 'success' })
-	// 这里可对接后端API
 	uni.navigateBack()
 }
 </script>

@@ -101,7 +101,6 @@ function logout() {
 }
 
 const getPhoneNumber = (e) => {
-	console.log(111)
 	console.log(e)
 	if (e.detail.errMsg === 'getPhoneNumber:ok') {
 		// 获取到加密数据
@@ -117,7 +116,7 @@ const getPhoneNumber = (e) => {
 					code,
 					encryptedData,
 					iv
-				}).then(res => console.log('aaa', res))
+				}).then(res => UserApi.getUser().then(res => user.value = res))
 			}
 		});
 	} else {

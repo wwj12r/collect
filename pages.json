@@ -10,7 +10,9 @@
 		{
 			"path": "pages/index/detail",
 			"style": {
-				"navigationBarTitleText": "活动详情"
+				"navigationBarTitleText": "活动详情",
+				"enableShareTimeline": true,
+				"enableShareAppMessage": true
 			}
 		},
 		{

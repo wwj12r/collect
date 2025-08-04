@@ -147,7 +147,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { IndexApi } from '../../services'
-import { onLoad } from '@dcloudio/uni-app';
+import { onLoad, onShareAppMessage } from '@dcloudio/uni-app';
 import { getGeoCoder, getAuthorize, uploadImg, getFullImageUrl, isPastTime } from '../../utils/utils';
 import ExpandableText from '@/components/ExpandableText.vue'
 
@@ -166,6 +166,16 @@ onLoad((option) => {
 });
 
 onMounted((e) => {
+})
+
+
+
+onShareAppMessage(() => {
+	return {
+		title: detail.value.content.title,
+		imageUrl: getFullImageUrl(detail.value.content.photo.split(',')[0]),
+		path: '/pages/index/detail?id=' + detail.value.content.id
+	}
 })
 
 const fetchData = async (id) => {
