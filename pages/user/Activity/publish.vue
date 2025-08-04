@@ -109,6 +109,23 @@
 						:disabled="readonly"
 					/>
 				</uni-forms-item>
+
+				<uni-forms-item
+					label="主办方信息"
+					name="sponsor"
+					required
+				>
+					<uni-easyinput 
+						v-model="form.sponsor" 
+						placeholder="请输入"
+						:trim="true"
+						:clearable="true"
+						:inputBorder="false"
+						suffix-icon="compose"
+						suffix-icon-style="color: #1a1a1a;"
+						:disabled="readonly"
+					/>
+				</uni-forms-item>
 				
 				<!-- <uni-forms-item 
 					label="报名费用" 
@@ -141,7 +158,6 @@
 				<uni-forms-item 
 					label="报名条件" 
 					name="condition" 
-					required
 				>
 					<uni-easyinput 
 						v-model="form.condition" 
@@ -251,6 +267,7 @@ onLoad(async (query) => {
 		limitNum: res.content.limitNum,
 		type: Number(res.content.type),
 		condition: res.content.condition,
+		sponsor: res.content.sponsor,
 		// registrationFee: res.content.registrationFee,
 	}
 
@@ -314,6 +331,14 @@ const rules = ref({
 			}
 		]
 	},
+	sponsor: {
+		rules: [
+			{
+				required: true,
+				errorMessage: '请填写主办方信息'
+			}
+		]
+	},
 	limitNum: {
 		rules: [
 			{
@@ -346,14 +371,6 @@ const rules = ref({
 			}
 		]
 	},
-	condition: {
-		rules: [
-			{
-				required: true,
-				errorMessage: '请输入报名条件'
-			}
-		]
-	}
 })
 
 // 日期变化
@@ -422,6 +439,7 @@ async function submit() {
 			limitNum: Number(form.value.limitNum),
 			condition: form.value.condition,
 			shareContent: form.value.shareContent,
+			sponsor: form.value.sponsor,
 		}
 
 		if (activityId.value) {

@@ -122,9 +122,22 @@ export const ActivityApi = {
 	 * @returns 二维码图片url
 	 * @link https://documenter.getpostman.com/view/3444793/2sB34kEeJG#1dc4bc79-f96d-4d95-950e-564f49c4c690
 	 */
-	fetchActivityVerifyQrCode(id: string) {
+	fetchBizVerifyQrCode(id: string) {
 		return request.get<{imgUrl: string}>({
 			url: `/activitysignet/qrcodeauthor`,
+			data: { id }
+		})
+	},
+
+	/**
+	 * 获取用户活动核销二维码
+	 * @param id 活动id
+	 * @returns 二维码图片url
+	 * @link https://documenter.getpostman.com/view/3444793/2sB34kEeJG#1dc4bc79-f96d-4d95-950e-564f49c4c690
+	 */
+	fetchUserVerifyQrCode(id: string) {
+		return request.get<{imgUrl: string}>({
+			url: `/activitysignet/qrcode`,
 			data: { id }
 		})
 	}
