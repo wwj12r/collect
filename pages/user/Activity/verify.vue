@@ -121,7 +121,13 @@ onLoad(async (query) => {
 	if (!query.id) {
 		return
 	}
-	const res = await ActivityApi.fetchActivityVerifyQrCode(query.id)
+
+	let res;
+	if (query.type === 'user') {
+		res = await ActivityApi.fetchUserVerifyQrCode(query.id)
+	} else {
+		res = await ActivityApi.fetchBizVerifyQrCode(query.id)
+	}
 	qrcodeUrl.value = res.imgUrl
 })
 
