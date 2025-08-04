@@ -3,7 +3,7 @@
 		<view class="imgs">
 			<u-swiper v-if="content.length" :list="content" height="1100rpx" keyName="id" interval="1500" showTitle :autoplay="autoplay" circular @touchstart.native="handleTouchStart" @change="onSwiperChange">
 				<template v-slot="{ item }">
-					<image @click="toDetail(content[currentIndex].id)" :src="getFullImageUrl(item.headimg)" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
+					<image @click="toDetail(content[currentIndex].id)" :src="getFullImageUrl(item.photo)" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
 				</template>
 			</u-swiper>
 		</view>

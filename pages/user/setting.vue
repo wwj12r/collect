@@ -13,7 +13,7 @@
 			<view class="info-row">
 				<text class="label">用户ID</text>
 				<view class="info">
-					<text class="value gray">{{ user.id }}</text>
+					<text class="value gray">{{ user.uuid }}</text>
 					<uni-icons type="compose" size="18" color="#bbb" @click="copyId" />
 				</view>
 			</view>

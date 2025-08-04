@@ -28,7 +28,7 @@ const getList = () => {
 	if (loading.value || finished.value) return
 	loading.value = true
 	const userId = uni.getStorageSync('userId')
-	ActivityApi.getContentlist({ page: page.value, perPage: pageSize, state: userId }).then(res => {
+	ActivityApi.getContentlist({ page: page.value, perPage: pageSize, creator: userId }).then(res => {
 		if (res.content && res.content.length > 0) {
 			list.value.push(...res.content)
 			page.value++
