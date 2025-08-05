@@ -4,7 +4,7 @@
 			<view class="close-btn">
 				<u-icon name="close-circle" size="48rpx" color="#fff" @click="close" />
 			</view>
-			<image class="main-img" :src="imgUrl" mode="widthFix" />
+			<image class="main-img" :src="imgUrl" mode="aspectFit" />
 			<view class="btn-row">
 				<button class="share-btn" open-type="share" @click="onShare">分享</button>
 				<button class="like-btn" @click="onLike">
@@ -71,6 +71,8 @@ function onLike() {
 .main-img {
 	width: 656rpx;
 	height: 941rpx;
+	max-height: 50vh;
+	object-fit: contain;
 	border-radius: 20rpx;
 	margin-bottom: 46rpx;
 }

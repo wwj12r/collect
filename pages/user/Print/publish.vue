@@ -53,9 +53,9 @@ const submit = async () => {
 		uni.showToast({ title: '请输入正文', icon: 'none' })
 		return
 	}
+	uni.showLoading({ title: '发布中...' })
 	const photo = await uploadImg([imgUrl.value]).then(res => res[0].imgUrl)
 	console.log(photo)
-	uni.showLoading({ title: '发布中...' })
 	const res = await ActivityApi.postContentcreate({
 		title: title.value,
 		content: content.value,

@@ -14,7 +14,7 @@
 		<!-- 集章卡片网格 -->
 		<view class="card-grid" v-if="tokenRef">
 			<view class="card-item" v-for="(card, idx) in list" :key="idx" @click="previewImg(card)">
-				<image class="card-img" :src="card.headimg" mode="aspectFill" />
+				<image class="card-img" :src="getFullImageUrl(card.photo)" mode="aspectFill" />
 			</view>
 		</view>
 		<view v-else>
@@ -23,23 +23,24 @@
 			</button>
 		</view>
 	</view>
-	<StampPreviewPopup v-model:show="showPopup" :imgUrl="active.headimg" @like="zan" />
+	<StampPreviewPopup v-model:show="showPopup" :imgUrl="getFullImageUrl(active.photo)" @like="zan" />
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import StampPreviewPopup from './components/preview.vue'
-import { getAuthorize } from '../../utils/utils'
+import { getAuthorize, getFullImageUrl } from '../../utils/utils'
 import { GalleryApi } from '../../services/gallery'
 import { onReachBottom, onShow, onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 import { useToken } from '../../hooks/userToken'
+import { ActivityApi } from '../../services/activity'
 const { tokenRef, setToken } = useToken()
 
 onShareAppMessage(() => {
 	console.log(showPopup.value)
 	return {
 		title: '我的展厅',
-		imageUrl: active.value.headimg,
+		imageUrl: getFullImageUrl(active.value.photo),
 		path: '/pages/gallery/index?id=' + uni.getStorageSync('userId')
 	}
 })

@@ -10,7 +10,7 @@
 		<view class="info">
 			<!-- 活动信息 -->
 			<view class="info-card">
-				<view class="tag">{{ isPastTime(detail.content.endTime) ? '已结束' : detail.activitySignetStateList[detail.content.state] }}</view>
+				<view class="tag">{{ isPastTime(detail.content.startTime) ? '已结束' : detail.activitySignetStateList[detail.content.state] }}</view>
 				<view class="event-title">{{ detail.content.title }}</view>
 			</view>
 
@@ -59,7 +59,7 @@
 					</view>
 				</view>
 				<view class="section-content red">
-					发布一篇活动介绍到小红书
+					{{detail.content.condition}}
 					<!-- <button class="copy-btn" @click="copyContent">复制内容</button> -->
 					<view class="copy-btn" @click="copyContent(detail.content.condition)">
 						<image class="copy-btn-img" src="/static/index/button.png"></image>复制内容
@@ -97,7 +97,7 @@
 			<!-- 报名按钮 -->
 			<view class="footer">
 				<button class="signup-btn disabled" v-if="detail.content.state == 1">{{ detail.activitySignetStateList[detail.content.state] }}</button>
-				<button class="signup-btn disabled" v-else-if="detail.content.state == 3 || isPastTime(detail.content.endTime)">已结束</button>
+				<button class="signup-btn disabled" v-else-if="detail.content.state == 3 || isPastTime(detail.content.startTime)">已结束</button>
 				<button class="signup-btn" @click="openPopUp" v-else-if="detail.content.state == 2 && detail.content.orderId == 0">报名</button>
 				<button class="signup-btn disabled" v-else-if="detail.content.orderId > 0">{{ detail?.activitySignetOrderStateList?.[detail.content.orderState] }}</button>
 				<button class="signup-btnall" open-type="getUserInfo" @getuserinfo="getAuth" v-if="!authorized"></button>
@@ -183,7 +183,7 @@ const fetchData = async (id) => {
 		detail.value = res
 		console.log(res)
 		// IndexApi.getMyDetail(res.content.orderId).then(user => userStatus.value = user)
-		const geo = await getGeoCoder(res.content.address)
+		const geo = await getGeoCoder(res.content?.address)
 		console.log(geo)
 		geoRef.value = geo
 	})
@@ -244,12 +244,13 @@ const submit = async (direct) => {
 		}
 		uni.hideLoading()
 		fetchData(detail.value.content.id)
-		if (result.msg) {
+		if (result.ret == 0) {
 			hidePopup()
+			uni.showToast({ title: result.msg || '提交成功', icon: 'success' })
+		} else if (result.msg) {
 			uni.showToast({ title: result.msg, icon: 'error' })
 			return
 		}
-		uni.showToast({ title: '提交成功', icon: 'success' })
 		if (detail.value.content.type == 1) {
 			uni.navigateTo({ url: '/pages/index/success' })
 		}
