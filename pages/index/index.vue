@@ -4,8 +4,8 @@
 			<swiper-item v-for="item in content" :key="item.id" height="100vh">
 				<view class="imgs">
 					<u-swiper v-if="item.photo.split(',').length" :list="item.photo.split(',')" height="1100rpx" interval="1500" showTitle :autoplay="autoplay" circular @touchstart.native="handleTouchStart">
-						<template v-slot="{item}">
-							<image @click.stop="toDetail(item.id)" :src="getFullImageUrl(item)" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
+						<template v-slot="{item: items}">
+							<image @click.stop="toDetail(item.id)" :src="getFullImageUrl(items)" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
 						</template>
 					</u-swiper>
 				</view>
