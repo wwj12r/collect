@@ -91,7 +91,7 @@
 						<image src="/static/index/activity.png"></image>活动详情
 					</view>
 				</view>
-				<image class="detail-img" :src="getFullImageUrl(detail.content.content)" mode="widthFix" />
+				<image class="detail-img" v-if="detail.content.content" v-for="(img, index) in detail.content.content?.split(',')" :src="getFullImageUrl(img)" :key="index" mode="widthFix" />
 			</view>
 
 			<!-- 报名按钮 -->
