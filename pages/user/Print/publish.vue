@@ -68,16 +68,18 @@ const submit = async () => {
 
 <style scoped>
 .publish-idea-page {
-	background: #f7f7f7;
+	background: #fafafa;
 	min-height: 100vh;
 	padding: 0 0 80rpx 0;
 	position: relative;
+	padding-top: 32rpx;
+	box-sizing: border-box;
 }
 
 .img-upload {
 	width: 120rpx;
 	height: 120rpx;
-	margin: 32rpx 0 0 32rpx;
+	margin: 0 0 0 32rpx;
 	border-radius: 12rpx;
 	background: #f2f2f2;
 	display: flex;

@@ -33,7 +33,6 @@ import { getAuthorize, getFullImageUrl } from '../../utils/utils'
 import { GalleryApi } from '../../services/gallery'
 import { onReachBottom, onShow, onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 import { useToken } from '../../hooks/userToken'
-import { ActivityApi } from '../../services/activity'
 const { tokenRef, setToken } = useToken()
 
 onShareAppMessage(() => {
@@ -138,7 +137,7 @@ const zan = async () => {
 }
 
 .signup-btn {
-	width: 90%;
+	width: 650rpx;
 	background: #222;
 	color: #fff;
 	font-size: 32rpx;
