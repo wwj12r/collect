@@ -1,8 +1,6 @@
 import request from "./request"
 
 export const CenterApi = {
-
-
 	/**
 	 * 创意列表(热门创意话题)
 	*/
@@ -15,5 +13,11 @@ export const CenterApi = {
 	*/
 	postArticle(data) {
 		return request.post({ url: '/article', data })
+	},
+	/**
+	 * 创意详情
+	*/
+	getArticleDetail(id) {
+		return request.get({ url: '/article/' + id })
 	},
 }

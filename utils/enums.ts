@@ -1,1 +1,1 @@
-export const imgBaseUrl = 'https://sami-1256315447.file.myqcloud.com'
+export const imgBaseUrl = 'https://sami-1256315447.picgz.myqcloud.com'

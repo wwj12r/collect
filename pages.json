@@ -46,7 +46,8 @@
 		{
 			"path": "pages/center/detail",
 			"style": {
-				"navigationBarTitleText": "查看创意"
+				"navigationBarTitleText": "查看创意",
+				"navigationStyle": "custom"
 			}
 		},
 		{

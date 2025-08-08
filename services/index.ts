@@ -45,7 +45,7 @@ export const IndexApi = {
 							'access-token': uni.getStorageSync('token') || '',
 						},
 						formData: {
-							type: 4,
+							type: 3,
 						},
 						success: (uploadRes) => {
 							console.log('上传成功：', uploadRes)

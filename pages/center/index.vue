@@ -140,8 +140,10 @@ function onSearch() {
 function onPublish() {
 	uni.navigateTo({ url: '/pages/center/idea' })
 }
-function onToDetail() {
-	uni.navigateTo({ url: '/pages/center/detail' })
+function onToDetail(item) {
+	uni.navigateTo({
+		url: '/pages/center/detail?id=' + item.id
+	})
 }
 
 const handleReachBottom = () => {
