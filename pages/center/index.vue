@@ -30,14 +30,14 @@
 				</view>
 			</view>
 			<view class="stamp-scroll">
-				<image class="stamp-cards" v-for="(stamp, idx) in stamps.filter(i => activeCategory ? isWithinLast3Days(i.createTime) : !isWithinLast3Days(i.createTime))" :key="idx" :src="getFullImageUrl(stamp.photo)" mode="aspectFill">
+				<image @click="onToDetail(stamp)" class="stamp-cards" v-for="(stamp, idx) in stamps.filter(i => activeCategory ? isWithinLast3Days(i.createTime) : !isWithinLast3Days(i.createTime))" :key="idx" :src="getFullImageUrl(stamp.photo)" mode="aspectFill">
 				</image>
 			</view>
 
 			<!-- 热门创意话题 -->
 			<view class="section-title">热门创意话题</view>
 			<view class="topic-list">
-				<view class="topic-card" v-for="(topic, idx) in list" :key="idx" @click="onToDetail(topic)">
+				<view class="topic-card" v-for="(topic, idx) in list" :key="idx" @click="onToDetail(topic, true)">
 					<image :src="getFullImageUrl(topic.photo?.split(',')[0])" class="topic-img" mode="aspectFill" />
 					<view class="topic-desc">{{ topic.title }}</view>
 					<view class="topic-footer">
@@ -125,10 +125,6 @@ onShow(() => {
 	})
 	getList()
 });
-
-onShow(() => {
-	getList()
-})
 // onReachBottom(() => {
 // 	tokenRef.value && getList()
 // })
@@ -140,9 +136,9 @@ function onSearch() {
 function onPublish() {
 	uni.navigateTo({ url: '/pages/center/idea' })
 }
-function onToDetail(item) {
+function onToDetail(item, isArticle) {
 	uni.navigateTo({
-		url: '/pages/center/detail?id=' + item.id
+		url: '/pages/center/detail?id=' + item.id + (isArticle ? '&isArticle=1' : '')
 	})
 }
 
@@ -158,11 +154,11 @@ const getAuth = () => {
 	})
 }
 function isWithinLast3Days(dateStr) {
-  const inputTime = new Date(dateStr).getTime();
-  const now = Date.now();
-  const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
-  
-  return now - inputTime <= threeDaysInMs;
+	const inputTime = new Date(dateStr).getTime();
+	const now = Date.now();
+	const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
+
+	return now - inputTime <= threeDaysInMs;
 }
 </script>
 

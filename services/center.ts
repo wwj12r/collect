@@ -20,4 +20,34 @@ export const CenterApi = {
 	getArticleDetail(id) {
 		return request.get({ url: '/article/' + id })
 	},
+	/**
+	 * 创意评论列表
+	*/
+	getArticlecomment(data) {
+		return request.get({ url: '/articlecomment', data })
+	},
+	/**
+	 * 创意评论
+	*/
+	postArticlecomment(data) {
+		return request.post({ url: '/articlecomment', data })
+	},
+	/**
+	 * 创意评论点赞
+	*/
+	postArticlecommentLike(data) {
+		return request.post({ url: '/articlecomment/like', data })
+	},
+	/**
+	 * 创意点赞
+	*/
+	postArticleLike(data) {
+		return request.post({ url: '/article/articlelike', data })
+	},
+	/**
+	 * 获得电子印章
+	*/
+	postContentjoin(data) {
+		return request.post({ url: '/activitysignet/contentjoin', data })
+	},
 }
