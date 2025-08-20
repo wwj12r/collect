@@ -7,7 +7,7 @@
 		<view class="img-upload" @click="chooseImage">
 			<image v-if="imgUrl" :src="imgUrl" class="img" mode="aspectFill" />
 			<view v-else class="img-placeholder">
-				<u-icon type="plusempty" size="36" color="#bbb" />
+				<image class="add-icon" src="/static/index/add.png" />
 			</view>
 		</view>
 
@@ -18,12 +18,15 @@
 		<textarea class="content-input" v-model="content" placeholder="添加正文" placeholder-class="input-placeholder" maxlength="500" auto-height />
 
 		<!-- 底部按钮 -->
-		<button class="submit-btn" @click="submit">发布活动</button>
+		<button class="submit-btn" @click="submit">发布创意</button>
 	</view>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { uploadImg } from '../../utils/utils'
+import { ActivityApi } from '../../services/activity'
+import { CenterApi } from '../../services/center'
 
 const imgUrl = ref('')
 const title = ref('')
@@ -38,7 +41,7 @@ function chooseImage() {
 	})
 }
 
-function submit() {
+const submit = async () => {
 	if (!imgUrl.value) {
 		uni.showToast({ title: '请上传图片', icon: 'none' })
 		return
@@ -51,24 +54,40 @@ function submit() {
 		uni.showToast({ title: '请输入正文', icon: 'none' })
 		return
 	}
-	uni.showToast({ title: '发布成功', icon: 'success' })
-	// 这里可对接后端API
-	uni.navigateTo({ url: '/pages/index/success' })
+	uni.showLoading({ title: '发布中...' })
+	const photo = await uploadImg([imgUrl.value]).then(res => res[0].imgUrl)
+	console.log(photo)
+	const res = await CenterApi.postArticle({
+		title: title.value,
+		content: content.value,
+		photo,
+		artType: 16,
+	})
+	if (res.ret > 0) {
+		uni.showToast({ title: res.msg, icon: 'error' })
+	} else {
+		uni.showToast({ title: '发布成功', icon: 'success' })
+		setTimeout(() => {
+			uni.navigateBack()
+		}, 1000);
+	}
 }
 </script>
 
 <style scoped>
 .publish-idea-page {
-	background: #f7f7f7;
+	background: #fafafa;
 	min-height: 100vh;
 	padding: 0 0 80rpx 0;
 	position: relative;
+	padding-top: 32rpx;
+	box-sizing: border-box;
 }
 
 .img-upload {
 	width: 120rpx;
 	height: 120rpx;
-	margin: 32rpx 0 0 32rpx;
+	margin: 0 0 0 32rpx;
 	border-radius: 12rpx;
 	background: #f2f2f2;
 	display: flex;
@@ -89,6 +108,11 @@ function submit() {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	image {
+		width: 30rpx;
+		height: 30rpx;
+	}
 }
 
 .title-input {

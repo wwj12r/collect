@@ -31,7 +31,10 @@
 			"path": "pages/center/index",
 			"style": {
 				"navigationBarTitleText": "创意中心",
-				"navigationStyle": "custom"
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false,
+				"enableShareAppMessage": true,
+				"onReachBottomDistance": 100
 			}
 		},
 		{
@@ -43,7 +46,8 @@
 		{
 			"path": "pages/center/detail",
 			"style": {
-				"navigationBarTitleText": "查看创意"
+				"navigationBarTitleText": "查看创意",
+				"navigationStyle": "custom"
 			}
 		},
 		{
@@ -149,12 +153,12 @@
 				"iconPath": "static/index/index.png", // 未选中图标
 				"selectedIconPath": "static/index/index-active.png" // 选中图标
 			},
-			// {
-			// 	"pagePath": "pages/center/index",
-			// 	"text": "创意中心",
-			// 	"iconPath": "static/center/center.png",
-			// 	"selectedIconPath": "static/center/center-active.png"
-			// },
+			{
+				"pagePath": "pages/center/index",
+				"text": "创意中心",
+				"iconPath": "static/center/center.png",
+				"selectedIconPath": "static/center/center-active.png"
+			},
 			{
 				"pagePath": "pages/gallery/index",
 				"text": "展厅",

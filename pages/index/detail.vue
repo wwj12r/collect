@@ -246,7 +246,7 @@ const submit = async (direct) => {
 		fetchData(detail.value.content.id)
 		if (result.ret == 0) {
 			hidePopup()
-			uni.showToast({ title: result.msg || '提交成功', icon: 'success' })
+			uni.showToast({ title: '提交成功', icon: 'success' })
 		} else if (result.msg) {
 			uni.showToast({ title: result.msg, icon: 'error' })
 			return

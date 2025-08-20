@@ -146,6 +146,7 @@ const toDetail = (id) => {
 	display: flex;
 	align-items: start;
 	color: #999999;
+	gap: 20rpx;
 	justify-content: space-between;
 
 	.detail-info-address-right {

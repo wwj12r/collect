@@ -1,273 +1,385 @@
 <template>
 	<view class="discover-page">
-	  <!-- 顶部搜索栏 -->
-	  <view class="search-bar">
-		<input class="search-input" v-model="searchText" placeholder="广东盖帮之深圳集章大会预告" />
-		<button class="search-btn" @click="onSearch">搜索</button>
-		<view class="search-icons">
-		  <u-icon type="more-filled" size="28" color="#333" />
-		</view>
-	  </view>
-  
-	  <!-- 印章分类 -->
-	  <view class="category-bar">
-		<view
-		  v-for="(cat, idx) in categories"
-		  :key="cat"
-		  :class="['category-item', { active: idx === activeCategory }]"
-		  @click="activeCategory = idx"
-		>
-		  {{ cat }}
-		</view>
-	  </view>
-  
-	  <!-- 优质印章横滑 -->
-	  <view class="section-title">优质印章</view>
-	  <scroll-view class="stamp-scroll" scroll-x>
-		<view class="stamp-card" v-for="(stamp, idx) in stamps" :key="idx">
-		  <image :src="stamp.img" class="stamp-img" mode="aspectFill" />
-		  <view class="stamp-name">{{ stamp.name }}</view>
-		</view>
-	  </scroll-view>
-  
-	  <!-- 热门创意话题 -->
-	  <view class="section-title">热门创意话题</view>
-	  <view class="topic-list">
-		<view class="topic-card" v-for="(topic, idx) in topics" :key="idx" @click="onToDetail(topic)">
-		  <image :src="topic.img" class="topic-img" mode="aspectFill" />
-		  <view class="topic-desc">{{ topic.desc }}</view>
-		  <view class="topic-footer">
-			<view class="topic-user">
-			  <image :src="topic.avatar" class="user-avatar" />
-			  <text class="user-name">{{ topic.user }}</text>
+		<!-- 顶部搜索栏 -->
+		<view class="search-bar" v-if="tokenRef">
+			<u-input prefixIcon="search" clearable :customStyle="{
+				height: '60rpx',
+				borderRadius: '30rpx',
+				background: '#fff',
+				padding: '0 110rpx 0 24rpx',
+				fontSize: '26rpx',
+				marginRight: '12rpx',
+				// paddingRight: '120rpx',
+				width: '100%'
+			}" v-model="searchText" placeholder="搜索掌主名称或内容" @confirm="onSearch" @clear="onSearch" />
+			<button class="search-btn" @click="onSearch">搜索</button>
+			<view class="search-icons">
+				<u-icon type="more-filled" size="28" color="#333" />
 			</view>
-			<view class="topic-stats">
-			  <u-icon type="heart" size="20" color="#f56c6c" />
-			  <text class="stat">{{ topic.likes }}</text>
-			</view>
-		  </view>
 		</view>
-	  </view>
-  
-	  <!-- 悬浮发布按钮 -->
-	  <button class="fab" @click="onPublish">
-		<u-icon type="plusempty" size="32" color="#fff" />
-	  </button>
+		<scroll-view class="search-content" v-if="tokenRef" scroll-y :scroll-with-animation="true" @scrolltolower="handleReachBottom">
+
+			<!-- 优质印章横滑 -->
+			<view class="section-title">优质印章
+
+				<!-- 印章分类 -->
+				<view class="category-bar">
+					<view v-for="(cat, idx) in categories" :key="cat" :class="['category-item', { active: idx === activeCategory }]" @click="changeCategories(idx)">
+						{{ cat }}
+					</view>
+				</view>
+			</view>
+			<view class="stamp-scroll">
+				<image @click="onToDetail(stamp)" class="stamp-cards" v-for="(stamp, idx) in stamps.filter(i => activeCategory ? isWithinLast3Days(i.createTime) : !isWithinLast3Days(i.createTime))" :key="idx" :src="getFullImageUrl(stamp.photo)" mode="aspectFill">
+				</image>
+			</view>
+
+			<!-- 热门创意话题 -->
+			<view class="section-title">热门创意话题</view>
+			<view class="topic-list">
+				<view class="topic-card" v-for="(topic, idx) in list" :key="idx" @click="onToDetail(topic, true)">
+					<image :src="getFullImageUrl(topic.photo?.split(',')[0])" class="topic-img" mode="aspectFill" />
+					<view class="topic-desc">{{ topic.title }}</view>
+					<view class="topic-footer">
+						<view class="topic-user">
+							<image :src="getFullImageUrl(topic.headimg)" class="user-avatar" />
+							<text class="user-name">{{ topic.nickname }}</text>
+						</view>
+						<view class="topic-stats">
+							<image src="/static/center/like.png"></image>
+							<text class="stat">{{ topic.likesNum }}</text>
+						</view>
+					</view>
+				</view>
+			</view>
+
+			<!-- 悬浮发布按钮 -->
+			<button class="fab" @click="onPublish">
+				<u-icon name="plus" size="32" color="#fff" />
+			</button>
+		</scroll-view>
+		<view v-else>
+			<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuth">
+				登录查看
+			</button>
+		</view>
 	</view>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue'
-  
-  const searchText = ref('')
-  const categories = ['热门', '覆卤', '覆新']
-  const activeCategory = ref(0)
-  
-  const stamps = [
-	{ img: 'https://your-image-url/shanghai.jpg', name: '上海' },
-	{ img: 'https://your-image-url/suzhou.jpg', name: '苏州' },
-	{ img: 'https://your-image-url/guangzhou.jpg', name: '广州' }
-  ]
-  
-  const topics = [
-	{
-	  img: 'https://your-image-url/topic1.jpg',
-	  desc: '活里面的印章数量是我见过最多的，而且都很好看！喜欢...',
-	  avatar: 'https://your-image-url/avatar1.jpg',
-	  user: '酸辣贩奶',
-	  likes: 32917
-	},
-	{
-	  img: 'https://your-image-url/topic2.jpg',
-	  desc: '来了南京的印章来了，可单色可套色，明天再整一下套色...',
-	  avatar: 'https://your-image-url/avatar2.jpg',
-	  user: 'Doi比企谷',
-	  likes: 51082
-	},
-	{
-	  img: 'https://your-image-url/topic3.jpg',
-	  desc: '',
-	  avatar: 'https://your-image-url/avatar3.jpg',
-	  user: '',
-	  likes: 0
-	},
-	{
-	  img: 'https://your-image-url/topic4.jpg',
-	  desc: '',
-	  avatar: 'https://your-image-url/avatar4.jpg',
-	  user: '',
-	  likes: 0
-	}
-  ]
-  
-  function onSearch() {
-	uni.showToast({ title: '搜索: ' + searchText.value, icon: 'none' })
-  }
-  function onPublish() {
+</template>
+
+<script setup>
+import { onReachBottom, onShow } from '@dcloudio/uni-app'
+import { ref } from 'vue'
+import { ActivityApi } from '../../services/activity'
+import { CenterApi } from '../../services/center'
+import { useToken } from '../../hooks/userToken'
+import { getAuthorize, getFullImageUrl } from '../../utils/utils'
+const { tokenRef, setToken } = useToken()
+
+const searchText = ref('')
+const categories = ['热门', '最新']
+const activeCategory = ref(0)
+const stamps = ref([])
+
+const list = ref([])
+
+const page = ref(1)
+const pageSize = 10
+const loading = ref(false)
+const finished = ref(false)
+const keyword = ref('')
+
+const changeCategories = (idx) => {
+	activeCategory.value = idx
+
+}
+
+const getList = (search) => {
+	if (loading.value || finished.value) return
+	loading.value = true
+	search && uni.showLoading()
+	CenterApi.getArticle({ page: search ? 1 : page.value, perPage: pageSize, artType: 16, keyword: keyword.value || '' }).then(res => {
+		uni.hideLoading()
+		if (res.content && res.content.length > 0) {
+			list.value.push(...res.content)
+			page.value++
+		} else if (search) {
+			page.value = 1
+			list.value = res.content
+		} else {
+			finished.value = true
+		}
+		loading.value = false
+	}).catch(err => {
+		uni.hideLoading()
+		loading.value = false
+	})
+}
+
+onShow(() => {
+	list.value = []
+	page.value = 1
+	finished.value = false;
+	const userId = uni.getStorageSync('userId')
+	ActivityApi.getContentlist({ page: 1, perPage: 999, creator: userId }).then(res => {
+		stamps.value = res.content || []
+	})
+	getList()
+});
+// onReachBottom(() => {
+// 	tokenRef.value && getList()
+// })
+
+function onSearch() {
+	keyword.value = searchText.value
+	getList(keyword.value)
+}
+function onPublish() {
 	uni.navigateTo({ url: '/pages/center/idea' })
-  }
-  function onToDetail() {
-	uni.navigateTo({ url: '/pages/center/detail' })
-  }
-  </script>
-  
-  <style scoped>
-  .discover-page {
-	background: #f7f7f7;
-	min-height: 100vh;
-	padding-bottom: 80rpx;
-  }
-  .search-bar {
+}
+function onToDetail(item, isArticle) {
+	uni.navigateTo({
+		url: '/pages/center/detail?id=' + item.id + (isArticle ? '&isArticle=1' : '')
+	})
+}
+
+const handleReachBottom = () => {
+	// 加载更多数据
+	console.log('容器滚动到底了')
+	tokenRef.value && getList()
+}
+const getAuth = () => {
+	getAuthorize().then(res => {
+		setToken(uni.getStorageSync('token'));
+		getList()
+	})
+}
+function isWithinLast3Days(dateStr) {
+	const inputTime = new Date(dateStr).getTime();
+	const now = Date.now();
+	const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
+
+	return now - inputTime <= threeDaysInMs;
+}
+</script>
+
+<style scoped lang="scss">
+.discover-page {
+	background: #fafafa;
+	height: 100vh;
+	box-sizing: border-box;
+	padding: 100rpx 23rpx 0;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.search-bar {
 	display: flex;
 	align-items: center;
-	padding: 24rpx 20rpx 0 20rpx;
-	background: #fff;
-  }
-  .search-input {
+	width: 498rpx;
+	position: relative;
+}
+
+.search-content {
 	flex: 1;
+	overflow: scroll;
+	padding-top: 20rpx;
+	box-sizing: border-box;
+}
+
+.search-input {
 	height: 60rpx;
 	border-radius: 30rpx;
-	background: #f2f2f2;
+	background: #fff;
 	border: none;
 	padding: 0 24rpx;
-	font-size: 26rpx;
+	font-size: 22rpx;
 	margin-right: 12rpx;
-  }
-  .search-btn {
+	width: 100%;
+}
+
+.search-btn {
+	position: absolute;
+	right: 17rpx;
+	top: 6rpx;
+	height: 50rpx;
+	width: 100rpx;
 	background: #222;
 	color: #fff;
 	border-radius: 30rpx;
 	font-size: 26rpx;
-	padding: 0 32rpx;
-	height: 60rpx;
-	margin-right: 12rpx;
-  }
-  .search-icons {
 	display: flex;
 	align-items: center;
-  }
-  .category-bar {
+	justify-content: center;
+	z-index: 12;
+}
+
+.search-icons {
 	display: flex;
-	background: #fff;
-	padding: 0 20rpx;
-	margin-bottom: 10rpx;
-  }
-  .category-item {
+	align-items: center;
+}
+
+.category-bar {
+	display: flex;
+	gap: 20rpx;
+	padding: 0 10rpx;
+}
+
+.category-item {
 	font-size: 26rpx;
-	color: #888;
+	color: rgba(153, 153, 153, 1);
 	margin-right: 32rpx;
-	padding: 18rpx 0;
+	padding: 8rpx 0;
 	border-bottom: 4rpx solid transparent;
-  }
-  .category-item.active {
+}
+
+.category-item.active {
 	color: #222;
 	font-weight: bold;
 	border-bottom: 4rpx solid #222;
-  }
-  .section-title {
-	font-size: 28rpx;
+}
+
+.section-title {
+	font-size: 32rpx;
 	font-weight: bold;
-	margin: 24rpx 0 12rpx 20rpx;
-  }
-  .stamp-scroll {
+	display: flex;
+	gap: 40rpx;
+	align-items: baseline;
+	margin: 26rpx 0 20rpx 0;
+}
+
+.stamp-scroll {
 	display: flex;
 	flex-direction: row;
-	padding-left: 20rpx;
-	margin-bottom: 18rpx;
-  }
-  .stamp-card {
-	width: 180rpx;
-	margin-right: 18rpx;
-	background: #fff;
-	border-radius: 16rpx;
+	flex-wrap: nowrap;
+	overflow: scroll;
+	margin-bottom: 38rpx;
+	min-height: 272rpx;
+}
+
+.stamp-cards {
+	width: 223rpx;
+	height: 272rpx;
+	flex: none;
+	margin-right: 16rpx;
+	border-radius: 13rpx;
 	overflow: hidden;
-	border: 2rpx dashed #ccc;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	padding-bottom: 10rpx;
-  }
-  .stamp-img {
+	display: inline-block;
+}
+
+.stamp-img {
 	width: 180rpx;
 	height: 180rpx;
 	object-fit: cover;
-  }
-  .stamp-name {
+}
+
+.stamp-name {
 	font-size: 22rpx;
 	color: #222;
 	margin-top: 8rpx;
 	text-align: center;
-  }
-  .topic-list {
+}
+
+.topic-list {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	padding: 0 20rpx;
-  }
-  .topic-card {
+}
+
+.topic-card {
 	width: 48%;
-	background: #fff;
 	border-radius: 16rpx;
 	margin-bottom: 18rpx;
 	overflow: hidden;
-	box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04);
 	display: flex;
 	flex-direction: column;
-  }
-  .topic-img {
+}
+
+.topic-img {
 	width: 100%;
-	height: 180rpx;
-	object-fit: cover;
-  }
-  .topic-desc {
+	height: 420rpx;
+}
+
+.topic-desc {
 	font-size: 22rpx;
 	color: #333;
 	margin: 10rpx 12rpx 0 12rpx;
 	min-height: 48rpx;
-  }
-  .topic-footer {
+}
+
+.topic-footer {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	padding: 10rpx 12rpx 12rpx 12rpx;
-  }
-  .topic-user {
+}
+
+.topic-user {
 	display: flex;
 	align-items: center;
-  }
-  .user-avatar {
+}
+
+.user-avatar {
 	width: 32rpx;
 	height: 32rpx;
 	border-radius: 50%;
 	margin-right: 8rpx;
-  }
-  .user-name {
+}
+
+.user-name {
 	font-size: 20rpx;
 	color: #888;
-  }
-  .topic-stats {
+}
+
+.topic-stats {
 	display: flex;
 	align-items: center;
-	color: #f56c6c;
+	color: rgba(26, 26, 26, 1);
 	font-size: 20rpx;
-  }
-  .stat {
+
+	image {
+		width: 21rpx;
+		height: 21rpx;
+	}
+}
+
+.stat {
 	margin-left: 4rpx;
-  }
-  .fab {
+}
+
+.fab {
 	position: fixed;
 	right: 40rpx;
 	bottom: 60rpx;
 	width: 88rpx;
 	height: 88rpx;
 	background: #ff6600;
+	opacity: 0.85;
 	border-radius: 50%;
-	box-shadow: 0 4rpx 16rpx rgba(255,102,0,0.18);
+	box-shadow: 0 4rpx 16rpx rgba(255, 102, 0, 0.18);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	z-index: 10;
 	border: none;
 	padding: 0;
-  }
-  </style>
+}
+
+.signup-btn {
+	width: 650rpx;
+	background: #222;
+	color: #fff;
+	font-size: 32rpx;
+	border-radius: 50rpx;
+	padding: 20rpx 0;
+	font-weight: bold;
+	margin: 810rpx auto;
+	display: block;
+
+	&.disabled {
+		background-color: #f7f7f7;
+		color: rgba(0, 0, 0, .3);
+
+	}
+}
+</style>

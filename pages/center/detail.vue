@@ -1,118 +1,343 @@
 <template>
-	<view class="idea-detail-page">
-	  <!-- 大图展示 -->
-	  <view class="img-area">
-		<image :src="idea.img" class="main-img" mode="aspectFill" />
-		<view class="side-actions">
-		  <view class="action-item">
-			<u-icon type="hand-up" size="32" color="#fff" />
-			<text class="action-text">{{ idea.likes }}</text>
-		  </view>
-		  <view class="action-item">
-			<u-icon type="chat" size="32" color="#fff" />
-			<text class="action-text">{{ idea.comments }}</text>
-		  </view>
-		  <view class="action-item">
-			<u-icon type="paperplane" size="32" color="#fff" />
-			<text class="action-text">{{ idea.shares }}</text>
-		  </view>
-		</view>
-	  </view>
-  
-	  <!-- 正文内容 -->
-	  <view class="content-area">
-		<view class="desc">{{ idea.desc }}</view>
-		<view class="extra">{{ idea.extra }}</view>
-		<view class="date">{{ idea.date }}</view>
-		<view class="more-tip">上滑查看更多</view>
-	  </view>
-	</view>
-  </template>
-  
-  <script setup>
-  
-  const idea = {
-	img: 'https://your-image-url/idea-detail.jpg',
-	likes: '3.2万',
-	comments: 7812,
-	shares: 3283,
-	desc: '店里面的印章数量是我见过最多的，而且都很好看！',
-	extra: '印章收集好打卡！南京夫子庙/周末来试试。儿童的印章数量是我见过最多的，而且都很好看！喜欢收藏的姐妹们快来看看~ #盖章 #集章 #集章地图 #文创产品 #文创设计 #推荐 南京夫子庙盖章南京集章 有南京感',
-	date: '2025-07-21'
-  }
-  </script>
-  
-  <style scoped>
-  .idea-detail-page {
-	background: #f7f7f7;
+	<swiper v-if="contentList.length" :list="contentList" class="swiper" height="100vh" direction="column" :vertical="true" :autoplay="false" keyName="id" showTitle circular @change="onSwiperChange">
+		<swiper-item v-for="item in contentList" :key="item.id" height="100vh">
+			<view class="idea-detail-page">
+				<view class="detail-header">
+					<u-icon name="arrow-left" size="22" @click="goback"></u-icon>
+					<image :src="getFullImageUrl(item.headimg)" mode="aspectFill"></image>
+					<view>{{ item.nickname }}</view>
+				</view>
+				<view class="img-area">
+
+					<!-- <image :src="getFullImageUrl(item.photo)" class="main-img" mode="aspectFill" /> -->
+					<u-swiper v-if="item.photo.split(',').length" :list="item.photo.split(',')" :height="toggleRef ? '900rpx' : '1096rpx'" interval="1500" :autoplay="autoplay" circular @change="onChange">
+						<template v-slot:default="{ item: items }">
+							<image :src="getFullImageUrl(items)" mode="aspectFit" :style="{ width: '100%', height: toggleRef ? '900rpx' : '1096rpx', background: '#000' }" />
+						</template>
+					</u-swiper>
+
+					<view class="custom-indicator" v-if="item.photo.split(',').length > 1">
+						<view v-for="(dot, index) in item.photo.split(',')" :key="index" :class="['custom-dot', { active: current === index }]"></view>
+					</view>
+					<view class="side-actions" v-if="item.islikes > -1">
+						<view class="action-item" @click="like">
+							<!-- <image src="/static/gallery/like.png"></image> -->
+							<u-icon name="thumb-up" color="#fff" size="60rpx" v-if="!item.islikes"></u-icon>
+							<u-icon name="thumb-up-fill" color="#fff" size="60rpx" v-if="item.islikes"></u-icon>
+							<text class="action-text">{{ item.likesNum }}</text>
+						</view>
+						<view class="action-item" @click="showPopupFn">
+							<image src="/static/center/comment.png"></image>
+							<text class="action-text">{{ item.commentsNum }}</text>
+						</view>
+						<button plain class="!border-none flex flex-col items-center gap-2 text-xs" open-type="share">
+							<view class="action-item">
+								<image src="/static/center/share.png"></image>
+								<text class="action-text">{{ item.shareNm }}</text>
+							</view>
+						</button>
+					</view>
+				</view>
+
+				<view class="content-area">
+					<view class="desc">{{ item.title }}</view>
+					<view class="extra">
+						<ExpandableText @toggle="toggle" :showToggleControl="false" iconSize='24rpx' :text="item.content" :maxLines="4" />
+					</view>
+					<view class="date">{{ item.createTime }}</view>
+					<view class="more-tip">上滑查看更多</view>
+					<button v-if="!item.artType" class="logout-btn" @click="collect">收集电子章</button>
+				</view>
+			</view>
+		</swiper-item>
+	</swiper>
+	<CommentPopup v-model:show="showPopup" :id="contentList[current].id" @comment="handleComment" />
+</template>
+
+<script setup>
+import { onLoad, onShareAppMessage } from '@dcloudio/uni-app';
+import { onMounted, ref } from 'vue';
+import { CenterApi } from '../../services/center';
+import { ActivityApi } from '../../services/activity';
+import { getFullImageUrl } from '../../utils/utils';
+import CommentPopup from './components/CommentPopup.vue';
+import ExpandableText from '../../components/ExpandableText.vue';
+
+const current = ref(0)
+const toggleRef = ref(false)
+const contentList = ref({})
+const showPopup = ref(false)
+const idRef = ref('')
+const isArticleRef = ref(false)
+
+onLoad((option) => {
+	console.log(option)
+	fetchData(option.id, option.isArticle)
+});
+const fetchData = async (id, isArticle) => {
+	idRef.value = id
+	isArticleRef.value = isArticle
+	if (isArticle) {
+		const res = await CenterApi.getArticleDetail(id)
+		contentList.value = [res]
+		const list1 = await CenterApi.getArticle({ page: 1, perPage: 999, artType: 16, keyword: '' })
+		contentList.value.push(...list1.content.filter(item => item.id != id))
+		console.log(res)
+		const userId = uni.getStorageSync('userId')
+		const list2 = await ActivityApi.getContentlist({ page: 1, perPage: 999, creator: userId })
+		contentList.value.push(...list2.content)
+		// const userId = uni.getStorageSync('userId')
+		// const [content1, content2] = await Promise.all([
+		// 	ActivityApi.getContentlist({ page: 1, perPage: 999, creator: userId }),
+		// 	CenterApi.getArticle({ page: 1, perPage: 999, artType: 16, keyword: '' })])
+
+		// contentList.value = [...content1.content, ...content2.content]
+	} else {
+		const userId = uni.getStorageSync('userId')
+		const list1 = await ActivityApi.getContentlist({ page: 1, perPage: 999, creator: userId })
+		console.log([list1.content.find(item => item.id == id)])
+		let findOne, rest = []
+		list1.content.map(element => {
+			if (element.id == id) {
+				findOne = element
+			} else {
+				rest.push(element)
+			}
+		});
+		contentList.value = [findOne, ...rest]
+		const list2 = await CenterApi.getArticle({ page: 1, perPage: 999, artType: 16, keyword: '' })
+		contentList.value.push(...list2.content)
+	}
+	console.log(contentList.value)
+}
+
+const onSwiperChange = async (e) => {
+	current.value = e.detail.current
+	if (contentList.value[e.detail.current].artType && !contentList.value[e.detail.current].username) {
+		const res = await CenterApi.getArticleDetail(contentList.value[e.detail.current].id)
+		contentList.value = contentList.value.map(item => item.id == contentList.value[e.detail.current].id ? { ...item, ...res } : item)
+	}
+}
+const goback = () => {
+	uni.navigateBack()
+}
+const onChange = (e) => {
+	// current.value = e.current
+}
+
+const showPopupFn = () => {
+	showPopup.value = true
+}
+
+const handleComment = () => {
+	fetchData(idRef.value, isArticleRef.value)
+}
+
+const like = () => {
+	CenterApi.postArticleLike({ aid: idRef.value })
+	contentList.value = contentList.value.map(item => item.id == idRef.value ? { ...item, islikes: 1, likesNum: Number(item.likesNum) + 1 } : item)
+}
+
+const toggle = (e) => {
+	toggleRef.value = e
+}
+
+const collect = async () => {
+	const res = await CenterApi.postContentjoin({ id: contentList.value[current.value].id })
+	console.log(res)
+	if (res.ret == 0) {
+		uni.showToast({ title: '收集成功！' })
+		setTimeout(() => {
+			uni.navigateTo({ url: '/page/gallery/index' })
+		}, 500);
+	} else {
+		uni.showToast({ title: res.msg, icon: 'error' })
+	}
+}
+
+
+// 分享给朋友
+onShareAppMessage(() => {
+	const item = contentList.value[current.value]
+	return {
+		title: item?.title || '分享内容',
+		path: `/pages/center/detail?id=${item?.id}&isArticle=${isArticleRef.value}`,
+		imageUrl: getFullImageUrl(item?.photo?.split(',')[0] || '')
+	}
+})
+</script>
+
+<style scoped lang="scss">
+.custom-indicator {
+	@include flex(row);
+	justify-content: center;
+	position: absolute;
+	bottom: 20rpx;
+	left: 0;
+	right: 0;
+	z-index: 10;
+}
+
+.custom-dot {
+	height: 7rpx;
+	width: 52rpx;
+	border-radius: 100px;
+	background-color: rgba(255, 255, 255, 0.6);
+	margin: 0 10rpx;
+	transition: background-color 0.3s;
+
+	&.active {
+		background-color: rgba(255, 255, 255, 1);
+	}
+}
+
+.dot {
+	width: 10rpx;
+	height: 10rpx;
+	background-color: rgba(255, 255, 255, 0.5);
+	border-radius: 100rpx;
+	margin: 0 6rpx;
+	transition: all 0.3s;
+}
+
+.dot.active {
+	width: 20rpx;
+	background-color: #ffffff;
+}
+
+.swiper {
+	padding: 0;
+	height: 100vh;
+}
+
+.idea-detail-page {
+	background: #fafafa;
 	min-height: 100vh;
 	padding-bottom: 40rpx;
-  }
-  .img-area {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	.detail-header {
+		width: 100%;
+		height: 120rpx;
+		margin-top: 70rpx;
+		background-color: #fff;
+		display: flex;
+		align-items: center;
+
+		image {
+			width: 67rpx;
+			height: 67rpx;
+			border-radius: 50%;
+			margin-left: 33rpx;
+			margin-right: 21rpx;
+		}
+
+		view {
+			color: rgba(26, 26, 26, 1);
+			font-size: 28rpx;
+		}
+	}
+}
+
+.img-area {
 	position: relative;
 	width: 100%;
-	height: 420rpx;
+	// height: 1096rpx;
+	// flex: 1;
 	background: #000;
-	border-radius: 18rpx;
 	overflow: hidden;
-	margin: 18rpx auto 0 auto;
-	max-width: 96vw;
-  }
-  .main-img {
+}
+
+.main-img {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
 	display: block;
-  }
-  .side-actions {
+}
+
+.side-actions {
 	position: absolute;
-	right: 18rpx;
-	top: 40rpx;
+	right: 28rpx;
+	bottom: 10rpx;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	z-index: 2;
-  }
-  .action-item {
+}
+
+.action-item {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	margin-bottom: 24rpx;
-  }
-  .action-text {
+	gap: 5rpx;
+
+	image {
+		width: 50rpx;
+		height: 50rpx;
+		object-fit: contain;
+	}
+}
+
+.action-text {
 	color: #fff;
 	font-size: 22rpx;
 	margin-top: 4rpx;
-	text-shadow: 0 2rpx 8rpx rgba(0,0,0,0.18);
-  }
-  .content-area {
-	background: #fff;
+	text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.18);
+}
+
+.content-area {
 	border-radius: 0 0 18rpx 18rpx;
 	margin: 0 auto;
-	max-width: 96vw;
+	width: 100%;
 	padding: 24rpx 18rpx 18rpx 18rpx;
-  }
-  .desc {
+}
+
+.desc {
 	font-size: 26rpx;
-	color: #222;
+	color: rgba(26, 26, 26, 1);
 	font-weight: bold;
 	margin-bottom: 12rpx;
-  }
-  .extra {
+}
+
+.extra {
 	font-size: 22rpx;
-	color: #555;
+	color: rgba(26, 26, 26, 1);
 	margin-bottom: 18rpx;
 	line-height: 1.7;
-  }
-  .date {
+	max-height: 300rpx;
+	overflow: scroll;
+}
+
+.date {
 	font-size: 20rpx;
-	color: #bbb;
+	color: rgba(179, 179, 179, 1);
 	margin-bottom: 8rpx;
-  }
-  .more-tip {
+}
+
+.more-tip {
 	text-align: center;
 	color: #bbb;
 	font-size: 20rpx;
 	margin-top: 8rpx;
-  }
-  </style>
+}
+
+.logout-btn {
+	width: 396rpx;
+	height: 76rpx;
+	background: #222;
+	color: #fff;
+	font-size: 30rpx;
+	border-radius: 76rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: bold;
+	position: fixed;
+	left: 190rpx;
+	bottom: 40rpx;
+	z-index: 10;
+}
+</style>
