@@ -5,7 +5,7 @@
 				<view class="detail-header">
 					<u-icon name="arrow-left" size="22" @click="goback"></u-icon>
 					<image :src="getFullImageUrl(item.headimg)" mode="aspectFill"></image>
-					<view>{{ item.username }}</view>
+					<view>{{ item.nickname }}</view>
 				</view>
 				<view class="img-area">
 
