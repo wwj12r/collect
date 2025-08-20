@@ -89,7 +89,6 @@ function scanCode() {
 		success: (res) => {
 			// 这里可以处理扫码结果 res.result
 			console.log('扫码结果:', res)
-			scansuc.value = true
 			if (res.errMsg === 'scanCode:ok' && res.result) {
 				uni.navigateTo({ url: '/pages/user/scan?code=' + res.result })
 

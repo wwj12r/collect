@@ -123,7 +123,7 @@
 				</view>
 			</view>
 			<view class="section-content red" v-if="detail.content.condition">
-				发布一篇活动介绍到小红书
+				{{ detail.content.condition }}
 				<!-- <button class="copy-btn" @click="copyContent">复制内容</button> -->
 				<view class="copy-btn" @click="copyContent(detail.content.condition)">
 					<image class="copy-btn-img" src="/static/index/button.png"></image>复制内容

@@ -30,7 +30,8 @@
 				<text class="label">手机号码</text>
 				<view>
 					<view class="value orange info">{{ user.phone ? user.phone : '点击获取手机号' }}
-						<button v-if="!user.phone" class="phone-button" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber"></button>
+						<button v-if="!user.phone" class="phone-button" open-type="getPhoneNumber"
+							@getphonenumber="getPhoneNumber"></button>
 					</view>
 
 				</view>
@@ -58,7 +59,8 @@ function changeAvatar() {
 			const photos = await uploadImg(res.tempFilePaths)
 			const photo = photos.map(i => i.imgUrl)[0]
 			user.value.headimg = photo
-			await UserApi.postUploadhead({ photo })
+			// await UserApi.postUploadhead({ photo })
+			await UserApi.pustNickname(user.value.id, '', photo)
 			uni.showToast({ title: '修改头像成功！' })
 		}
 	})

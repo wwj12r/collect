@@ -19,7 +19,7 @@ export const UserApi = {
 	/**
 	 * 修改用户昵称
 	*/
-	pustNickname(id, nickname) {
-		return request.put({ url: '/user/643', data: { nickname } })
+	pustNickname(id, nickname, headimg) {
+		return request.put({ url: '/user/' + id, data: nickname ? { nickname } : { headimg } })
 	},
 }
