@@ -274,7 +274,7 @@ const toList = () => {
 	})
 }
 const getAuth = () => {
-	getAuthorize().then(res => showPopup.value = true)
+	getAuthorize().then(res => openPopUp())
 }
 
 const follow = () => {
