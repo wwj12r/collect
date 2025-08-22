@@ -83,18 +83,12 @@ const fetchData = async (id, isArticle) => {
 		const list1 = await CenterApi.getArticle({ page: 1, perPage: 999, artType: 16, keyword: '' })
 		contentList.value.push(...list1.content.filter(item => item.id != id))
 		console.log(res)
-		const userId = uni.getStorageSync('userId')
-		const list2 = await ActivityApi.getContentlist({ page: 1, perPage: 999, creator: userId })
-		contentList.value.push(...list2.content)
 		// const userId = uni.getStorageSync('userId')
-		// const [content1, content2] = await Promise.all([
-		// 	ActivityApi.getContentlist({ page: 1, perPage: 999, creator: userId }),
-		// 	CenterApi.getArticle({ page: 1, perPage: 999, artType: 16, keyword: '' })])
-
-		// contentList.value = [...content1.content, ...content2.content]
+		// const list2 = await ActivityApi.getContentlist({ page: 1, perPage: 999, creator: userId })
+		// contentList.value.push(...list2.content)
 	} else {
 		const userId = uni.getStorageSync('userId')
-		const list1 = await ActivityApi.getContentlist({ page: 1, perPage: 999, creator: userId })
+		const list1 = await ActivityApi.getContentlist({ page: 1, perPage: 999, creator: '' })
 		console.log([list1.content.find(item => item.id == id)])
 		let findOne, rest = []
 		list1.content.map(element => {
@@ -105,8 +99,8 @@ const fetchData = async (id, isArticle) => {
 			}
 		});
 		contentList.value = [findOne, ...rest]
-		const list2 = await CenterApi.getArticle({ page: 1, perPage: 999, artType: 16, keyword: '' })
-		contentList.value.push(...list2.content)
+		// const list2 = await CenterApi.getArticle({ page: 1, perPage: 999, artType: 16, keyword: '' })
+		// contentList.value.push(...list2.content)
 	}
 	console.log(contentList.value)
 }

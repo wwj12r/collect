@@ -261,7 +261,7 @@ const submit = async (direct) => {
 }
 
 const openPopUp = () => {
-	if (detail.value.content.condition) {
+	if (detail.value.content.type == 1 ) {
 		showPopup.value = true
 	} else {
 		submit(true)

@@ -44,6 +44,13 @@
 			}
 		},
 		{
+			"path": "pages/center/list",
+			"style": {
+				"navigationBarTitleText": "印章列表",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
 			"path": "pages/center/detail",
 			"style": {
 				"navigationBarTitleText": "查看创意",
