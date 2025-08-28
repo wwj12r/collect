@@ -80,6 +80,7 @@ const isEmpty = ref(false)
 
 // 监听 show 变化，当弹窗打开时请求接口
 watch(() => props.show, (newVal) => {
+	console.log(newVal)
 	if (newVal) {
 		fetchComments(true)
 	}
@@ -94,6 +95,7 @@ const fetchComments = async (refresh) => {
 		finished.value = false;
 	}
 	loading.value = true
+	console.log(loading.value, finished.value)
 	try {
 		const res = await CenterApi.getArticlecomment({
 			aid: props.id,

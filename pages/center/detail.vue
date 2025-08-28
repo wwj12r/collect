@@ -142,13 +142,14 @@ const toggle = (e) => {
 const collect = async () => {
 	const res = await CenterApi.postContentjoin({ id: contentList.value[current.value].id })
 	console.log(res)
-	if (res.ret == 1) {
+	if (res?.ret == 1) {
 		uni.showToast({ title: res.msg, icon: 'error' })
 	} else if (!res) {
 		uni.showToast({ title: '收集成功！' })
-		setTimeout(() => {
-			uni.navigateTo({ url: '/page/gallery/index' })
-		}, 500);
+		contentList.value = contentList.value.map(item => item.id == contentList.value[current.value].id ? {...item, isGet: true} : item)
+		// setTimeout(() => {
+		// 	uni.navigateTo({ url: '/page/gallery/index' })
+		// }, 500);
 	}
 }
 
