@@ -20,7 +20,7 @@
 						<view v-for="(dot, index) in item.photo.split(',')" :key="index" :class="['custom-dot', { active: current === index }]"></view>
 					</view>
 					<view class="side-actions" v-if="item.islikes > -1">
-						<view class="action-item" @click="like">
+						<view class="action-item" @click="like(item.islikes)">
 							<!-- <image src="/static/gallery/like.png"></image> -->
 							<u-icon name="thumb-up" color="#fff" size="60rpx" v-if="!item.islikes"></u-icon>
 							<u-icon name="thumb-up-fill" color="#fff" size="60rpx" v-if="item.islikes"></u-icon>
@@ -46,7 +46,8 @@
 					</view>
 					<view class="date">{{ item.createTime }}</view>
 					<view class="more-tip">上滑查看更多</view>
-					<button v-if="!item.artType && item.creator != userId" class="logout-btn" @click="collect">收集电子章</button>
+					<button v-if="!item.artType && !item.isGet" class="logout-btn" @click="collect">收集电子章</button>
+					<button v-if="!item.artType && item.isGet" style="background-color: #eee;" class="logout-btn">已拥有</button>
 				</view>
 			</view>
 		</swiper-item>
@@ -128,7 +129,8 @@ const handleComment = () => {
 	fetchData(contentList.value[current.value].id, isArticleRef.value)
 }
 
-const like = () => {
+const like = (liked) => {
+	if (liked) return
 	CenterApi.postArticleLike({ aid: contentList.value[current.value].id })
 	contentList.value = contentList.value.map(item => item.id == contentList.value[current.value].id ? { ...item, islikes: 1, likesNum: Number(item.likesNum) + 1 } : item)
 }
@@ -259,7 +261,7 @@ onShareAppMessage(() => {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	z-index: 2;
+	z-index: 20;
 }
 
 .action-item {

@@ -81,7 +81,7 @@ const isEmpty = ref(false)
 // 监听 show 变化，当弹窗打开时请求接口
 watch(() => props.show, (newVal) => {
 	if (newVal) {
-		fetchComments()
+		fetchComments(true)
 	}
 })
 

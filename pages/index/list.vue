@@ -3,6 +3,8 @@
 		<view v-for="(img, idx) in detail.content.collectImgs.split(',')" :key="idx" class="stamp-img-item">
 			<image :src="getFullImageUrl(img)" @click="previewImage(idx)" mode="aspectFill" />
 		</view>
+		<!-- <PreviewImageWithActions ref="previewRef" /> -->
+
 	</view>
 </template>
 <script setup>
@@ -10,7 +12,10 @@ import { ref, onMounted } from 'vue'
 import { IndexApi } from '../../services'
 import { onLoad } from '@dcloudio/uni-app';
 import { getFullImageUrl } from '../../utils/utils';
+import PreviewImageWithActions from './components/preview.vue'
+
 const detail = ref({})
+const previewRef = ref(null)
 
 onLoad((option) => {
 	fetchData(option.id)
@@ -18,10 +23,14 @@ onLoad((option) => {
 
 const previewImage = (index) => {
 	const imgs = detail.value.content.collectImgs.split(',').map(i => getFullImageUrl(i))
-    uni.previewImage({
-      current: imgs[index], // 当前显示图片的 http 链接
-      urls: imgs // 需要预览的图片 http 链接列表
-    })
+	uni.previewImage({
+		current: imgs[index], // 当前显示图片的 http 链接
+		urls: imgs // 需要预览的图片 http 链接列表
+	})
+	// previewRef.value.openPreview({
+	// 	current: index, // 当前下标
+	// 	urls: imgs      // 图片数组
+	// })
 }
 
 const fetchData = async (id) => {
