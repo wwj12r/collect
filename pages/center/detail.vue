@@ -46,7 +46,7 @@
 					</view>
 					<view class="date">{{ item.createTime }}</view>
 					<view class="more-tip">上滑查看更多</view>
-					<button v-if="!item.artType" class="logout-btn" @click="collect">收集电子章</button>
+					<button v-if="!item.artType && item.creator != userId" class="logout-btn" @click="collect">收集电子章</button>
 				</view>
 			</view>
 		</swiper-item>
@@ -69,6 +69,7 @@ const contentList = ref({})
 const showPopup = ref(false)
 const idRef = ref('')
 const isArticleRef = ref(false)
+const userId = uni.getStorageSync('userId')
 
 onLoad((option) => {
 	console.log(option)
@@ -124,12 +125,12 @@ const showPopupFn = () => {
 }
 
 const handleComment = () => {
-	fetchData(idRef.value, isArticleRef.value)
+	fetchData(contentList.value[current.value].id, isArticleRef.value)
 }
 
 const like = () => {
-	CenterApi.postArticleLike({ aid: idRef.value })
-	contentList.value = contentList.value.map(item => item.id == idRef.value ? { ...item, islikes: 1, likesNum: Number(item.likesNum) + 1 } : item)
+	CenterApi.postArticleLike({ aid: contentList.value[current.value].id })
+	contentList.value = contentList.value.map(item => item.id == contentList.value[current.value].id ? { ...item, islikes: 1, likesNum: Number(item.likesNum) + 1 } : item)
 }
 
 const toggle = (e) => {
@@ -139,13 +140,13 @@ const toggle = (e) => {
 const collect = async () => {
 	const res = await CenterApi.postContentjoin({ id: contentList.value[current.value].id })
 	console.log(res)
-	if (res.ret == 0) {
+	if (res.ret == 1) {
+		uni.showToast({ title: res.msg, icon: 'error' })
+	} else if (!res) {
 		uni.showToast({ title: '收集成功！' })
 		setTimeout(() => {
 			uni.navigateTo({ url: '/page/gallery/index' })
 		}, 500);
-	} else {
-		uni.showToast({ title: res.msg, icon: 'error' })
 	}
 }
 
