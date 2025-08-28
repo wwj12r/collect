@@ -1,5 +1,6 @@
 <template>
-	<swiper v-if="contentList.length" :list="contentList" class="swiper" height="100vh" direction="column" :vertical="true" :autoplay="false" keyName="id" showTitle circular @change="onSwiperChange">
+	<swiper v-if="contentList.length" :list="contentList" class="swiper" height="100vh" direction="column"
+		:vertical="true" :autoplay="false" keyName="id" showTitle circular @change="onSwiperChange">
 		<swiper-item v-for="item in contentList" :key="item.id" height="100vh">
 			<view class="idea-detail-page">
 				<view class="detail-header">
@@ -10,14 +11,20 @@
 				<view class="img-area">
 
 					<!-- <image :src="getFullImageUrl(item.photo)" class="main-img" mode="aspectFill" /> -->
-					<u-swiper v-if="item.photo.split(',').length" :list="item.photo.split(',')" :height="toggleRef ? '900rpx' : '1096rpx'" interval="1500" :autoplay="autoplay" circular @change="onChange">
-						<template v-slot:default="{ item: items }">
-							<image :src="getFullImageUrl(items)" mode="aspectFit" :style="{ width: '100%', height: toggleRef ? '900rpx' : '1096rpx', background: '#000' }" />
-						</template>
-					</u-swiper>
+					<swiper v-if="item.photo.split(',').length" :list="item.photo.split(',')" :style="{ height: toggleRef ? '900rpx' : '1096rpx'}"
+						interval="1500" :autoplay="autoplay" circular
+						@change="onChange">
+						<swiper-item v-for="items in item.photo.split(',')" :key="item.id" :style="{height: toggleRef ? '900rpx' : '1096rpx'}">
+							<!-- <template v-slot:default="{ item: items }"> -->
+								<image :src="getFullImageUrl(items)" mode="aspectFit"
+									:style="{ width: '100%', height: toggleRef ? '900rpx' : '1096rpx', background: '#000' }" />
+							<!-- </template> -->
+						</swiper-item>
+					</swiper>
 
 					<view class="custom-indicator" v-if="item.photo.split(',').length > 1">
-						<view v-for="(dot, index) in item.photo.split(',')" :key="index" :class="['custom-dot', { active: current === index }]"></view>
+						<view v-for="(dot, index) in item.photo.split(',')" :key="index"
+							:class="['custom-dot', { active: current === index }]"></view>
 					</view>
 					<view class="side-actions" v-if="item.islikes > -1">
 						<view class="action-item" @click="like(item.islikes)">
@@ -30,7 +37,7 @@
 							<image src="/static/center/comment.png"></image>
 							<text class="action-text">{{ item.commentsNum }}</text>
 						</view>
-						<button plain class="!border-none flex flex-col items-center gap-2 text-xs" open-type="share">
+						<button plain style="border: none;" open-type="share">
 							<view class="action-item">
 								<image src="/static/center/share.png"></image>
 								<text class="action-text">{{ item.shareNm }}</text>
@@ -42,12 +49,14 @@
 				<view class="content-area">
 					<view class="desc">{{ item.title }}</view>
 					<view class="extra">
-						<ExpandableText @toggle="toggle" :showToggleControl="false" iconSize='24rpx' :text="item.content" :maxLines="4" />
+						<ExpandableText @toggle="toggle" :showToggleControl="false" iconSize='24rpx'
+							:text="item.content" :maxLines="4" />
 					</view>
 					<view class="date">{{ item.createTime }}</view>
 					<view class="more-tip">上滑查看更多</view>
 					<button v-if="!item.artType && !item.isGet" class="logout-btn" @click="collect">收集电子章</button>
-					<button v-if="!item.artType && item.isGet" style="background-color: #eee;" class="logout-btn">已拥有</button>
+					<button v-if="!item.artType && item.isGet" style="background-color: #eee;"
+						class="logout-btn">已拥有</button>
 				</view>
 			</view>
 		</swiper-item>
@@ -146,7 +155,7 @@ const collect = async () => {
 		uni.showToast({ title: res.msg, icon: 'error' })
 	} else if (!res) {
 		uni.showToast({ title: '收集成功！' })
-		contentList.value = contentList.value.map(item => item.id == contentList.value[current.value].id ? {...item, isGet: true} : item)
+		contentList.value = contentList.value.map(item => item.id == contentList.value[current.value].id ? { ...item, isGet: true } : item)
 		// setTimeout(() => {
 		// 	uni.navigateTo({ url: '/page/gallery/index' })
 		// }, 500);
