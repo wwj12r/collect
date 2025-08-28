@@ -88,14 +88,14 @@ watch(() => props.show, (newVal) => {
 
 // 请求评论列表接口
 const fetchComments = async (refresh) => {
-	if (loading.value || finished.value) return
+	if ((loading.value || finished.value) && !refresh) return
 	if (refresh) {
 		comments.value = []
 		page.value = 1
 		finished.value = false;
 	}
 	loading.value = true
-	console.log(loading.value, finished.value)
+	isEmpty.value = false
 	try {
 		const res = await CenterApi.getArticlecomment({
 			aid: props.id,
@@ -107,7 +107,7 @@ const fetchComments = async (refresh) => {
 			page.value++
 		} else {
 			finished.value = true
-			if (page.value === 1) {
+			if (page.value === 1 || refresh) {
 				isEmpty.value= true
 			}
 		}
