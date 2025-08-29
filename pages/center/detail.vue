@@ -263,6 +263,7 @@ onShareAppMessage(() => {
 	flex-direction: column;
 	align-items: center;
 	z-index: 20;
+	transform: translate3d(0, 0, 0);
 }
 
 .action-item {
