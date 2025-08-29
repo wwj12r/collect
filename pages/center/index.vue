@@ -47,7 +47,8 @@
 							<text class="user-name">{{ topic.nickname }}</text>
 						</view>
 						<view class="topic-stats">
-							<image src="/static/center/like.png"></image>
+							<image src="/static/center/like.png" v-if="topic.islikes" mode="aspectFill" :style="{ transform: 'scale(1.5)' }"></image>
+							<image src="/static/center/likeicon.png" v-if="!topic.islikes" mode="aspectFill"></image>
 							<text class="stat">{{ topic.likesNum }}</text>
 						</view>
 					</view>

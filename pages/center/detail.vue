@@ -22,8 +22,8 @@
 					<view class="side-actions" v-if="item.islikes > -1">
 						<view class="action-item" @click="like(item.islikes)">
 							<!-- <image src="/static/gallery/like.png"></image> -->
-							<u-icon name="thumb-up" color="#fff" size="60rpx" v-if="!item.islikes"></u-icon>
-							<u-icon name="thumb-up-fill" color="#fff" size="60rpx" v-if="item.islikes"></u-icon>
+							<image src="/static/center/unlike.png" v-if="!item.islikes"></image>
+							<image src="/static/center/like.png" v-if="item.islikes"></image>
 							<text class="action-text">{{ item.likesNum }}</text>
 						</view>
 						<view class="action-item" @click="showPopupFn">
@@ -146,7 +146,7 @@ const collect = async () => {
 		uni.showToast({ title: res.msg, icon: 'error' })
 	} else if (!res) {
 		uni.showToast({ title: '收集成功！' })
-		contentList.value = contentList.value.map(item => item.id == contentList.value[current.value].id ? {...item, isGet: true} : item)
+		contentList.value = contentList.value.map(item => item.id == contentList.value[current.value].id ? { ...item, isGet: true } : item)
 		// setTimeout(() => {
 		// 	uni.navigateTo({ url: '/page/gallery/index' })
 		// }, 500);
@@ -274,9 +274,10 @@ onShareAppMessage(() => {
 	gap: 5rpx;
 
 	image {
-		width: 50rpx;
-		height: 50rpx;
+		width: 84rpx;
+		height: 84rpx;
 		object-fit: contain;
+		margin-bottom: -10rpx;
 	}
 }
 
@@ -284,7 +285,7 @@ onShareAppMessage(() => {
 	color: #fff;
 	font-size: 22rpx;
 	margin-top: 4rpx;
-	text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.18);
+	text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.48);
 }
 
 .content-area {
