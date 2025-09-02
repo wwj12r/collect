@@ -262,6 +262,7 @@ const btnClick = (item) => {
   background: #f2f2f2;
   margin: 0;
   margin-left: auto;
+  white-space: nowrap;
 }
 
 .status-btn.pending {

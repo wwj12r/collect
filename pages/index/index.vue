@@ -46,7 +46,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { IndexApi } from '../../services'
-import { onLoad, onShareAppMessage } from '@dcloudio/uni-app';
+import { onLoad, onShareAppMessage, onShow } from '@dcloudio/uni-app';
 import { getDistance, getFullImageUrl, getGeoCoder, isPastTime } from '../../utils/utils'
 const content = ref([])
 const currentIndex = ref(0)
@@ -59,7 +59,7 @@ onShareAppMessage(() => {
 	}
 })
 
-onMounted(() => {
+onShow(() => {
 	IndexApi.getActivitysignet({state: '2'}).then(res => {
 		content.value = res.content
 		getDistances()

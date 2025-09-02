@@ -99,7 +99,7 @@
 			<view class="footer">
 				<button class="signup-btn disabled" v-if="detail.content.state == 1">{{ detail.activitySignetStateList[detail.content.state] }}</button>
 				<button class="signup-btn disabled" v-else-if="detail.content.state == 3 || isPastTime(detail.content.startTime)">已结束</button>
-				<button class="signup-btn" @click="openPopUp" v-else-if="detail.content.state == 2 && detail.content.orderId == 0">报名</button>
+				<button class="signup-btn" @click="openPopUp" v-else-if="detail.content.state == 2 && (detail.content.orderId == 0 || detail.content.orderState == 3)">报名</button>
 				<button class="signup-btn disabled" v-else-if="detail.content.orderId > 0">{{ detail?.activitySignetOrderStateList?.[detail.content.orderState] }}</button>
 				<button class="signup-btnall" open-type="getUserInfo" @getuserinfo="getAuth" v-if="!authorized"></button>
 			</view>
@@ -232,18 +232,11 @@ const submit = async (direct) => {
 	try {
 		uni.showLoading()
 		let result
-		if (direct) {
-			result = await IndexApi.postSignin({
-				id: detail.value.content.id,
-				photo: res.map(i => i.imgUrl).toString()
-			})
-		} else {
-			const res = await uploadImg(imgUrl.value)
-			result = await IndexApi.postSignin({
-				id: detail.value.content.id,
-				photo: res.map(i => i.imgUrl).toString()
-			})
-		}
+		const res = await uploadImg(imgUrl.value)
+		result = await IndexApi.postSignin({
+			id: detail.value.content.id,
+			photo: res.map(i => i.imgUrl).toString()
+		})
 		uni.hideLoading()
 		fetchData(detail.value.content.id)
 		if (result.ret == 0) {
@@ -403,7 +396,7 @@ const follow = () => {
 	}
 }
 
-.section-introduction{
+.section-introduction {
 	display: block;
 	margin-bottom: 20rpx;
 	white-space: pre-line;
