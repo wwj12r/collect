@@ -72,6 +72,7 @@ import { ActivityApi } from '../../../services/activity'
 import { getPhotoFromStringSlice, prefillImageUrl } from '../../../utils/utils'
 import dayjs from 'dayjs'
 import PageScaffold from '../../../components/PageScaffold.vue'
+import { IndexApi } from '../../../services'
 
 const qrcodeUrl = ref('')
 
@@ -83,36 +84,36 @@ onLoad(async (query) => {
 	// 保存活动ID到本地存储，用于分享
 	uni.setStorageSync('currentActivityId', query.id)
 	
-	const res = await ActivityApi.fetchActivityDetail(query.id)
+	const res = await IndexApi.getMyDetail(query.id)
 	let formatTime = ''
 	const mapDayToChn = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-	if (dayjs(res.content.startTime).isSame(dayjs(res.content.endTime), 'day')) {
-		formatTime = dayjs(res.content.startTime).format('MM月DD日') 
-			+ mapDayToChn[dayjs(res.content.startTime).day()]
-			+ dayjs(res.content.startTime).format('hh:mm')
+	if (dayjs(res.startTime).isSame(dayjs(res.endTime), 'day')) {
+		formatTime = dayjs(res.startTime).format('MM月DD日') 
+			+ mapDayToChn[dayjs(res.startTime).day()]
+			+ dayjs(res.startTime).format('hh:mm')
 			+ '~'
-			+ dayjs(res.content.endTime).format('hh:mm')
-	} else if (dayjs(res.content.startTime).isSame(dayjs(res.content.endTime), 'year')) {
-		formatTime = dayjs(res.content.startTime).format('MM月DD日')
-			+ dayjs(res.content.startTime).format('hh:mm')
+			+ dayjs(res.endTime).format('hh:mm')
+	} else if (dayjs(res.startTime).isSame(dayjs(res.endTime), 'year')) {
+		formatTime = dayjs(res.startTime).format('MM月DD日')
+			+ dayjs(res.startTime).format('hh:mm')
 			+ '~'
-			+ dayjs(res.content.endTime).format('MM月DD日')
-			+ dayjs(res.content.endTime).format('hh:mm')
+			+ dayjs(res.endTime).format('MM月DD日')
+			+ dayjs(res.endTime).format('hh:mm')
 	} else {
-		formatTime = dayjs(res.content.startTime).format('YYYY年MM月DD日')
-			+ dayjs(res.content.startTime).format('hh:mm')
+		formatTime = dayjs(res.startTime).format('YYYY年MM月DD日')
+			+ dayjs(res.startTime).format('hh:mm')
 			+ '~'
-			+ dayjs(res.content.endTime).format('YYYY年MM月DD日')
-			+ dayjs(res.content.endTime).format('hh:mm')
+			+ dayjs(res.endTime).format('YYYY年MM月DD日')
+			+ dayjs(res.endTime).format('hh:mm')
 	}
 
 	activity.value = {
 		id: query.id,
-		title: res.content.title,
-		address: res.content.address,
-		photo: res.content.photo,
-		startTime: dayjs(res.content.startTime).format('MM月DD日'),
-		endTime: dayjs(res.content.endTime).format('YYYY-MM-DD HH:mm:ss'),
+		title: res.title,
+		address: res.address,
+		photo: res.photo,
+		startTime: dayjs(res.startTime).format('MM月DD日'),
+		endTime: dayjs(res.endTime).format('YYYY-MM-DD HH:mm:ss'),
 		formatTime: formatTime,
 	}
 })
