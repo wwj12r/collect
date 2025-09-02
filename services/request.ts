@@ -1,3 +1,4 @@
+import { getAuthorize } from "../utils/utils";
 
 interface RequestOptions {
     url: string;
@@ -46,6 +47,14 @@ const request = <T = any>(options: RequestOptions): Promise<Response<T>> => {
             },
             timeout: options.timeout || 60000,
             success: (res) => {
+                if (res.data?.status == 401) {
+                    getAuthorize(true).then(res => {
+                        resolve(res as any)
+                    }).catch(err => {
+                        reject(err)
+                    })
+                    return
+                }
                 if (Array.isArray(res.data?.datas) && res.data?.datas.length === 0) {
                     resolve(res.data);
                 } else {

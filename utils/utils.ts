@@ -47,7 +47,7 @@ export const getGeoCoder = async (address: string): Promise<{ lat: number, lng: 
 
 
 
-export const getAuthorize = () => {
+export const getAuthorize = (silent = false) => {
 	const { tokenRef, setToken } = useToken()
 	return new Promise(resolve => {
 		uni.getSetting({
@@ -87,7 +87,7 @@ export const getAuthorize = () => {
 						}
 					})
 				}
-				uni.showLoading({ title: '正在登录' })
+				!silent && uni.showLoading({ title: '正在登录' })
 				if (res.authSetting['scope.userInfo']) {
 					login()
 				} else {

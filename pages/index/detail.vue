@@ -59,9 +59,9 @@
 					</view>
 				</view>
 				<view class="section-content red">
-					{{detail.content.condition}}
+					{{ detail.content.condition }}
 					<!-- <button class="copy-btn" @click="copyContent">复制内容</button> -->
-					<view class="copy-btn" @click="copyContent(detail.content.condition)">
+					<view class="copy-btn" @click="copyContent(detail.content.shareContent)">
 						<image class="copy-btn-img" src="/static/index/button.png"></image>复制内容
 					</view>
 				</view>
@@ -91,6 +91,7 @@
 						<image src="/static/index/activity.png"></image>活动详情
 					</view>
 				</view>
+				<text class="section-introduction">{{ detail.content.introduction }}</text>
 				<image class="detail-img" v-if="detail.content.content" v-for="(img, index) in detail.content.content?.split(',')" :src="getFullImageUrl(img)" :key="index" mode="widthFix" />
 			</view>
 
@@ -125,7 +126,7 @@
 			<view class="section-content red" v-if="detail.content.condition">
 				{{ detail.content.condition }}
 				<!-- <button class="copy-btn" @click="copyContent">复制内容</button> -->
-				<view class="copy-btn" @click="copyContent(detail.content.condition)">
+				<view class="copy-btn" @click="copyContent(detail.content.shareContent)">
 					<image class="copy-btn-img" src="/static/index/button.png"></image>复制内容
 				</view>
 			</view>
@@ -234,6 +235,7 @@ const submit = async (direct) => {
 		if (direct) {
 			result = await IndexApi.postSignin({
 				id: detail.value.content.id,
+				photo: res.map(i => i.imgUrl).toString()
 			})
 		} else {
 			const res = await uploadImg(imgUrl.value)
@@ -261,7 +263,7 @@ const submit = async (direct) => {
 }
 
 const openPopUp = () => {
-	if (detail.value.content.type == 1 ) {
+	if (detail.value.content.type == 1) {
 		showPopup.value = true
 	} else {
 		submit(true)
@@ -399,6 +401,12 @@ const follow = () => {
 		color: rgba(153, 153, 153, 1);
 		font-size: 22rpx;
 	}
+}
+
+.section-introduction{
+	display: block;
+	margin-bottom: 20rpx;
+	white-space: pre-line;
 }
 
 .requirement-row {

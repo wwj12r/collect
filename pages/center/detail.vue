@@ -23,7 +23,7 @@
 						<view class="action-item" @click="like(item.islikes)">
 							<!-- <image src="/static/gallery/like.png"></image> -->
 							<image src="/static/center/unlike.png" v-if="!item.islikes"></image>
-							<image src="/static/center/like.png" v-if="item.islikes"></image>
+							<image class="small" src="/static/center/like.png" v-if="item.islikes"></image>
 							<text class="action-text">{{ item.likesNum }}</text>
 						</view>
 						<view class="action-item" @click="showPopupFn">
@@ -278,6 +278,12 @@ onShareAppMessage(() => {
 		height: 84rpx;
 		object-fit: contain;
 		margin-bottom: -10rpx;
+	}
+
+	.small {
+		width: 100rpx;
+		height: 100rpx;
+		margin-bottom: -15rpx;
 	}
 }
 
