@@ -70,7 +70,11 @@ const getCode = (code) => {
 		orderSn.value = res?.orderSn || ''
 		userName.value = res?.nickname || ''
 		if (res.msg) {
-			uni.showToast({ title: res.msg })
+			if (res.ret == 0) {
+				uni.showToast({ title: res.msg })
+			} else {
+				uni.showToast({ title: res.msg, icon: 'none' })
+			}
 		}
 	})
 }
