@@ -29,14 +29,23 @@
 <script setup>
 import { ref } from 'vue'
 import { ActivityApi } from '../../services/activity'
+import { onLoad } from '@dcloudio/uni-app'
 
 // 这里可以通过路由参数或接口获取实际数据
 const orderSn = ref('')
 const userName = ref('')
 const scansuc = ref(false)
 
-onLoad((options) => {
-	getCode(options.code)
+onLoad(async (options) => {
+	if (options.code) {
+		return getCode(options.code)
+	}
+
+	if (options.id) {
+		const response = await ActivityApi.fetchActivityDetail(options.id)
+		const code = response.content.code
+		return getCode(code)
+	}
 })
 
 function scanCode() {
@@ -59,7 +68,7 @@ function scanCode() {
 const getCode = (code) => {
 	ActivityApi.getQrcodeConfirm({ code: code }).then(res => {
 		orderSn.value = res?.orderSn || ''
-		nickname.value = res?.nickname || ''
+		userName.value = res?.nickname || ''
 		if (res.msg) {
 			uni.showToast({ title: res.msg })
 		}
