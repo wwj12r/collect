@@ -108,6 +108,10 @@ export const ActivityApi = {
 		return request.get({ url: '/activitysignet/confirm', data })
 	},
 
+	getQrcodeConfirmauthor(data) {
+		return request.get({ url: '/activitysignet/confirmauthor', data })
+	},
+
 	getContentlist(data) {
 		return request.get({ url: '/activitysignet/contentlist', data })
 	},

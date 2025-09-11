@@ -38,14 +38,14 @@ const scansuc = ref(false)
 
 onLoad(async (options) => {
 	if (options.code) {
-		return getCode(options.code)
+		return getCode(options.code, options.type)
 	}
 
-	if (options.id) {
-		const response = await ActivityApi.fetchActivityDetail(options.id)
-		const code = response.content.code
-		return getCode(code)
-	}
+	// if (options.id) {
+	// 	const response = await ActivityApi.fetchActivityDetail(options.id)
+	// 	const code = response.content.code
+	// 	return getCode(code)
+	// }
 })
 
 function scanCode() {
@@ -65,8 +65,8 @@ function scanCode() {
 	})
 }
 
-const getCode = (code) => {
-	ActivityApi.getQrcodeConfirm({ code: code }).then(res => {
+const getCode = (code, biz) => {
+	(biz ? ActivityApi.getQrcodeConfirmauthor : ActivityApi.getQrcodeConfirm)({ code: code }).then(res => {
 		orderSn.value = res?.orderSn || ''
 		userName.value = res?.nickname || ''
 		if (res.msg) {

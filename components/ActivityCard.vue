@@ -199,9 +199,25 @@ const [unpublishLoading, unpublish] = useAction({
 })
 
 const onScan = () => {
-  uni.navigateTo({
-    url: `/pages/user/scan?id=${props.activity.id}`
-  })
+  // uni.navigateTo({
+  //   url: `/pages/user/scan?id=${props.activity.id}`
+  // })
+  scanCode()
+}
+function scanCode() {
+	uni.scanCode({
+		onlyFromCamera: true,
+		success: (res) => {
+			// 这里可以处理扫码结果 res.result
+			console.log('扫码结果:', res)
+			if (res.errMsg === 'scanCode:ok' && res.result) {
+				uni.navigateTo({ url: '/pages/user/scan?type=user&code=' + res.result })
+			}
+		},
+		fail: (err) => {
+			uni.showToast({ title: '扫码失败', icon: 'none' })
+		}
+	})
 }
 
 const onReEdit = () => {
