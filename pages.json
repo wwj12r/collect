@@ -82,6 +82,14 @@
 			}
 		},
 		{
+			"path": "pages/user/Activity/audit",
+			"style": {
+				"navigationBarTitleText": "报名审核",
+				"enablePullDownRefresh": false,
+				"onReachBottomDistance": 100
+			}
+		},
+		{
 			"path": "pages/user/Activity/manage",
 			"style": {
 				"navigationBarTitleText": "活动管理",

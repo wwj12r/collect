@@ -119,6 +119,10 @@ export const ActivityApi = {
 	postContentcreate(data) {
 		return request.post({ url: '/activitysignet/contentcreate', data })
 	},
+
+	getSignlist(data) {
+		return request.get({ url: '/activitysignet/signlist', data })
+	},
 	
 	/**
 	 * 获取活动核销二维码

@@ -63,12 +63,21 @@
     </view>
 
     <!-- 操作按钮 -->
-    <view v-if="activity.state === ActivityState.PUBLISHED" class="flex justify-around m-3 pt-2">
+    <view v-if="activity.state === ActivityState.PUBLISHED" class="flex justify-around m-3 pt-2 gap-1">
       <button 
         shape="circle"
         plain
         size="default"
-        class="p-1 w-[200rpx] rounded-full text-sm font-bold bg-transparent inline-flex items-center justify-center !border !border-branding-grey !m-0"
+        class="p-1 w-[180rpx] rounded-full text-sm font-bold bg-transparent inline-flex items-center justify-center !border !border-branding-grey !m-0"
+        @click="toAudit"
+      >
+        待审核{{ activity.approveNum ? `(${activity.approveNum})` : '' }}
+      </button>
+      <button 
+        shape="circle"
+        plain
+        size="default"
+        class="p-1 w-[180rpx] rounded-full text-sm font-bold bg-transparent inline-flex items-center justify-center !border !border-branding-grey !m-0"
         @click="onScan"
       >
         扫码核销
@@ -77,7 +86,7 @@
         shape="circle"
         plain
         size="default"
-        class="p-1 w-[200rpx] rounded-full text-sm font-bold bg-transparent inline-flex items-center justify-center !border !border-branding-grey !m-0"
+        class="p-1 w-[180rpx] rounded-full text-sm font-bold bg-transparent inline-flex items-center justify-center !border !border-branding-grey !m-0"
         @click="onGenerateCode"
       >
         生成核销码
@@ -85,7 +94,7 @@
       <button 
         plain
         size="default"
-        class="p-1 w-[200rpx] rounded-full text-sm font-bold bg-transparent inline-flex items-center justify-center !border !border-branding-grey !m-0"
+        class="p-1 w-[150rpx] rounded-full text-sm font-bold bg-transparent inline-flex items-center justify-center !border !border-branding-grey !m-0"
         @click="onTakeDown"
         :loading="unpublishLoading"
         shape="circle"
@@ -197,6 +206,12 @@ const [unpublishLoading, unpublish] = useAction({
     return true;
   }
 })
+
+const toAudit = () => {
+  uni.navigateTo({
+    url: `/pages/user/Activity/audit?id=${props.activity.id}`
+  })
+}
 
 const onScan = () => {
   // uni.navigateTo({

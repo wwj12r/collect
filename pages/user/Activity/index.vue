@@ -128,7 +128,7 @@ const btnClick = (item) => {
   if (item.state == 2 || item.state == 4) {
     uni.navigateTo({ url: '/pages/user/Activity/verify?type=user&id=' + item.id })
   } else if (item.state == 1) {
-    uni.showToast({title: '订单审核中'})
+    uni.showToast({title: '订单审核中', icon: 'none'})
   }
 }
 </script>

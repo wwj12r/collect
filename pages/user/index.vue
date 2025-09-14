@@ -31,6 +31,7 @@
 					<image :src="'/static/user/' + item.icon + '.png'"></image>
 					<text class="tool-text">{{ item.text }}</text>
 					<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuth(item)" v-if="!tokenRef"></button>
+					<view v-if="user.approveNum" class="tool-tips">待审核({{ user.approveNum  }})</view>
 				</view>
 			</view>
 		</view>
@@ -53,7 +54,7 @@ const activities = [
 ]
 const tools = [
 	{ icon: 'publish', text: '发布活动', link: '/pages/user/Activity/publish' },
-	{ icon: 'manage', text: '活动管理', link: '/pages/user/Activity/manage' },
+	{ icon: 'manage', text: '活动管理', link: '/pages/user/Activity/manage', approveNum: true },
 	{ icon: 'scan', text: '扫码核销' },
 	{ icon: 'print', text: '发布印章', link: '/pages/user/Print/index' }
 ]
@@ -103,6 +104,21 @@ function scanCode() {
 </script>
 
 <style scoped lang="scss">
+
+.tool-tips{
+	font-size: 22rpx;
+	white-space: nowrap;
+	background-color: #FF4D00;
+	border-radius: 20rpx;
+	padding: 5rpx 14rpx;
+	position: absolute;
+	top: -27rpx;
+	left: 80rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #fff;
+}
 .mine-page {
 	background: #f7f7f7;
 	min-height: 100vh;
