@@ -174,12 +174,12 @@
 				"iconPath": "static/center/center.png",
 				"selectedIconPath": "static/center/center-active.png"
 			},
-			{
-				"pagePath": "pages/gallery/index",
-				"text": "展厅",
-				"iconPath": "static/gallery/gallery.png",
-				"selectedIconPath": "static/gallery/gallery-active.png"
-			},
+			// {
+			// 	"pagePath": "pages/gallery/index",
+			// 	"text": "展厅",
+			// 	"iconPath": "static/gallery/gallery.png",
+			// 	"selectedIconPath": "static/gallery/gallery-active.png"
+			// },
 			{
 				"pagePath": "pages/user/index",
 				"text": "我的",

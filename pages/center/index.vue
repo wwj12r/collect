@@ -31,7 +31,7 @@
 				<view class="category-all" @click="toList">查看更多</view>
 			</view>
 			<view class="stamp-scroll">
-				<image @click="onToDetail(stamp)" class="stamp-cards" v-for="(stamp, idx) in stamps.filter(i => !activeCategory ? isWithinLast3Days(i.createTime) : !isWithinLast3Days(i.createTime))" :key="idx" :src="getFullImageUrl(stamp.photo)" mode="aspectFill">
+				<image @click="onToDetail(stamp)" class="stamp-cards" v-for="(stamp, idx) in stamps.filter(i => activeCategory ? isWithinLast3Days(i.createTime) : !isWithinLast3Days(i.createTime))" :key="idx" :src="getFullImageUrl(stamp.photo)" mode="aspectFill">
 				</image>
 			</view>
 
@@ -78,7 +78,7 @@ import { getAuthorize, getFullImageUrl } from '../../utils/utils'
 const { tokenRef, setToken } = useToken()
 
 const searchText = ref('')
-const categories = ['最新', '热门']
+const categories = ['热门', '最新']
 const activeCategory = ref(0)
 const stamps = ref([])
 

@@ -56,7 +56,8 @@ const tools = [
 	{ icon: 'publish', text: '发布活动', link: '/pages/user/Activity/publish' },
 	{ icon: 'manage', text: '活动管理', link: '/pages/user/Activity/manage', approveNum: true },
 	{ icon: 'scan', text: '扫码核销' },
-	{ icon: 'print', text: '发布印章', link: '/pages/user/Print/index' }
+	{ icon: 'print', text: '发布印章', link: '/pages/user/Print/index' },
+	{ icon: 'gallery', text: '展厅', link: '/pages/gallery/index' }
 ]
 const goSetting = () => {
 	// 跳转到设置页
@@ -202,9 +203,10 @@ function scanCode() {
 .activity-list,
 .tool-list {
 	display: flex;
-	justify-content: space-around;
-	align-items: center;
 	padding-bottom: 10rpx;
+	align-items: center;
+	flex-wrap: wrap;
+    gap: 20px 0; /* 行间距 50px，列间距 20px（可按需调整） */
 }
 
 .activity-item,
@@ -212,8 +214,9 @@ function scanCode() {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	flex: 1;
 	position: relative;
+	width: 25%;
+
 }
 
 .activity-text,
