@@ -3,7 +3,7 @@
 		<!-- 顶部分类Tab -->
 		<view class="tab-bar">
 			<view v-for="(tab, idx) in tabs" :key="tab" :class="['tab-item', { active: tab.value === activeTab }]" @click="changeTab(tab.value)">
-				{{ tab.label }}（{{ tab.key }}）
+				{{ tab.label }}（{{ groupCount[tab.key] }}）
 			</view>
 		</view>
 
@@ -35,7 +35,7 @@
 					</view>
 					<view class="card-detail" v-if="item.photo.split(',').length || item.reason">
 						<view class="detail-row" v-if="item.state == 3">
-							<text class="label">原因</text>
+							<text class="label">原因：</text>
 							<text>{{ item.reason }}</text>
 						</view>
 						<view class="detail-row" v-else>
@@ -53,6 +53,7 @@
 			<view>暂无内容</view>
 			<text>活动箱饿晕了…急需支援...</text>
 		</view>
+		<AuditPopup v-model:show="showAudit" v-model:modelValue="currentIndex" :items="mediaList" @approve="handleApprove" @reject="handleReject" />
 	</view>
 </template>
 
@@ -62,6 +63,7 @@ import { ActivityApi } from '../../../services/activity'
 import { onReachBottom, } from '@dcloudio/uni-app'
 import { onLoad } from '@dcloudio/uni-app';
 import { getFullImageUrl, getGeoCoder } from '../../../utils/utils';
+import AuditPopup from './components/AuditPopup.vue';
 const id = ref([])
 const list = ref([])
 const page = ref(1)
@@ -69,6 +71,10 @@ const pageSize = 10
 const loading = ref(false)
 const finished = ref(false)
 const specItemList = ref([])
+const showAudit = ref(false)
+const mediaList = ref([])
+const currentIndex = ref(0)
+const groupCount = ref([])
 const getList = () => {
 	if (loading.value || finished.value) return
 	loading.value = true
@@ -77,6 +83,7 @@ const getList = () => {
 		console.log(res)
 		uni.hideLoading()
 		specItemList.value = res.specItemList
+		groupCount.value = res.groupCount
 		list.value.push(...(res.content || []))
 		page.value++
 		loading.value = false
@@ -100,12 +107,12 @@ const buttonStatus = {
 }
 
 const tabs = [
-	{ label: '待审核', value: '2', key: '1' },
-	{ label: '已审核', value: '1', key: '2' },
-	{ label: '已拒绝', value: '3', key: '3' },
-	{ label: '已核销', value: '4', key: '4' },
+	{ label: '待审核', value: '2', key: 2 },
+	{ label: '已审核', value: '1', key: 1 },
+	{ label: '已拒绝', value: '3', key: 3 },
+	{ label: '已核销', value: '4', key: 4 },
 ]
-const activeTab = ref('1')
+const activeTab = ref('2')
 const changeTab = (val) => {
 	activeTab.value = val
 	console.log(val)
@@ -115,12 +122,56 @@ const changeTab = (val) => {
 	getList()
 }
 const btnClick = (item) => {
-	console.log(item.state)
-	if (item.state == 2 || item.state == 4) {
-		uni.navigateTo({ url: '/pages/user/Activity/verify?type=user&id=' + item.id })
-	} else if (item.state == 1) {
-		uni.showToast({ title: '订单审核中' })
-	}
+	console.log(item.photo.split(','))
+	showAudit.value = item
+	mediaList.value = item.photo.split(',')
+	// if (item.state == 2 || item.state == 4) {
+	// 	uni.navigateTo({ url: '/pages/user/Activity/verify?type=user&id=' + item.id })
+	// } else if (item.state == 1) {
+	// 	uni.showToast({ title: '订单审核中' })
+	// }
+}
+
+const handleApprove = () => {
+	console.log()
+	ActivityApi.postAuditorder({
+		id: showAudit.value.id,
+		state: 2,
+	}).then(res => {
+		if (res?.ret == 1) {
+			uni.showToast({ title: res.msg, icon: 'error' })
+		} else if (!res) {
+			showAudit.value = false
+			mediaList.value = []
+			// list.value = list.value.map(item => item.id == showAudit.value.id ? { ...item, state: true } : item)
+			page.value = 1
+			list.value = []
+			finished.value = false
+			getList()
+			uni.showToast({ title: '审批成功！' })
+		}
+	})
+}
+
+const handleReject = (reason) => {
+	ActivityApi.postAuditorder({
+		id: showAudit.value.id,
+		state: 3,
+		reason
+	}).then(res => {
+		if (res?.ret == 1) {
+			uni.showToast({ title: res.msg, icon: 'error' })
+		} else if (!res) {
+			showAudit.value = false
+			mediaList.value = []
+			// list.value = list.value.map(item => item.id == showAudit.value.id ? { ...item, state: true } : item)
+			page.value = 1
+			list.value = []
+			finished.value = false
+			getList()
+			uni.showToast({ title: '审批成功！' })
+		}
+	})
 }
 </script>
 

@@ -106,6 +106,12 @@
 			}
 		},
 		{
+			"path": "pages/user/Activity/specList",
+			"style": {
+				"navigationBarTitleText": "报名规格配置"
+			}
+		},
+		{
 			"path": "pages/user/Activity/publish",
 			"style": {
 				"navigationBarTitleText": "发布活动"
@@ -157,16 +163,16 @@
 		"backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {
-		"color": "#999999", // 未选中颜色
-		"selectedColor": "#FF0000", // 选中颜色
-		"backgroundColor": "#FFFFFF", // 背景色
-		"borderStyle": "black", // 边框样式（black/white）
+		"color": "#999999",
+		"selectedColor": "#FF0000",
+		"backgroundColor": "#FFFFFF",
+		"borderStyle": "black",
 		"list": [
 			{
-				"pagePath": "pages/index/index", // 页面路径
-				"text": "首页", // 显示文字
-				"iconPath": "static/index/index.png", // 未选中图标
-				"selectedIconPath": "static/index/index-active.png" // 选中图标
+				"pagePath": "pages/index/index",
+				"text": "首页",
+				"iconPath": "static/index/index.png",
+				"selectedIconPath": "static/index/index-active.png"
 			},
 			{
 				"pagePath": "pages/center/index",
@@ -174,12 +180,6 @@
 				"iconPath": "static/center/center.png",
 				"selectedIconPath": "static/center/center-active.png"
 			},
-			// {
-			// 	"pagePath": "pages/gallery/index",
-			// 	"text": "展厅",
-			// 	"iconPath": "static/gallery/gallery.png",
-			// 	"selectedIconPath": "static/gallery/gallery-active.png"
-			// },
 			{
 				"pagePath": "pages/user/index",
 				"text": "我的",

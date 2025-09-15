@@ -92,6 +92,17 @@
 				</uni-forms-item>
 				
 				<uni-forms-item 
+					label="活动报名规格" 
+					name="detailConfig" 
+					labelWidth="260rpx"
+				>
+					<view @click="onToSpecList" class="edit-config" :class="{ selected: !!activityConfig }">
+						{{ activityConfig ? '已配置' : '请选择' }}
+						<uni-icons type="right" size="22" color="#bbb" />
+					</view>
+				</uni-forms-item>
+				
+				<uni-forms-item 
 					label="活动参与人数" 
 					name="limitNum" 
 					required
@@ -402,6 +413,14 @@ function onToEdit(event) {
 	event.preventDefault();
 	uni.navigateTo({ 
 		url: '/pages/user/Activity/edit' 
+	})
+}
+
+// 跳转到编辑页面
+function onToSpecList(event) {
+	event.preventDefault();
+	uni.navigateTo({ 
+		url: '/pages/user/Activity/specList' 
 	})
 }
 

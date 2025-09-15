@@ -123,6 +123,10 @@ export const ActivityApi = {
 	getSignlist(data) {
 		return request.get({ url: '/activitysignet/signlist', data })
 	},
+
+	postAuditorder(data) {
+		return request.post({ url: '/activitysignet/auditorder', data })
+	},
 	
 	/**
 	 * 获取活动核销二维码
