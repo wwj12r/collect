@@ -36,6 +36,10 @@
               <view class="value valueview" @click="toAddress(item.address)">{{ item.address }}<uni-icons type="right" size="10"></uni-icons></view>
               <!-- <uni-icons type="right" size="18" color="rgba(26, 26, 26, 1)" class="arrow" /> -->
             </view>
+            <view v-if="item.reason" class="detail-row" style=" margin-top: 20rpx;">
+              <text class="label" style="color: #FF4D00;">审核不通过：</text>
+              <text class="value" style="color: #FF4D00;">{{ item.reason }}</text>
+            </view>
           </view>
         </view>
       </view>
@@ -128,7 +132,7 @@ const btnClick = (item) => {
   if (item.state == 2 || item.state == 4) {
     uni.navigateTo({ url: '/pages/user/Activity/verify?type=user&id=' + item.id })
   } else if (item.state == 1) {
-    uni.showToast({title: '订单审核中', icon: 'none'})
+    uni.showToast({ title: '订单审核中', icon: 'none' })
   }
 }
 </script>

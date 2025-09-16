@@ -7,6 +7,13 @@
 			</view>
 		</view>
 
+		<view class="activity-filter" v-if="list.length && specItemList.length">
+			<view class="activity-filter-btn" @click="showSpecPopup = true">
+				<image src="/static/user/filter.png"></image>
+				按规格筛选
+			</view>
+			<view class="activity-filter-reset" v-if="specItemId" @click="specItemId=''">重制</view>
+		</view>
 		<!-- 活动卡片列表 -->
 		<view class="activity-list" v-if="list.length">
 			<view class="activity-card" v-for="(item, idx) in list" :key="item.id">
@@ -55,6 +62,25 @@
 		</view>
 		<AuditPopup v-model:show="showAudit" v-model:modelValue="currentIndex" :items="mediaList" @approve="handleApprove" @reject="handleReject" />
 	</view>
+	<u-popup :show="showSpecPopup" @close="showSpecPopup = false" @open="showSpecPopup = true" :mask-click="false" border-radius="20" :safe-area-inset-bottom="true" round="20">
+		<view class="popup-content">
+			<view class="popup-title" style="color: #1A1A1A;">
+				选择规格
+				<view class="close-btn">
+					<u-icon name="arrow-down" custom-class="close-btn" @click="hidePopup" />
+				</view>
+			</view>
+			<view class="spec-list">
+				<view class="spec-item" v-for="(items, index) in specItemList" :key="items.id">
+					<view class="spec-title">{{ items.title }}</view>
+					<view class="spec-contentList">
+						<view v-for="(item, index) in item.contentList" :key="item.id" class="spec-content" @click="checkSpecItem(item.id)" :class="{ 'active': specItemId.includes(item.id) }">{{ item.content }}</view>
+					</view>
+				</view>
+			</view>
+			<button class="submit-btn" :disabled="!specItemId.length" @click="showSpecPopup=false">提交</button>
+		</view>
+	</u-popup>
 </template>
 
 <script setup>
@@ -75,11 +101,14 @@ const showAudit = ref(false)
 const mediaList = ref([])
 const currentIndex = ref(0)
 const groupCount = ref([])
+
+const specItemId = ref([])
+const showSpecPopup = ref(false)
 const getList = () => {
 	if (loading.value || finished.value) return
 	loading.value = true
 	uni.showLoading()
-	ActivityApi.getSignlist({ page: page.value, perPage: pageSize, state: activeTab.value, id: id.value }).then(res => {
+	ActivityApi.getSignlist({ page: page.value, perPage: pageSize, state: activeTab.value, id: id.value, specItemId: specItemId.value }).then(res => {
 		console.log(res)
 		uni.hideLoading()
 		specItemList.value = res.specItemList
@@ -133,7 +162,6 @@ const btnClick = (item) => {
 }
 
 const handleApprove = () => {
-	console.log()
 	ActivityApi.postAuditorder({
 		id: showAudit.value.id,
 		state: 2,
@@ -173,9 +201,129 @@ const handleReject = (reason) => {
 		}
 	})
 }
+const checkSpecItem = (id) => {
+	specItemId.value = id
+}
 </script>
 
 <style scoped lang="scss">
+.spec-list {
+	height: 450rpx;
+	overflow: scroll;
+	display: flex;
+	flex-direction: column;
+	gap: 33rpx;
+	padding: 12rpx 0;
+}
+
+.spec-item {
+	display: flex;
+	color: #1A1A1A;
+	align-items: baseline;
+	gap: 12rpx;
+
+	.spec-title {
+		width: 170rpx;
+		font-weight: bold;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.spec-contentList {
+		display: flex;
+		width: 480rpx;
+		gap: 23rpx;
+		flex-wrap: wrap;
+
+		.spec-content {
+			border: 1px solid #E6E6E6;
+			border-radius: 12rpx;
+			padding: 18rpx 41rpx;
+
+			&.active {
+				background-color: #1A1A1A;
+				color: #fff;
+			}
+		}
+	}
+}
+
+
+.submit-btn {
+	width: 350rpx;
+	height: 76rpx;
+	background: #222;
+	color: #fff;
+	font-size: 28rpx;
+	border-radius: 50rpx;
+	padding: 18rpx 0;
+	font-weight: bold;
+	margin-top: 24rpx;
+	opacity: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.submit-btn:disabled {
+	background: #ccc;
+	color: #fff;
+	opacity: 0.7;
+}
+
+.popup-content {
+	background: #fff;
+	border-radius: 24rpx 24rpx 0 0;
+	padding: 32rpx 24rpx 24rpx 24rpx;
+	min-height: 600rpx;
+	position: relative;
+}
+
+.popup-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	text-align: center;
+	margin-bottom: 32rpx;
+	position: relative;
+	color: rgba(64, 33, 49, 1);
+	display: flex;
+	justify-content: center;
+
+	.u-icon {
+		margin-left: auto;
+		font-size: 16rpx;
+	}
+}
+
+.close-btn {
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+.activity-filter {
+	display: flex;
+	justify-content: space-between;
+	font-size: 22rpx;
+	margin: 20rpx 13rpx;
+
+	.activity-filter-btn {
+		display: flex;
+		color: #1A1A1A;
+		align-items: center;
+		gap: 10rpx;
+
+		image {
+			width: 21rpx;
+			height: 21rpx;
+		}
+	}
+
+	.activity-filter-reset {
+		color: #999999;
+	}
+}
+
 .activity-empty {
 	display: flex;
 	flex-direction: column;

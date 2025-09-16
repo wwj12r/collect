@@ -139,7 +139,26 @@
 				</view>
 				<view v-if="!imgUrl.length" class="upload-tip">请上传已完成报名条件的截图</view>
 			</view>
-			<button class="submit-btn" :disabled="!imgUrl.length" @click="submit">提交</button>
+			<button class=" spec" :disabled="!imgUrl.length" @click="submit">{{ detail.content.specList?.length ? '下一步' : '提交' }}</button>
+		</view>
+	</u-popup>
+	<u-popup :show="showSpecPopup" @close="showSpecPopup = false" @open="showSpecPopup = true" :mask-click="false" border-radius="20" :safe-area-inset-bottom="true" round="20">
+		<view class="popup-content">
+			<view class="popup-title" style="color: #1A1A1A;">
+				选择规格
+				<view class="close-btn">
+					<u-icon name="arrow-down" custom-class="close-btn" @click="hidePopup" />
+				</view>
+			</view>
+			<view class="spec-list">
+				<view class="spec-item" v-for="(items, index) in detail.content.specList" :key="items.id">
+					<view class="spec-title">{{ items.title }}</view>
+					<view class="spec-contentList">
+						<view v-for="(item, index) in item.contentList" :key="item.id" class="spec-content" @click="checkSpecItem(item.id)" :class="{ 'active': specItemIds.includes(item.id) }">{{ item.content }}</view>
+					</view>
+				</view>
+			</view>
+			<button class="submit-btn" :disabled="!specItemIds.length" @click="submit(true)">提交</button>
 		</view>
 	</u-popup>
 
@@ -152,14 +171,12 @@ import { onLoad, onShareAppMessage } from '@dcloudio/uni-app';
 import { getGeoCoder, getAuthorize, uploadImg, getFullImageUrl, isPastTime } from '../../utils/utils';
 import ExpandableText from '@/components/ExpandableText.vue'
 
-
-const popupRef = ref(null)
+const specItemIds = ref([])
 const imgUrl = ref([])
 const showPopup = ref(false)
+const showSpecPopup = ref(false)
 const authorized = ref(uni.getStorageSync('token'))
 const detail = ref({})
-const userStatus = ref({})
-const loading = ref(false)
 const geoRef = ref({})
 
 onLoad((option) => {
@@ -229,13 +246,18 @@ const chooseImage = () => {
 	})
 }
 const submit = async (direct) => {
+	if (detail.value.specList.length && !direct) {
+		showSpecPopup.value = true
+		return
+	}
 	try {
 		uni.showLoading()
 		let result
 		const res = await uploadImg(imgUrl.value)
 		result = await IndexApi.postSignin({
 			id: detail.value.content.id,
-			photo: res.map(i => i.imgUrl).toString()
+			photo: res.map(i => i.imgUrl).toString(),
+			specItemIds: specItemIds.value.toString()
 		})
 		uni.hideLoading()
 		fetchData(detail.value.content.id)
@@ -258,8 +280,10 @@ const submit = async (direct) => {
 const openPopUp = () => {
 	if (detail.value.content.type == 1) {
 		showPopup.value = true
+	} else if (detail.value.specList.length) {
+		showSpecPopup.value = true
 	} else {
-		submit(true)
+		submit()
 	}
 }
 const toList = () => {
@@ -278,10 +302,60 @@ const follow = () => {
 		fetchData(detail.value.content.id)
 	})
 }
+
+const checkSpecItem = (id) => {
+	if (specItemIds.value.includes(id)) {
+		console.log(specItemIds.value)
+		specItemIds.value = specItemIds.value.filter(i => i !== id)
+	} else {
+		specItemIds.value = [...specItemIds.value, id]
+	}
+}
 </script>
 
 
 <style lang="scss" scoped>
+.spec-list {
+	height: 450rpx;
+	overflow: scroll;
+	display: flex;
+	flex-direction: column;
+	gap: 33rpx;
+	padding: 12rpx 0;
+}
+
+.spec-item {
+	display: flex;
+	color: #1A1A1A;
+	align-items: baseline;
+	gap: 12rpx;
+
+	.spec-title {
+		width: 170rpx;
+		font-weight: bold;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.spec-contentList {
+		display: flex;
+		width: 480rpx;
+		gap: 23rpx;
+		flex-wrap: wrap;
+
+		.spec-content {
+			border: 1px solid #E6E6E6;
+			border-radius: 12rpx;
+			padding: 18rpx 41rpx;
+
+			&.active {
+				background-color: #1A1A1A;
+				color: #fff;
+			}
+		}
+	}
+}
+
 .card-swiper-wrapper {
 	width: 100%;
 	overflow: visible;

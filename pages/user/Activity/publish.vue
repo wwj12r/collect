@@ -96,8 +96,8 @@
 					name="detailConfig" 
 					labelWidth="260rpx"
 				>
-					<view @click="onToSpecList" class="edit-config" :class="{ selected: !!activityConfig }">
-						{{ activityConfig ? '已配置' : '请选择' }}
+					<view @click="onToSpecList" class="edit-config" :class="{ selected: !!specConfig }">
+						{{ specConfig ? '已配置' : '请选择' }}
 						<uni-icons type="right" size="22" color="#bbb" />
 					</view>
 				</uni-forms-item>
@@ -224,9 +224,14 @@ import { eventEmitter, EVENT_TYPE } from '@/utils/eventEmitter'
 import { ActivityApi } from '../../../services/activity'
 
 const activityConfig = ref(null)
+const specConfig = ref(null)
 
 const onActivityConfigUpdated = (data) => {
 	activityConfig.value = data
+}
+
+const onSpecConfigUpdated = (data) => {
+	specConfig.value = data
 }
 
 const onActivityConfigGet = () => {
@@ -235,13 +240,23 @@ const onActivityConfigGet = () => {
 	}
 }
 
+const onSpecConfigGet = () => {
+	if (activityConfig.value) {
+		eventEmitter.emit(EVENT_TYPE.ACTIVITY_SPEC_TRANSFER, specConfig.value)
+	}
+}
+
 onMounted(() => {
 	eventEmitter.on(EVENT_TYPE.ACTIVITY_CONFIG_UPDATED, onActivityConfigUpdated)
 	eventEmitter.on(EVENT_TYPE.ACTIVITY_CONFIG_GET, onActivityConfigGet)
+	eventEmitter.on(EVENT_TYPE.ACTIVITY_SPEC_UPDATED, onSpecConfigUpdated)
+	eventEmitter.on(EVENT_TYPE.ACTIVITY_SPEC_GET, onSpecConfigGet)
 })
 onUnmounted(() => {
 	eventEmitter.off(EVENT_TYPE.ACTIVITY_CONFIG_UPDATED, onActivityConfigUpdated)
 	eventEmitter.off(EVENT_TYPE.ACTIVITY_CONFIG_GET, onActivityConfigGet)
+	eventEmitter.off(EVENT_TYPE.ACTIVITY_SPEC_UPDATED, onSpecConfigUpdated)
+	eventEmitter.off(EVENT_TYPE.ACTIVITY_SPEC_GET, onSpecConfigGet)
 })
 
 const readonly = ref(false)
@@ -288,6 +303,8 @@ onLoad(async (query) => {
 		collectImgs: res.content.collectImgs?.split(','),
 		introduction: res.content.introduction,
 	}
+
+	specConfig.value = res.content.specList
 
 
 	onDateChange(dateRange)
@@ -459,7 +476,9 @@ async function submit() {
 			condition: form.value.condition,
 			shareContent: form.value.shareContent,
 			sponsor: form.value.sponsor,
+			specList: specConfig.value
 		}
+		console.log(submitData)
 
 		if (activityId.value) {
 			const res = await ActivityApi.republishActivity(submitData, activityId.value)
