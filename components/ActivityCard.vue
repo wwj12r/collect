@@ -25,7 +25,7 @@
         style="width: 226rpx; height: 192rpx; border-radius: 12rpx;"
       />
       <view class="flex-1 overflow-hidden flex flex-col justify-between">
-        <view class="text-sm font-bold text-gray-900">
+        <view class="text-sm font-bold text-gray-900" @click="toAudit">
           {{ activity.title }}
         </view>
         <view>
@@ -43,7 +43,7 @@
     </view>
 
     <!-- 统计数据 -->
-    <view class="flex justify-between m-3 pt-3 border-t border-gray-100">
+    <view class="flex justify-between m-3 pt-3 border-t border-gray-100" @click="toAudit">
       <view class="flex items-center">
         <img src="/static/user/activity-joined.png" class="w-3 h-3" />
         <text class="text-xs text-branding-grey ml-1">{{ activity.num }}人报名</text>

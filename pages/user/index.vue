@@ -31,7 +31,7 @@
 					<image :src="'/static/user/' + item.icon + '.png'"></image>
 					<text class="tool-text">{{ item.text }}</text>
 					<button class="signup-btn" open-type="getUserInfo" @getuserinfo="getAuth(item)" v-if="!tokenRef"></button>
-					<view v-if="user.approveNum" class="tool-tips">待审核({{ user.approveNum  }})</view>
+					<view v-if="user.approveNum && item.approveNum" class="tool-tips">待审核({{ user.approveNum  }})</view>
 				</view>
 			</view>
 		</view>
