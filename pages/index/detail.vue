@@ -226,6 +226,7 @@ const toAddress = () => {
 
 const hidePopup = () => {
 	showPopup.value = false
+	showSpecPopup.value = false
 }
 
 const copyContent = (text) => {
