@@ -98,7 +98,7 @@
 			<!-- 报名按钮 -->
 			<view class="footer">
 				<button class="signup-btn disabled" v-if="detail.content.state == 1">{{ detail.activitySignetStateList[detail.content.state] }}</button>
-				<button class="signup-btn disabled" v-else-if="detail.content.state == 3 || isPastTime(detail.content.startTime)">已结束</button>
+				<button class="signup-btn disabled" v-else-if="detail.content.state == 3 || isPastTime(detail.content.endTime)">已结束</button>
 				<button class="signup-btn" @click="openPopUp" v-else-if="detail.content.state == 2 && (detail.content.orderId == 0 || detail.content.orderState == 3)">报名</button>
 				<button class="signup-btn disabled" v-else-if="detail.content.orderId > 0">{{ detail?.activitySignetOrderStateList?.[detail.content.orderState] }}</button>
 				<button class="signup-btnall" open-type="getUserInfo" @getuserinfo="getAuth" v-if="!authorized"></button>
@@ -151,10 +151,10 @@
 				</view>
 			</view>
 			<view class="spec-list">
-				<view class="spec-item" v-for="(items, index) in detail.content.specList" :key="items.id">
+				<view class="spec-item" v-for="(items, index) in detail.content.specList" :key="items.id" v-if="detail.content.specList && detail.content.specList.length > 0 ">
 					<view class="spec-title">{{ items.title }}</view>
-					<view class="spec-contentList">
-						<view v-for="(item, index) in item.contentList" :key="item.id" class="spec-content" @click="checkSpecItem(item.id)" :class="{ 'active': specItemIds.includes(item.id) }">{{ item.content }}</view>
+					<view class="spec-contentList" v-if="items.contentList">
+						<view v-for="(item, index) in items.contentList" :key="item.id" class="spec-content" @click="checkSpecItem(item.id)" :class="{ 'active': specItemIds.includes(item.id) }">{{ item.content }}</view>
 					</view>
 				</view>
 			</view>
@@ -246,7 +246,7 @@ const chooseImage = () => {
 	})
 }
 const submit = async (direct) => {
-	if (detail.value.specList.length && !direct) {
+	if (detail.value.content.specList.length && !direct) {
 		showSpecPopup.value = true
 		return
 	}
@@ -280,7 +280,7 @@ const submit = async (direct) => {
 const openPopUp = () => {
 	if (detail.value.content.type == 1) {
 		showPopup.value = true
-	} else if (detail.value.specList.length) {
+	} else if (detail.value.specList?.length) {
 		showSpecPopup.value = true
 	} else {
 		submit()

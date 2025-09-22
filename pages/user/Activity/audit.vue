@@ -3,7 +3,7 @@
 		<!-- 顶部分类Tab -->
 		<view class="tab-bar">
 			<view v-for="(tab, idx) in tabs" :key="tab" :class="['tab-item', { active: tab.value === activeTab }]" @click="changeTab(tab.value)">
-				{{ tab.label }}（{{ groupCount[tab.key] }}）
+				{{ tab.label }}（{{ groupCount[tab.key] || 0 }}）
 			</view>
 		</view>
 
