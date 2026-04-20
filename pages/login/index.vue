@@ -91,7 +91,7 @@ export default {
 						const code = loginRes.code;
 
 						uni.request({
-							url: "https://www.91sami.com/api/web/activitysignet/getphonenumber",
+							url: `${baseUrl}/activitysignet/getphonenumber`,
 							dataType: "json",
 							responseType: "json",
 							method: "POST",

@@ -1,4 +1,4 @@
-import { getAuthorize } from "../utils/utils";
+import { baseUrl, getAuthorize } from "../utils/utils";
 
 interface RequestOptions {
     url: string;
@@ -38,7 +38,7 @@ export interface PaginationResponse<T = any> {
 const request = <T = any>(options: RequestOptions): Promise<Response<T>> => {
     return new Promise((resolve, reject) => {
         uni.request({
-            url: 'https://www.91sami.com/api/web' + options.url,
+            url: baseUrl + options.url,
             method: options.method || 'GET',
             data: options.data || {},
             header: {

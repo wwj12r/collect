@@ -4,6 +4,9 @@ import { imgBaseUrl } from "./enums";
 import QQMapWX from '../utils/qqmap';
 import { useToken } from "../hooks/userToken";
 
+const env = 'dev'
+export const baseUrl = `https://${env}.91sami.com/api/web`
+
 
 export const prefillImageUrl = (url: string) => {
 	return imgBaseUrl + url;

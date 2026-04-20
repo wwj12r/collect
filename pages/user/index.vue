@@ -57,17 +57,32 @@ const tools = [
 	{ icon: 'manage', text: '活动管理', link: '/pages/user/Activity/manage', approveNum: true },
 	{ icon: 'scan', text: '扫码核销' },
 	{ icon: 'print', text: '发布印章', link: '/pages/user/Print/index' },
-	{ icon: 'gallery', text: '展厅', link: '/pages/gallery/index' }
+	{ icon: 'gallery', text: '展厅', link: '/pages/gallery/index' },
+	{
+		icon: 'gallery',
+		text: '社区',
+		webviewTokenUrl: 'https://dev.91sami.com/smwgame/newMap?token='
+	}
 ]
 const goSetting = () => {
 	// 跳转到设置页
 	uni.navigateTo({ url: '/pages/user/setting' })
 }
+
+const openWebviewWithToken = (urlPrefix) => {
+	const url = urlPrefix + encodeURIComponent(tokenRef.value)
+	uni.navigateTo({
+		url: '/pages/common/webview?url=' + encodeURIComponent(url)
+	})
+}
+
 const onActivityClick = (item) => {
 	// 处理活动点击
 	console.log(tokenRef.value)
 	if (!tokenRef.value) return
-	if (item.link) {
+	if (item.webviewTokenUrl) {
+		openWebviewWithToken(item.webviewTokenUrl)
+	} else if (item.link) {
 		uni.navigateTo({ url: item.link })
 	} else {
 		scanCode()
@@ -75,15 +90,21 @@ const onActivityClick = (item) => {
 }
 
 const getAuth = (item) => {
-	getAuthorize().then(res => item?.link ? uni.navigateTo({ url: item.link }) : UserApi.getUser().then(res => user.value = res))
+	getAuthorize().then(() => {
+		if (item?.link) {
+			uni.navigateTo({ url: item.link })
+		} else if (item?.webviewTokenUrl) {
+			openWebviewWithToken(item.webviewTokenUrl)
+		} else {
+			UserApi.getUser().then(res => (user.value = res))
+		}
+	})
 }
 onShow(() => {
 	// getList()
 	console.log(tokenRef.value)
 	UserApi.getUser().then(res => user.value = res)
 })
-
-
 
 function scanCode() {
 	uni.scanCode({

@@ -154,6 +154,26 @@
 			"style": {
 				"navigationBarTitleText": "登录"
 			}
+		},
+		{
+			"path": "pages/common/webview",
+			"style": {
+				"navigationBarTitleText": "",
+				"enableShareAppMessage": true
+			}
+		},
+		{
+			"path": "pages/common/share-entry",
+			"style": {
+				"navigationBarTitleText": "转发",
+				"enableShareAppMessage": true
+			}
+		},
+		{
+			"path": "pages/common/save-image",
+			"style": {
+				"navigationBarTitleText": "保存图片"
+			}
 		}
 	],
 	"globalStyle": {

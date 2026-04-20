@@ -38,7 +38,7 @@ export const IndexApi = {
 				encoding: 'binary', // 你也可以使用 'base64'
 				success: (res) => {
 					uni.uploadFile({
-						url: 'https://www.91sami.com/api/web/image', // ✅ 改成你自己的接口地址
+						url: `${baseUrl}/image`, // ✅ 改成你自己的接口地址
 						filePath: data,
 						name: 'photo', // ✅ 与后端接收字段一致
 						header: {
