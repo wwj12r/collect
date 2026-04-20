@@ -8,31 +8,64 @@
 </template>
 
 <script>
+const DEFAULT_SHARE_TITLE = 'hi朋友，来一起玩"你拼我猜"吗？'
+const DEFAULT_SHARE_DESC = '和手帐搭子一起在游戏中玩出素材吧。'
+const DEFAULT_SHARE_PATH = '/pages/index/index'
+
+function safeDecode(value) {
+	if (typeof value !== 'string') return ''
+	try {
+		return decodeURIComponent(value).trim()
+	} catch (_) {
+		return value.trim()
+	}
+}
+
+function normalizeMiniProgramPath(path) {
+	if (!path) return DEFAULT_SHARE_PATH
+	return path.startsWith('/') ? path : `/${path}`
+}
+
+function buildWebviewPathFromH5Url(h5url) {
+	if (!h5url) return ''
+	const clean = safeDecode(h5url)
+	if (!clean) return ''
+	return `/pages/index/index?url=${encodeURIComponent(clean)}&nativeShare=1`
+}
+
 export default {
 	data() {
 		return {
-			shareTitle: '撒米屋',
+			/** 与 H5 WaitingRoom 的分享文案保持一致 */
+			shareTitle: DEFAULT_SHARE_TITLE,
+			shareDesc: DEFAULT_SHARE_DESC,
 			/** 点开分享卡片要打开的小程序路径，须以 / 开头 */
-			sharePath: '/pages/index/index',
+			sharePath: DEFAULT_SHARE_PATH,
 			shareImageUrl: '',
 			backTimer: null,
 		}
 	},
 	onLoad(query) {
-		if (query.title) {
-			try {
-				this.shareTitle = decodeURIComponent(query.title)
-			} catch (_) {}
+		const h5Path = buildWebviewPathFromH5Url(query.h5url)
+		const hasH5Path = !!h5Path
+		if (h5Path) {
+			// 优先用当前 webview 的 H5 URL 组装分享落地，确保 roomId（/room/:id）透传给 H5
+			this.sharePath = h5Path
 		}
-		if (query.path) {
-			try {
-				this.sharePath = decodeURIComponent(query.path)
-			} catch (_) {}
+		if (query.title) {
+			const v = safeDecode(query.title)
+			if (v) this.shareTitle = v
+		}
+		if (query.desc) {
+			const v = safeDecode(query.desc)
+			if (v) this.shareDesc = v
+		}
+		if (!hasH5Path && query.path) {
+			const v = safeDecode(query.path)
+			if (v) this.sharePath = normalizeMiniProgramPath(v)
 		}
 		if (query.imageUrl) {
-			try {
-				this.shareImageUrl = decodeURIComponent(query.imageUrl)
-			} catch (_) {}
+			this.shareImageUrl = safeDecode(query.imageUrl)
 		}
 	},
 	onUnload() {

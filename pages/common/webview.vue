@@ -19,7 +19,7 @@ function deriveShareFromWebSrc(webSrc) {
 	try {
 		const u = new URL(webSrc)
 		if (/\/room\/[^/]+\/?/i.test(u.pathname)) {
-			const mpPath = `/pages/common/webview?url=${encodeURIComponent(webSrc)}&nativeShare=1`
+			const mpPath = `/pages/index/index?url=${encodeURIComponent(webSrc)}&nativeShare=1`
 			lastShareFromH5 = {
 				title: ROOM_SHARE_TITLE,
 				path: mpPath,
@@ -73,6 +73,7 @@ export default {
 			if (p.title) q.push(`title=${encodeURIComponent(p.title)}`)
 			if (p.path) q.push(`path=${encodeURIComponent(p.path)}`)
 			if (p.imageUrl) q.push(`imageUrl=${encodeURIComponent(p.imageUrl)}`)
+			if (this.webSrc) q.push(`h5url=${encodeURIComponent(this.webSrc)}`)
 			const url = `/pages/common/share-entry${q.length ? `?${q.join('&')}` : ''}`
 			uni.navigateTo({ url })
 		},

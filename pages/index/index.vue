@@ -1,281 +1,200 @@
 <template>
-	<view class="content">
-		<swiper v-if="content.length" :list="content" class="swiper" height="100vh" direction="column" :vertical="true" :autoplay="false" keyName="id" showTitle circular @change="onSwiperChange">
-			<swiper-item v-for="item in content" :key="item.id" height="100vh">
-				<view class="imgs">
-					<u-swiper v-if="item.photo.split(',').length" :list="item.photo.split(',')" height="1100rpx" interval="1500" showTitle :autoplay="autoplay" circular @touchstart.native="handleTouchStart">
-						<template v-slot="{item: items}">
-							<image @click.stop="toDetail(item.id)" :src="getFullImageUrl(items)" mode="aspectFill" style="width: 100%; height: 1100rpx; object-fit: cover;" />
-						</template>
-					</u-swiper>
-				</view>
-				<view class="detail" @click.stop="toDetail(item.id)">
-					<view class="detail-title">
-						<view class="detail-title-tips">{{ isPastTime(item?.startTime) ? '已结束' : ['', '下架', '报名中', '已结束'][item.state] }}</view>
-						<view class="detail-title-title">{{ item.title }}</view>
-					</view>
-					<view class="detail-info">
-						<view class="detail-info-top">
-							<image class="detail-info-top-img" :src="getFullImageUrl(item.headimg)"></image>
-							<view class="detail-info-top-view">{{ item.nickname }}</view>
-						</view>
-						<view class="detail-info-time">
-							<image class="detail-info-time-img" src="/static/index/time.png"></image>{{ item.startTime }}
-						</view>
-						<view class="detail-info-address">
-							<view class="detail-info-address-view">
-								<image class="detail-info-address-image" src="/static/index/address.png"></image>
-								{{ item.address }}
-							</view>
-							<view class="detail-info-address-right" v-if="item.distance">距您 {{ item.distance }} km</view>
-						</view>
-						<view class="detail-info-button">
-							<view class="detail-info-button-left">{{ item.num }} 人已报名</view>
-							<view class="detail-info-button-right">
-								<image class="detail-info-button-right-img" src="/static/index/button.png"></image>点击报名
-							</view>
-						</view>
-					</view>
-				</view>
-			</swiper-item>
-			<!-- <u-button type="primary" @click="handleClick">点我</u-button> -->
-		</swiper>
+	<view class="wv-root">
+		<web-view v-if="webSrc" :src="webSrc" @message="onWebViewMessage" />
 	</view>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
-import { IndexApi } from '../../services'
-import { onLoad, onShareAppMessage, onShow } from '@dcloudio/uni-app';
-import { getDistance, getFullImageUrl, getGeoCoder, isPastTime } from '../../utils/utils'
-const content = ref([])
-const currentIndex = ref(0)
+<script>
+import { getAuthorize } from '../../utils/utils'
 
-onShareAppMessage(() => {
-	return {
-		title: '米小章 ',
-		imageUrl: getFullImageUrl(content.value[currentIndex.value].photo.split(',')[0]),
-		path: '/pages/index/index'
+const DEFAULT_SHARE = {
+	title: '撒米屋',
+	path: '/pages/index/index',
+	imageUrl: '',
+}
+let lastShareFromH5 = { ...DEFAULT_SHARE }
+const WEBVIEW_URL_PREFIX = 'https://www.91sami.com/smwgameMini/newMap?token='
+
+const ROOM_SHARE_TITLE = 'hi朋友，来一起玩"你拼我猜"吗？'
+
+function mergeTokenIntoH5Url(url, token) {
+	if (!url) return ''
+	if (!token) return url
+	try {
+		const u = new URL(url)
+		u.searchParams.set('token', token)
+		return u.toString()
+	} catch (_) {
+		const sep = url.includes('?') ? '&' : '?'
+		return `${url}${sep}token=${encodeURIComponent(token)}`
 	}
-})
+}
 
-onShow(() => {
-	IndexApi.getActivitysignet({state: '2'}).then(res => {
-		content.value = res.content
-		getDistances()
-	})
-})
-
-const getDistances = async () => {
-	wx.getLocation({
-		type: 'gcj02', // 返回可以用于wx.openLocation的坐标
-		success(res) {
-			const userLat = res.latitude;
-			const userLng = res.longitude;
-			content.value.map(async (item, index) => {
-				try {
-					const geo = await getGeoCoder(item.address)
-					const targetLat = geo.lat;
-					const targetLng = geo.lng;
-
-					const distance = getDistance(userLat, userLng, targetLat, targetLng);
-					content.value[index] = { ...content.value[index], distance: distance.toFixed(2) }
-				} catch {
-					content.value[index] = { ...content.value[index], distance: 0 }
-				}
-			})
-		},
-		fail(err) {
-			console.error('获取定位失败', err);
+function deriveShareFromWebSrc(webSrc) {
+	if (!webSrc || typeof webSrc !== 'string') return
+	try {
+		const u = new URL(webSrc)
+		if (/\/room\/[^/]+\/?/i.test(u.pathname)) {
+			const mpPath = `/pages/index/index?url=${encodeURIComponent(webSrc)}&nativeShare=1`
+			lastShareFromH5 = {
+				title: ROOM_SHARE_TITLE,
+				path: mpPath,
+				imageUrl: '',
+			}
 		}
-	});
+	} catch (_) {}
 }
 
-const onSwiperChange = (e) => {
-	currentIndex.value = e.current
-}
-
-const autoplay = ref(true)
-
-// 手动滑动时中止自动播放
-const handleTouchStart = () => {
-	autoplay.value = false
-}
-
-const toDetail = (id) => {
-	uni.navigateTo({
-		url: '/pages/index/detail?id=' + id
-	})
+export default {
+	data() {
+		return {
+			webSrc: '',
+			nativeShareBtn: false,
+			shareBtnCustom: false,
+			shareBtnBoxStyle: '',
+		}
+	},
+	onLoad(options = {}) {
+		this.ensureLoginAndLoadWebview(options)
+		this.nativeShareBtn = options.nativeShare === '1'
+		const st = parseInt(options.shareTop, 10)
+		const sr = parseInt(options.shareRight, 10)
+		const sw = parseInt(options.shareW, 10)
+		const sh = parseInt(options.shareH, 10)
+		if ([st, sr, sw, sh].every((n) => !Number.isNaN(n) && n >= 0)) {
+			this.shareBtnCustom = true
+			this.shareBtnBoxStyle = `position:fixed;top:${st}rpx;right:${sr}rpx;width:${sw}rpx;height:${sh}rpx;left:auto;bottom:auto;display:flex;align-items:center;justify-content:center;`
+		}
+	},
+	onShow() {
+		// 从分享 path 进入且携带了 url 时，优先保持该 url（含 roomId）
+		if (!this.webSrc) this.updateWebSrcByToken()
+	},
+	methods: {
+		updateWebSrcByToken() {
+			const token = String(uni.getStorageSync('token') || '')
+			const url = WEBVIEW_URL_PREFIX + encodeURIComponent(token)
+			if (url !== this.webSrc) {
+				this.webSrc = url
+				deriveShareFromWebSrc(this.webSrc)
+			}
+		},
+		async ensureLoginAndLoadWebview(options = {}) {
+			const token = String(uni.getStorageSync('token') || '')
+			if (!token) {
+				try {
+					await getAuthorize()
+				} catch (_) {
+					// 登录失败时不阻断页面，仍加载未登录地址
+				}
+			}
+			const latestToken = String(uni.getStorageSync('token') || '')
+			if (options.url) {
+				const baseUrl = decodeURIComponent(String(options.url))
+				this.webSrc = mergeTokenIntoH5Url(baseUrl, options.token || latestToken)
+				deriveShareFromWebSrc(this.webSrc)
+				return
+			}
+			this.updateWebSrcByToken()
+		},
+		goShareEntry() {
+			const p = lastShareFromH5
+			const q = []
+			if (p.title) q.push(`title=${encodeURIComponent(p.title)}`)
+			if (p.path) q.push(`path=${encodeURIComponent(p.path)}`)
+			if (p.imageUrl) q.push(`imageUrl=${encodeURIComponent(p.imageUrl)}`)
+			if (this.webSrc) q.push(`h5url=${encodeURIComponent(this.webSrc)}`)
+			const url = `/pages/common/share-entry${q.length ? `?${q.join('&')}` : ''}`
+			uni.navigateTo({ url })
+		},
+		onWebViewMessage(e) {
+			console.log(e)
+			try {
+				const detail = e.detail || e.mp?.detail || {}
+				let list = detail.data
+				if (list == null) return
+				if (!Array.isArray(list)) {
+					list = [list]
+				}
+				if (!list.length) return
+				const last = list[list.length - 1]
+				if (last && last.type === 'share') {
+					lastShareFromH5 = {
+						title:
+							typeof last.title === 'string' && last.title ? last.title : DEFAULT_SHARE.title,
+						path:
+							typeof last.path === 'string' && last.path.startsWith('/')
+								? last.path
+								: DEFAULT_SHARE.path,
+						imageUrl: typeof last.imageUrl === 'string' ? last.imageUrl : '',
+					}
+				}
+			} catch (_) {}
+		},
+	},
+	onShareAppMessage() {
+		const promise = new Promise((resolve) => {
+			setTimeout(() => {
+				const p = lastShareFromH5
+				resolve({
+					title: p.title,
+					path: p.path,
+					imageUrl: p.imageUrl || undefined,
+				})
+			}, 100)
+		})
+		return {
+			title: DEFAULT_SHARE.title,
+			path: DEFAULT_SHARE.path,
+			promise,
+		}
+	},
 }
 </script>
 
-<style lang="scss" scoped>
-.detail-info-button {
-	margin-top: 10rpx;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-
-	.detail-info-button-right-img {
-		width: 22rpx;
-		height: 24rpx;
-	}
-
-	.detail-info-button-right {
-		padding: 12rpx 25rpx;
-		border-radius: 100rpx;
-		background-color: #000;
-		font-weight: bold;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 7rpx;
-		color: #FFFFFF;
-		font-size: 24rpx;
-	}
-
-	.detail-info-button-left {
-		color: #FF4D00;
-		font-weight: bold;
-	}
-}
-
-.detail-info-address {
-	height: 70rpx;
-	margin-top: 19rpx;
-	display: flex;
-	align-items: start;
-	color: #999999;
-	gap: 20rpx;
-	justify-content: space-between;
-
-	.detail-info-address-right {
-		white-space: nowrap;
-	}
-
-	.detail-info-address-image {
-		width: 21rpx;
-		height: 24rpx;
-	}
-
-	.detail-info-address-view {
-		display: flex;
-		align-items: center;
-		gap: 16rpx;
-	}
-}
-
-.detail-info-time {
-	margin-top: 26rpx;
-	display: flex;
-	align-items: center;
-	gap: 14rpx;
-	color: #999999;
-}
-
-.detail-info-time-img {
-	width: 23rpx;
-	height: 23rpx;
-}
-
-view {
-	box-sizing: border-box;
-	font-size: 26rpx;
-}
-
-image {
-	object-fit: cover;
-}
-
-.content {
-	// padding-top: 80rpx;
-	background-color: #fff;
+<style scoped>
+.wv-root {
+	width: 100%;
 	height: 100vh;
-	box-sizing: border-box;
-	overflow: hidden;
+	position: relative;
 }
-
-.logo {
-	height: 200rpx;
-	width: 200rpx;
-	margin-top: 200rpx;
-	margin-left: auto;
-	margin-right: auto;
-	margin-bottom: 50rpx;
-}
-
-.imgs {
-	width: 100%;
-	height: 1100rpx;
-	background-color: #000;
-}
-
-.img {
-	width: 100%;
-	height: 1100rpx;
-}
-
-.detail {
+.wv-native-share {
 	position: fixed;
-	bottom: 37rpx;
-	left: 23.5rpx;
-	width: 703rpx;
-	height: 414rpx;
-	background-color: #fff;
-	border-radius: 33rpx;
-	padding: 25rpx 23rpx;
-	overflow: hidden;
-	box-sizing: border-box;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
-}
-
-.detail-title {
-	height: 80rpx;
-
-	.detail-title-tips {
-		display: inline;
-		background-color: #FF4D00;
-		color: #fff;
-		font-weight: 500;
-		color: #FFFFFF;
-		padding: 5rpx 15rpx;
-		white-space: nowrap;
-		font-size: 20rpx;
-		margin-right: 14rpx;
-		border-radius: 6rpx;
-		vertical-align: middle;
-	}
-
-	.detail-title-title {
-		display: inline;
-		font-weight: 500;
-		color: #1A1A1A;
-		font-size: 34rpx;
-		vertical-align: middle;
-	}
-}
-
-.swiper {
-	height: 100vh;
-}
-
-.detail-info {}
-
-.detail-info-top {
+	z-index: 99998;
+	left: 0;
+	right: 0;
+	bottom: calc(200rpx + env(safe-area-inset-bottom));
 	display: flex;
+	flex-direction: row;
+	justify-content: center;
 	align-items: center;
-	gap: 16rpx;
-	margin-top: 26rpx;
-
-	.detail-info-top-img {
-		width: 44rpx;
-		height: 44rpx;
-		border-radius: 50%;
-	}
-
-	.detail-info-top-view {
-		color: #CCCCCC;
-	}
+	pointer-events: auto;
+}
+.wv-native-share--custom {
+	left: auto;
+	right: auto;
+	bottom: auto;
+}
+.wv-native-share--custom .wv-native-share__btn {
+	width: 100%;
+	height: 100%;
+	padding: 0 8rpx;
+	font-size: 22rpx;
+	box-sizing: border-box;
+}
+.wv-native-share__btn {
+	font-size: 28rpx;
+	padding: 18rpx 56rpx;
+	line-height: 1.25;
+	color: #4a3208;
+	background: linear-gradient(180deg, #ffe08a, #ffc169);
+	border-radius: 999rpx;
+	border: 2rpx solid rgba(191, 155, 109, 0.9);
+}
+.wv-native-share__btn::after {
+	border: none;
+}
+.wv-native-share__btn--hover {
+	opacity: 0.88;
 }
 </style>

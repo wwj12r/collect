@@ -195,12 +195,6 @@
 				"selectedIconPath": "static/index/index-active.png"
 			},
 			{
-				"pagePath": "pages/center/index",
-				"text": "创意中心",
-				"iconPath": "static/center/center.png",
-				"selectedIconPath": "static/center/center-active.png"
-			},
-			{
 				"pagePath": "pages/user/index",
 				"text": "我的",
 				"iconPath": "static/user/user.png",
