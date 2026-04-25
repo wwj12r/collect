@@ -4,7 +4,7 @@ import { imgBaseUrl } from "./enums";
 import QQMapWX from '../utils/qqmap';
 import { useToken } from "../hooks/userToken";
 
-const env = 'dev'
+const env = 'www'
 export const baseUrl = `https://${env}.91sami.com/api/web`
 
 

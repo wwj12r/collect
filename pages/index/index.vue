@@ -80,13 +80,12 @@ export default {
 			}
 		},
 		async ensureLoginAndLoadWebview(options = {}) {
-			const token = String(uni.getStorageSync('token') || '')
-			if (!token) {
-				try {
-					await getAuthorize()
-				} catch (_) {
-					// 登录失败时不阻断页面，仍加载未登录地址
-				}
+			const hadToken = !!String(uni.getStorageSync('token') || '')
+			// 每次进入本页都重新走 getAuthorize（uni.login + 后端换票），已登录时静默避免重复全屏 loading
+			try {
+				await getAuthorize(hadToken)
+			} catch (_) {
+				// 登录失败时不阻断页面，仍加载未登录地址
 			}
 			const latestToken = String(uni.getStorageSync('token') || '')
 			if (options.url) {
