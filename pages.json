@@ -8,6 +8,12 @@
 			}
 		},
 		{
+			"path": "pages/index/home",
+			"style": {
+				"navigationBarTitleText": "活动"
+			}
+		},
+		{
 			"path": "pages/index/detail",
 			"style": {
 				"navigationBarTitleText": "活动详情",
@@ -182,26 +188,26 @@
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
 	},
-	"tabBar": {
-		"color": "#999999",
-		"selectedColor": "#FF0000",
-		"backgroundColor": "#FFFFFF",
-		"borderStyle": "black",
-		"list": [
-			{
-				"pagePath": "pages/index/index",
-				"text": "首页",
-				"iconPath": "static/index/index.png",
-				"selectedIconPath": "static/index/index-active.png"
-			},
-			{
-				"pagePath": "pages/user/index",
-				"text": "我的",
-				"iconPath": "static/user/user.png",
-				"selectedIconPath": "static/user/user-active.png"
-			}
-		]
-	},
+	// "tabBar": {
+	// 	"color": "#999999",
+	// 	"selectedColor": "#FF0000",
+	// 	"backgroundColor": "#FFFFFF",
+	// 	"borderStyle": "black",
+	// 	"list": [
+	// 		{
+	// 			"pagePath": "pages/index/index",
+	// 			"text": "首页",
+	// 			"iconPath": "static/index/index.png",
+	// 			"selectedIconPath": "static/index/index-active.png"
+	// 		},
+	// 		{
+	// 			"pagePath": "pages/user/index",
+	// 			"text": "我的",
+	// 			"iconPath": "static/user/user.png",
+	// 			"selectedIconPath": "static/user/user-active.png"
+	// 		}
+	// 	]
+	// },
 	"uniIdRouter": {},
 	"easycom": {
 		"autoscan": true,

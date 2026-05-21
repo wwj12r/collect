@@ -13,7 +13,7 @@ const DEFAULT_SHARE = {
 	imageUrl: '',
 }
 let lastShareFromH5 = { ...DEFAULT_SHARE }
-const WEBVIEW_URL_PREFIX = 'https://www.91sami.com/smwgameMini/newMap?token='
+const WEBVIEW_URL_PREFIX = 'http://localhost:3000/smwgame/newMap?token='
 
 const ROOM_SHARE_TITLE = 'hi朋友，来一起玩"你拼我猜"吗？'
 

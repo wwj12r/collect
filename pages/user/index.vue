@@ -59,6 +59,7 @@ const tools = [
 	{ icon: 'scan', text: '扫码核销' },
 	{ icon: 'print', text: '发布印章', link: '/pages/user/Print/index' },
 	{ icon: 'gallery', text: '展厅', link: '/pages/gallery/index' },
+	{ icon: 'activity', text: '活动', link: '/pages/index/home' },
 	// {
 	// 	icon: 'gallery',
 	// 	text: '社区',
