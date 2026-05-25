@@ -13,7 +13,7 @@ const DEFAULT_SHARE = {
 	imageUrl: '',
 }
 let lastShareFromH5 = { ...DEFAULT_SHARE }
-const WEBVIEW_URL_PREFIX = 'http://localhost:3000/smwgame/newMap?token='
+const WEBVIEW_URL_PREFIX = 'https://www.91sami.com/smwgame/cocreateIndex?token='
 
 const ROOM_SHARE_TITLE = 'hi朋友，来一起玩"你拼我猜"吗？'
 
@@ -38,6 +38,16 @@ function deriveShareFromWebSrc(webSrc) {
 			const mpPath = `/pages/index/index?url=${encodeURIComponent(webSrc)}&nativeShare=1`
 			lastShareFromH5 = {
 				title: ROOM_SHARE_TITLE,
+				path: mpPath,
+				imageUrl: '',
+			}
+			return
+		}
+		// 共创主题本 / 内容页：保证分享 path 带完整 H5 落地（标题封面以 H5 postMessage 为准）
+		if (/\/cocreate\/?$/i.test(u.pathname) && u.searchParams.get('bookThemeId')) {
+			const mpPath = `/pages/index/index?url=${encodeURIComponent(webSrc)}&nativeShare=1`
+			lastShareFromH5 = {
+				title: '手帐主题本',
 				path: mpPath,
 				imageUrl: '',
 			}
