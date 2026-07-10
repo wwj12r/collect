@@ -50,66 +50,69 @@ export const getGeoCoder = async (address: string): Promise<{ lat: number, lng: 
 
 
 
-export const getAuthorize = (silent = false) => {
-	const { tokenRef, setToken } = useToken()
-	return new Promise(resolve => {
-		uni.getSetting({
-			success: res => {
-				const login = () => {
-					uni.login({
+/** uni.login + getUserInfo → /activitysignet/miniprogramlogin */
+export function miniProgramLogin(silent = false): Promise<{ access_token: string; userId: string }> {
+	const { setToken } = useToken()
+	return new Promise((resolve, reject) => {
+		const runLogin = () => {
+			uni.login({
+				provider: 'weixin',
+				success: (loginRes) => {
+					uni.getUserInfo({
 						provider: 'weixin',
-						success: code => {
-							uni.getUserInfo({
-								provider: 'weixin',
-								withCredentials: true,
-								success: res => {
-									console.log(code.code, JSON.stringify(res))
-									// getToken(res.code, res)
-
-									IndexApi.postLogin({ code: code.code, userInfo: JSON.stringify(res) }).then(res => {
-										console.log(res)
-										setToken(res.access_token)
-										uni.setStorageSync('userId', res.userId)
-										uni.setStorageSync('token', res.access_token)
-										// showPopup.value = true
-										resolve(res)
-										uni.hideLoading()
-									}).catch(rej => {
-										uni.hideLoading()
-									})
-								},
-								fail: err => {
-									console.log(err)
-									uni.hideLoading()
-								},
+						withCredentials: true,
+						success: (userInfoRes) => {
+							IndexApi.postLogin({
+								code: loginRes.code,
+								userInfo: JSON.stringify(userInfoRes),
 							})
+								.then((res) => {
+									setToken(res.access_token)
+									uni.setStorageSync('userId', res.userId)
+									uni.setStorageSync('token', res.access_token)
+									uni.hideLoading()
+									resolve(res)
+								})
+								.catch((err) => {
+									uni.hideLoading()
+									reject(err)
+								})
 						},
-						fail: err => {
-							console.log(err)
+						fail: (err) => {
 							uni.hideLoading()
-						}
+							reject(err)
+						},
 					})
-				}
-				!silent && uni.showLoading({ title: '正在登录' })
+				},
+				fail: (err) => {
+					uni.hideLoading()
+					reject(err)
+				},
+			})
+		}
+
+		if (!silent) uni.showLoading({ title: '正在登录' })
+		uni.getSetting({
+			success: (res) => {
 				if (res.authSetting['scope.userInfo']) {
-					login()
-				} else {
-					uni.authorize({
-						scope: 'scope.userInfo',
-						success: res => {
-							console.log(res)
-							login()
-						},
-						fail: err => {
-							console.log(err)
-							uni.hideLoading()
-						}
-					})
+					runLogin()
+					return
 				}
-			}
+				uni.authorize({
+					scope: 'scope.userInfo',
+					success: () => runLogin(),
+					fail: (err) => {
+						uni.hideLoading()
+						reject(err)
+					},
+				})
+			},
+			fail: (err) => reject(err),
 		})
 	})
 }
+
+export const getAuthorize = (silent = false) => miniProgramLogin(silent)
 
 export const getFullImageUrl = (url: string) => {
 	return url?.startsWith('http') ? url : imgBaseUrl + url

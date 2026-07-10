@@ -150,6 +150,12 @@
 			}
 		},
 		{
+			"path": "pages/user/edit-nickname",
+			"style": {
+				"navigationBarTitleText": "设置昵称"
+			}
+		},
+		{
 			"path": "pages/user/scan",
 			"style": {
 				"navigationBarTitleText": "核销"

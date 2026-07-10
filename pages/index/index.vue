@@ -6,6 +6,7 @@
 
 <script>
 import { getAuthorize } from '../../utils/utils'
+import { syncMpNavBar } from '../../utils/mpWebviewNav'
 
 const DEFAULT_SHARE = {
 	title: '撒米屋',
@@ -13,9 +14,28 @@ const DEFAULT_SHARE = {
 	imageUrl: '',
 }
 let lastShareFromH5 = { ...DEFAULT_SHARE }
-const WEBVIEW_URL_PREFIX = 'https://www.91sami.com/smwgame/cocreateIndex?token='
-
+const WEBVIEW_URL_PREFIX = 'https://www.91sami.com/smwgame/family?token='
+console.log(1)
 const ROOM_SHARE_TITLE = 'hi朋友，来一起玩"你拼我猜"吗？'
+const FAMILY_HOME_SHARE_TITLE = '撒米屋'
+const FAMILY_WORK_SHARE_TITLE = '共创作品'
+
+function isFamilyHomePath(pathname) {
+	return /\/family\/?$/i.test(pathname)
+}
+
+function isFamilyWorkDetailPath(pathname) {
+	return /\/family\/work\/detail\/?$/i.test(pathname)
+}
+
+function setShareFromH5WebSrc(webSrc, title) {
+	const mpPath = `/pages/index/index?url=${encodeURIComponent(webSrc)}&nativeShare=1`
+	lastShareFromH5 = {
+		title: title || FAMILY_HOME_SHARE_TITLE,
+		path: mpPath,
+		imageUrl: '',
+	}
+}
 
 function mergeTokenIntoH5Url(url, token) {
 	if (!url) return ''
@@ -51,6 +71,16 @@ function deriveShareFromWebSrc(webSrc) {
 				path: mpPath,
 				imageUrl: '',
 			}
+			return
+		}
+		// 撒米屋 IP 主页
+		if (isFamilyHomePath(u.pathname) && (u.searchParams.get('uid') || u.searchParams.get('massId') || u.searchParams.get('ipId'))) {
+			setShareFromH5WebSrc(webSrc, FAMILY_HOME_SHARE_TITLE)
+			return
+		}
+		// 撒米屋作品详情
+		if (isFamilyWorkDetailPath(u.pathname) && u.searchParams.get('id')) {
+			setShareFromH5WebSrc(webSrc, FAMILY_WORK_SHARE_TITLE)
 		}
 	} catch (_) {}
 }
@@ -79,6 +109,7 @@ export default {
 	onShow() {
 		// 从分享 path 进入且携带了 url 时，优先保持该 url（含 roomId）
 		if (!this.webSrc) this.updateWebSrcByToken()
+		else syncMpNavBar(this.webSrc)
 	},
 	methods: {
 		updateWebSrcByToken() {
@@ -87,6 +118,7 @@ export default {
 			if (url !== this.webSrc) {
 				this.webSrc = url
 				deriveShareFromWebSrc(this.webSrc)
+				syncMpNavBar(this.webSrc)
 			}
 		},
 		async ensureLoginAndLoadWebview(options = {}) {
@@ -102,6 +134,7 @@ export default {
 				const baseUrl = decodeURIComponent(String(options.url))
 				this.webSrc = mergeTokenIntoH5Url(baseUrl, options.token || latestToken)
 				deriveShareFromWebSrc(this.webSrc)
+				syncMpNavBar(this.webSrc)
 				return
 			}
 			this.updateWebSrcByToken()

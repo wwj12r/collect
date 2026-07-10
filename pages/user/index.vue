@@ -103,9 +103,8 @@ const getAuth = (item) => {
 	})
 }
 onShow(() => {
-	// getList()
 	console.log(tokenRef.value)
-	UserApi.getUser().then(res => user.value = res)
+	UserApi.getUser().then((res) => (user.value = res))
 })
 
 function scanCode() {
