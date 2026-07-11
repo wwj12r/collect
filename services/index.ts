@@ -1,4 +1,24 @@
 import request from "./request"
+import { baseUrl } from "../utils/utils"
+
+type UploadImageResult = { imgUrl: string; width?: number; height?: number }
+
+function buildAccessTokenQuery(): string {
+	const token = String(uni.getStorageSync('token') || '')
+	return token ? `access-token=${encodeURIComponent(token)}` : ''
+}
+
+/** 与 phaser RegisterService.uploadImage / HomeService.uploadImage 解析一致 */
+function pickUploadUrl(datas: unknown): string {
+	if (datas == null) return ''
+	if (typeof datas === 'string') return datas
+	if (typeof datas === 'object') {
+		const o = datas as Record<string, unknown>
+		const u = o.imgUrl ?? o.url ?? o.imageUrl ?? o.photo ?? o.image ?? o.headimg
+		if (typeof u === 'string') return u
+	}
+	return ''
+}
 
 export const IndexApi = {
 
@@ -28,38 +48,48 @@ export const IndexApi = {
 		return request.get({ url: '/activitysignet/' + id })
 	},
 	/**
-	 * 上传活动图片
-	*/
-	postImage(data: string) {
-		return new Promise(resolve => {
-			const fs = uni.getFileSystemManager();
-			fs.readFile({
-				filePath: data,
-				encoding: 'binary', // 你也可以使用 'base64'
-				success: (res) => {
-					uni.uploadFile({
-						url: `${baseUrl}/image`, // ✅ 改成你自己的接口地址
-						filePath: data,
-						name: 'photo', // ✅ 与后端接收字段一致
-						header: {
-							'access-token': uni.getStorageSync('token') || '',
-						},
-						formData: {
-							type: 3,
-						},
-						success: (uploadRes) => {
-							console.log('上传成功：', uploadRes)
-							resolve(JSON.parse(uploadRes.data).datas)
-						},
-						fail: (err) => {
-							console.error('上传失败：', err)
-						}
-					})
+	 * 上传图片（与 phaser `/api/web/image` 一致：photo + type，token 走 query 与 header）
+	 */
+	postImage(filePath: string, type: string | number = 3): Promise<UploadImageResult> {
+		return new Promise((resolve, reject) => {
+			const token = String(uni.getStorageSync('token') || '')
+			const query = buildAccessTokenQuery()
+			uni.uploadFile({
+				url: `${baseUrl}/image${query ? `?${query}` : ''}`,
+				filePath,
+				name: 'photo',
+				header: {
+					'access-token': token,
 				},
-				fail: (err) => {
-					console.error('读取文件失败', err);
-				}
-			});
+				formData: {
+					type: String(type),
+				},
+				success: (uploadRes) => {
+					try {
+						const body = typeof uploadRes.data === 'string'
+							? JSON.parse(uploadRes.data)
+							: uploadRes.data
+						if (body?.ret != null && body.ret !== 0) {
+							reject(new Error(body?.msg || '上传失败'))
+							return
+						}
+						const datas = body?.datas ?? body?.data ?? body
+						const imgUrl = pickUploadUrl(datas)
+						if (!imgUrl) {
+							reject(new Error('上传成功但未返回图片地址'))
+							return
+						}
+						resolve({
+							imgUrl,
+							width: typeof datas?.width === 'number' ? datas.width : undefined,
+							height: typeof datas?.height === 'number' ? datas.height : undefined,
+						})
+					} catch (err) {
+						reject(err)
+					}
+				},
+				fail: (err) => reject(err),
+			})
 		})
 	},
 	/**
